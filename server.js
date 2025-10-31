@@ -1,5 +1,5 @@
 // server.js
-//GITHUB
+
 // 必要なモジュールを読み込む
 const express = require('express');
 const app = express();

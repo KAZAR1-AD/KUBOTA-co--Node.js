@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title><%= pageTitle %></title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <h1><%= report.title %></h1>
+    <h2>レポートコード: <%= report.report_code %></h2>
+    <p>公開日: <%= report.created_at %></p>
+    
+    <div class="content">
+        <p><%= report.content %></p>
+    </div>
+
+    <p><a href="/">ホームに戻る</a></p>
+</body>
+</html>
