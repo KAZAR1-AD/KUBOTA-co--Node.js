@@ -4,7 +4,9 @@
 const express = require('express');
 const app = express();
 // 環境変数PORTがあればそれを使用し、なければ8080を使用
-const port = 3000;
+//各個人でかぶらないように変更してください
+//default const port = process.env.PORT || 8080;
+const port = 8080;
 
 // ===================================
 // ★ DB接続とDAOのインポート (追加/変更)
@@ -28,6 +30,8 @@ app.set('views', './views');
 
 // 'public'ディレクトリ内のファイルを、ブラウザに直接公開する (既存)
 app.use(express.static('public')); 
+//＠これ使わないかも
+//＠これつかわないとCSS読み込めない
 
 // POSTリクエストのフォームデータを解析するミドルウェア
 app.use(express.urlencoded({ extended: true }));
@@ -47,33 +51,81 @@ app.use(bodyParser.json())
 app.get('/', (req, res) => {
     // テンプレートに渡す動的なデータ
     const viewData = {
-        pageTitle: 'EJSで動的なホームページ (Port 8080)',
+        isLoggedIn: false, // ユーザーのログイン状態
+        //ログインしてるかどうかチェックしたい
+
         heading: 'Node.js Express EJSデモ',
         items: ['牛乳を買う', 'ブログを書く', 'Expressの勉強', 'ユーザー様向け情報'],
         currentTime: new Date().toLocaleString('ja-JP') // 現在時刻
     };
 
-    // 'views/index.ejs'をレンダリングし、viewDataを渡す
+    // 'views/FIN001.ejs'をレンダリングし、viewDataを渡す
     res.render('FIN001', viewData);
 });
 
-// ログインページへのGETリクエストハンドラ (既存)
-app.get('/login', (req, res) => {
-    res.render('FIN002', { pageTitle: 'ログインページ' });
+// ----------------------------------------------------
+// アンカータグの href="/FIN002" に対応するルート
+// ----------------------------------------------------
+//表示はかえたい/FIN002
+app.get('/fin002', (req, res) => {
+    // 1. 必要ならここでデータを取得・準備する処理（例: データベースからデータを取得）
+        const viewData = {
+        pageTitle: 'FIN002ページ',
+        description: 'これはFIN002ページの説明です。',
+        };
+    // 2. FIN002.ejs テンプレートをレンダリングして、クライアントに送信する
+    res.render('FIN002', viewData);
 });
 
-// ログインフォームのPOSTリクエストハンドラ (既存)
-app.post('/login', (req, res) => {
-    console.log('ログインフォームデータ:', req.body);
-    const { email, password } = req.body;
-
-    // 簡易的な認証ロジック (実際のアプリケーションではセキュリティに注意)
-    if (email === 'admin' && password === 'password') {
-        res.send(`<h1>ログイン成功</h1><p>ようこそ、${email}さん！</p><p><a href="/">ホームに戻る</a></p>`);
-    } else {
-        res.send('<h1>ログイン失敗</h1><p>ユーザー名またはパスワードが間違っています。</p><p><a href="/login">再試行</a></p>');
-    }
+// ----------------------------------------------------
+// アンカータグの href="/FIN003" に対応するルート
+// ----------------------------------------------------
+//表示はかえたい/FIN003
+app.get('/FIN003', (req, res) => {
+    // 1. 必要ならここでデータを取得・準備する処理（例: データベースからデータを取得）
+        const viewData = {
+        pageTitle: 'FIN002ページ',
+        description: 'これはFIN002ページの説明です。',
+        };
+    // 2. FIN002.ejs テンプレートをレンダリングして、クライアントに送信する
+    res.render('FIN003', viewData);
 });
+
+// 新規登録フォームの POST リクエスト処理
+app.post('/register-confirm', (req, res) => {
+    
+    // req.body から入力データを受け取る
+    const userData = {
+        username: req.body.username,
+        email: req.body.email,
+        password: req.body.password,
+        confirmPassword: req.body.confirm_password
+    };
+    
+    console.log('新規登録データを受信:', userData);
+    
+    // ここで以下の処理を実行します:
+    // 1. バリデーション（パスワード一致確認、形式チェックなど）
+    // 2. データベースへの登録処理（パスワードのハッシュ化も行う）
+    
+    // 処理が成功した場合、次の画面（FIN004）へリダイレクト
+    // 重要なデータ（IDなど）があれば、セッションなどで保持します。
+    res.redirect('/FIN004'); 
+});
+
+// FIN004 画面を表示する GET ルートも定義しておく必要があります
+app.get('/FIN004', (req, res) => {
+    // データを確認画面へ渡すなど
+    const viewData = {
+        username: 'サンプルユーザー', // 例として固定値
+        email:  'sammple@email.com', // 例として固定値
+        password: '********', // パスワードは表示しない
+        confirmPassword: '********' // パスワードは表示しない
+    };
+
+    res.render('FIN004',viewData );
+});
+
 
 // ★ レポート詳細を表示する動的なルート (DAOを利用) (追加)
 app.get('/report/:id', async (req, res) => {
