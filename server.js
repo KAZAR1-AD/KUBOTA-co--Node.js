@@ -60,7 +60,7 @@ app.get('/', (req, res) => {
 });
 
 // ----------------------------------------------------
-// アンカータグの href="/fin002" に対応するルート
+// アンカータグの href="/FIN002" に対応するルート
 // ----------------------------------------------------
 //表示はかえたい/FIN002
 app.get('/fin002', (req, res) => {
@@ -74,7 +74,7 @@ app.get('/fin002', (req, res) => {
 });
 
 // ----------------------------------------------------
-// アンカータグの href="/fin002" に対応するルート
+// アンカータグの href="/FIN003" に対応するルート
 // ----------------------------------------------------
 //表示はかえたい/FIN003
 app.get('/FIN003', (req, res) => {
@@ -85,6 +85,41 @@ app.get('/FIN003', (req, res) => {
         };
     // 2. FIN002.ejs テンプレートをレンダリングして、クライアントに送信する
     res.render('FIN003', viewData);
+});
+
+// 新規登録フォームの POST リクエスト処理
+app.post('/register-confirm', (req, res) => {
+    
+    // req.body から入力データを受け取る
+    const userData = {
+        username: req.body.username,
+        email: req.body.email,
+        password: req.body.password,
+        confirmPassword: req.body.confirm_password
+    };
+    
+    console.log('新規登録データを受信:', userData);
+    
+    // ここで以下の処理を実行します:
+    // 1. バリデーション（パスワード一致確認、形式チェックなど）
+    // 2. データベースへの登録処理（パスワードのハッシュ化も行う）
+    
+    // 処理が成功した場合、次の画面（FIN004）へリダイレクト
+    // 重要なデータ（IDなど）があれば、セッションなどで保持します。
+    res.redirect('/FIN004'); 
+});
+
+// FIN004 画面を表示する GET ルートも定義しておく必要があります
+app.get('/FIN004', (req, res) => {
+    // データを確認画面へ渡すなど
+    const viewData = {
+        username: 'サンプルユーザー', // 例として固定値
+        email:  'sammple@email.com', // 例として固定値
+        password: '********', // パスワードは表示しない
+        confirmPassword: '********' // パスワードは表示しない
+    };
+
+    res.render('FIN004',viewData );
 });
 
 
