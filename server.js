@@ -4,9 +4,11 @@
 const express = require('express');
 const app = express();
 // 環境変数PORTがあればそれを使用し、なければ8080を使用
+
 //各個人でかぶらないように変更してください
 //default const port = process.env.PORT || 8080;
 const port = 8080;
+
 
 // ===================================
 // ★ DB接続とDAOのインポート (追加/変更)
