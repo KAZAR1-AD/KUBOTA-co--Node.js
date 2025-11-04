@@ -4,8 +4,6 @@
 const express = require('express');
 const app = express();
 // 環境変数PORTがあればそれを使用し、なければ8080を使用
-//各個人でかぶらないように変更してください
-//default const port = process.env.PORT || 8080;
 const port = 3000;
 
 // ===================================
@@ -35,6 +33,10 @@ app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 // JSONデータを解析するミドルウェア
 app.use(express.json());
+// body-parserミドルウェアの設定 (既存)
+const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({extended: true}))
+app.use(bodyParser.json())
 
 
 // ===================================
@@ -52,7 +54,25 @@ app.get('/', (req, res) => {
     };
 
     // 'views/index.ejs'をレンダリングし、viewDataを渡す
-    res.render('index', viewData);
+    res.render('FIN001', viewData);
+});
+
+// ログインページへのGETリクエストハンドラ (既存)
+app.get('/login', (req, res) => {
+    res.render('FIN002', { pageTitle: 'ログインページ' });
+});
+
+// ログインフォームのPOSTリクエストハンドラ (既存)
+app.post('/login', (req, res) => {
+    console.log('ログインフォームデータ:', req.body);
+    const { email, password } = req.body;
+
+    // 簡易的な認証ロジック (実際のアプリケーションではセキュリティに注意)
+    if (email === 'admin' && password === 'password') {
+        res.send(`<h1>ログイン成功</h1><p>ようこそ、${email}さん！</p><p><a href="/">ホームに戻る</a></p>`);
+    } else {
+        res.send('<h1>ログイン失敗</h1><p>ユーザー名またはパスワードが間違っています。</p><p><a href="/login">再試行</a></p>');
+    }
 });
 
 // ★ レポート詳細を表示する動的なルート (DAOを利用) (追加)

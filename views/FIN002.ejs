@@ -7,32 +7,36 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="fin002">
+        
+        <div class="container">
 
-    <div class="container">
+            <form action="/login" method="POST">
 
-        <div class="fin002-register">
-            <a href="FIN003.html" class="fin002-register-link">新規登録はこちら</a>
-        </div>
+            <div class="fin002-register">
+                <a href="FIN003.html" class="fin002-register-link">新規登録はこちら</a>
+            </div>
 
-        <div class="form-group">
-            <label for="email" class="form-label">メールアドレス or ID</label>
-            <input type="text" id="email" class="form-input">
-        </div>
+            <div class="form-group">
+                <label for="email" class="form-label">メールアドレス or ID</label>
+                <input type="text" id="email" class="form-input">
+            </div>
 
-        <div class="form-group">
-            <label for="password" class="form-label">パスワード</label>
-            <input type="password" id="password" class="form-input">
-        </div>
+            <div class="form-group">
+                <label for="password" class="form-label">パスワード</label>
+                <input type="password" id="password" class="form-input">
+            </div>
 
-        <div class="button-area">
-            <button class="btn btn-pink">ログイン</button>
-            
-            <button 
-                class="btn btn-pink" 
-                onclick="location.href='FIN001.html'">
-                戻る
-            </button>
-        </div>
+            <div class="button-area">
+                <input type="submit" value="ログイン" class="btn btn-pink">
+                
+                <button 
+                    class="btn btn-pink" 
+                    onclick="location.href='FIN001.html'">
+                    戻る
+                </button>
+            </div>
+
+            </form>
 
     </div>
 </body>
