@@ -31,6 +31,7 @@ app.set('views', './views');
 // 'public'ディレクトリ内のファイルを、ブラウザに直接公開する (既存)
 app.use(express.static('public')); 
 //＠これ使わないかも
+//＠これつかわないとCSS読み込めない
 
 // POSTリクエストのフォームデータを解析するミドルウェア
 app.use(express.urlencoded({ extended: true }));
@@ -46,15 +47,46 @@ app.use(express.json());
 app.get('/', (req, res) => {
     // テンプレートに渡す動的なデータ
     const viewData = {
-        pageTitle: 'EJSで動的なホームページ (Port 8080)',
+        isLoggedIn: false, // ユーザーのログイン状態
+        //ログインしてるかどうかチェックしたい
+
         heading: 'Node.js Express EJSデモ',
         items: ['牛乳を買う', 'ブログを書く', 'Expressの勉強', 'ユーザー様向け情報'],
         currentTime: new Date().toLocaleString('ja-JP') // 現在時刻
     };
 
-    // 'views/index.ejs'をレンダリングし、viewDataを渡す
+    // 'views/FIN001.ejs'をレンダリングし、viewDataを渡す
     res.render('FIN001', viewData);
 });
+
+// ----------------------------------------------------
+// アンカータグの href="/fin002" に対応するルート
+// ----------------------------------------------------
+//表示はかえたい/FIN002
+app.get('/fin002', (req, res) => {
+    // 1. 必要ならここでデータを取得・準備する処理（例: データベースからデータを取得）
+        const viewData = {
+        pageTitle: 'FIN002ページ',
+        description: 'これはFIN002ページの説明です。',
+        };
+    // 2. FIN002.ejs テンプレートをレンダリングして、クライアントに送信する
+    res.render('FIN002', viewData);
+});
+
+// ----------------------------------------------------
+// アンカータグの href="/fin002" に対応するルート
+// ----------------------------------------------------
+//表示はかえたい/FIN003
+app.get('/FIN003', (req, res) => {
+    // 1. 必要ならここでデータを取得・準備する処理（例: データベースからデータを取得）
+        const viewData = {
+        pageTitle: 'FIN002ページ',
+        description: 'これはFIN002ページの説明です。',
+        };
+    // 2. FIN002.ejs テンプレートをレンダリングして、クライアントに送信する
+    res.render('FIN003', viewData);
+});
+
 
 // ★ レポート詳細を表示する動的なルート (DAOを利用) (追加)
 app.get('/report/:id', async (req, res) => {
