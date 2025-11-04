@@ -6,7 +6,7 @@ const app = express();
 // 環境変数PORTがあればそれを使用し、なければ8080を使用
 //各個人でかぶらないように変更してください
 //default const port = process.env.PORT || 8080;
-const port = 3000;
+const port = 8080;
 
 // ===================================
 // ★ DB接続とDAOのインポート (追加/変更)
@@ -30,6 +30,7 @@ app.set('views', './views');
 
 // 'public'ディレクトリ内のファイルを、ブラウザに直接公開する (既存)
 app.use(express.static('public')); 
+//＠これ使わないかも
 
 // POSTリクエストのフォームデータを解析するミドルウェア
 app.use(express.urlencoded({ extended: true }));
@@ -52,7 +53,7 @@ app.get('/', (req, res) => {
     };
 
     // 'views/index.ejs'をレンダリングし、viewDataを渡す
-    res.render('index', viewData);
+    res.render('FIN001', viewData);
 });
 
 // ★ レポート詳細を表示する動的なルート (DAOを利用) (追加)

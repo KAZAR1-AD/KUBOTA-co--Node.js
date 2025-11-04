@@ -1,144 +1,204 @@
 @charset "UTF-8";
 
 /* ==================================
-   共通スタイル (Common Styles)
-   FIN001〜FIN019 すべてに適用
+   リセット & 共通スタイル
 ================================== */
 
-/* --- ページ全体 --- */
 body {
-    font-family: "Meiryo", sans-serif;
-    background-color: #f9f9f9; /* 背景を白に */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    background-color: #f4f7f6; 
     color: #333;
     margin: 0;
     padding: 0;
+    font-size: 16px;
+    line-height: 1.6;
 }
 
 /* --- コンテナ (画面中央のボックス) --- */
 .container {
-    margin: 50px auto;
-    padding: 30px 40px;
+    width: 90%;
+    max-width: 600px; 
+    margin: 20px auto;
+    padding: 25px 30px;
     background-color: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
-/* --- 見出し --- */
-h2 {
-    text-align: center;
-    margin-top: 0;
+/* --- タイトルバー (全ページ共通) --- */
+.page-title-bar {
+    background-color: #0b4c68; 
+    color: white;
+    padding: 15px 20px;
     margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    text-align: center;
+}
+.page-title-bar h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    flex-grow: 1; 
+}
+/* 戻るボタン (タイトルバー用) */
+.page-back-btn {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: white;
+    text-decoration: none;
+    font-size: 30px;
+    font-weight: bold;
+    padding: 0 10px;
+    line-height: 1;
+}
+.page-back-btn:hover {
+    opacity: 0.8;
 }
 
 /* --- フォーム部品 --- */
 .form-group {
-    margin-bottom: 25px;
+    margin-bottom: 20px;
     text-align: left;
 }
-
 .form-label {
-    font-size: 16px;
-    font-weight: bold;
+    font-size: 14px;
+    font-weight: 600;
     display: block;
     margin-bottom: 8px;
+    color: #555;
 }
-
 .form-input {
     width: 100%;
-    height: 40px; /* 少し高さを出す */
+    height: 45px;
     border: 1px solid #ccc;
-    background-color: #fde9e4; /* デザイン統一のための薄ピンク */
+    background-color: #fdfdfd; 
     font-size: 16px;
-    padding: 5px 10px;
-    box-sizing: border-box; /* paddingを含めてwidth 100%にする */
-    border-radius: 4px;
+    padding: 8px 12px;
+    box-sizing: border-box;
+    border-radius: 8px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.form-input:focus {
+    border-color: #007bff; 
+    box-shadow: 0 0 0 3px rgba(0,123,255,0.2);
+    outline: none;
+}
+.form-input[readonly] {
+    background-color: #e9ecef;
+    color: #6c757d;
 }
 
 /* --- ボタン共通 --- */
 .button-area {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between; 
     margin-top: 30px;
-    gap: 20px; /* ボタン間の隙間 */
+    gap: 15px;
 }
 .button-area-center {
-    justify-content: center;
+    justify-content: center; 
 }
 
 .btn {
     display: inline-block;
-    height: 45px;
-    font-size: 18px;
-    font-weight: bold;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    height: 48px;
+    font-size: 16px;
+    font-weight: 600;
+    border: 1px solid transparent;
+    border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s;
     padding: 0 25px;
-    line-height: 43px; /* 文字の上下中央揃え */
-    text-decoration: none; /* aタグでも使えるように */
+    line-height: 46px;
+    text-decoration: none;
+    width: 100%; 
+    box-sizing: border-box;
 }
-.btn:hover {
-    opacity: 0.8;
-}
-
-/* ボタンの種類 (色) */
 .btn-primary {
-    /* (例) FIN003の青ボタン */
-    background-color: #0b4c68;
+    background-color: #007bff; 
     color: white;
-    border-color: #0b4c68;
+    border-color: #007bff;
+}
+.btn-primary:hover {
+    background-color: #0069d9;
+    border-color: #0062cc;
+}
+.btn-secondary {
+    background-color: #ffffff; 
+    color: #333;
+    border-color: #ccc;
+}
+.btn-secondary:hover {
+    background-color: #f8f9fa;
+    border-color: #bbb;
 }
 .btn-danger {
-    /* (例) FIN005の赤文字ボタン */
-    background-color: #ffe5dc;
-    color: red;
-    border-color: #cfcfcf;
+    background-color: #dc3545; 
+    color: white;
+    border-color: #dc3545;
 }
-.btn-default {
-    /* (例) FIN004の黒文字ボタン */
-    background-color: #ffe5dc;
-    color: #333;
-    border-color: #cfcfcf;
+.btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
 }
-.btn-pink {
-    /* (例) FIN002のピンクボタン */
-    background-color: #fde9e4;
-    color: #e60000;
-    border: none;
+.button-area-center .btn {
+    width: auto;
+    min-width: 150px;
 }
-
-/* --- 確認画面用 --- */
-.info-block {
-    text-align: left;
-    display: inline-block;
-    margin: 20px 0 30px;
-    line-height: 2.2;
-    font-size: 16px;
-}
-.info-block span {
-    font-weight: bold;
-    display: inline-block;
-    width: 140px;
-    text-align: right;
-    margin-right: 15px;
-    color: #555;
+.button-area .btn:only-child {
+    width: auto;
+    min-width: 150px;
 }
 
-/* --- ページ共通 メニューアイコン (FIN006, 007, 016) --- */
-.page-menu-icon {
-    position: absolute;
-    top: 20px;
-    right: 25px;
-    font-size: 36px; /* アイコンの大きさ */
-    text-decoration: none;
-    z-index: 10;
+/* ★★★ 変更点 START (共通スタイル) ★★★ */
+/* --- ページ共通 ヘッダーアイコン (FIN001, 006, 007) --- */
+/* .page-menu-icon と .page-menu-icon img スタイルを削除 */
+
+/* 新しい共通アイコンのスタイル (旧 .fin001-menu-btn) */
+.header-profile-icon {
+    display: block;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
     transition: transform 0.2s;
+    text-decoration: none;
 }
-.page-menu-icon:hover {
+.header-profile-icon:hover {
     transform: scale(1.1);
-    opacity: 1; /* 共通のhover(opacity:0.8)を上書き */
+}
+.header-profile-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+/* ★★★ 変更点 END (共通スタイル) ★★★ */
+
+
+/* ヘッダーのアイコン/ボタン用コンテナ (FIN006, 007用) */
+.header-icon-area {
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    z-index: 10;
+}
+
+/* ヘッダー用の小型ログインボタン (FIN006, 007用) */
+.header-login-btn {
+    display: block;
+    height: 30px; 
+    line-height: 28px; 
+    font-size: 13px; 
+    font-weight: 600;
+    padding: 0 10px; 
+    /* .btn と .btn-secondary のスタイルを継承します */
 }
 
 
@@ -147,145 +207,212 @@ h2 {
 ================================== */
 
 /******* FIN001 START ********/
-/* FIN001専用のヘッダー */
 .fin001-header {
     text-align: right;
     padding: 20px 30px;
-    position: absolute; /* 画面右上に固定 */
+    position: absolute;
     top: 0;
     right: 0;
+    z-index: 10; 
 }
-/* ログインボタンの微調整 */
 .fin001-login-btn {
-    height: 40px;
-    line-height: 38px;
-    font-size: 16px;
+    width: 120px;
+    height: 42px;
+    line-height: 40px;
+    font-size: 15px;
 }
-/* メインコンテンツのコンテナ */
+
+/* ★★★ 変更点 START (FIN001) ★★★ */
+/* .fin001-menu-btn と .fin001-menu-btn img のスタイル定義を削除 */
+/* (共通スタイルの .header-profile-icon を使うため) */
+/* ★★★ 変更点 END (FIN001) ★★★ */
+
 .fin001-main-container {
-    text-align: center; /* 中身を中央揃え */
-    margin-top: 150px; /* 上からのマージンを多めに */
-    width: 600px;
-    border: none; /* FIN001は枠線なしにする */
-    box-shadow: none; /* FIN001は影なしにする */
-    background-color: transparent; /* 背景も透明に */
+    text-align: center;
+    margin-top: 150px;
+    border: none;
+    box-shadow: none;
+    background-color: transparent;
 }
 .fin001-main-container h1 {
-    font-size: 36px;
+    font-size: 40px;
     margin-bottom: 40px;
+    color: #0b4c68; 
 }
-/* STARTボタンの微調整 */
 .fin001-start-btn {
     width: 200px;
     height: 60px;
-    font-size: 24px;
+    font-size: 22px;
     line-height: 58px;
+}
+.fin001-start-btn:hover {
+    background-color: #0069d9;
 }
 /******* FIN001 END ********/
 
 
 /******* FIN002 START ********/
-.fin002 .container {
-    width: 400px;
-}
+.fin002 .container { max-width: 450px; }
 .fin002-register {
     text-align: right;
-    margin-bottom: 40px;
+    margin-bottom: 25px;
 }
 .fin002-register-link {
-    background-color: #fde9e4;
-    color: #e60000;
+    font-size: 14px;
+    color: #007bff;
     text-decoration: none;
-    padding: 6px 10px;
-    border-radius: 4px;
-    font-weight: bold;
+    font-weight: 600;
+}
+.fin002-register-link:hover {
+    text-decoration: underline;
+}
+.fin002 .btn {
+    width: 48%;
 }
 /******* FIN002 END ********/
 
 
 /******* FIN003 START ********/
 .fin003 .container {
-    width: 450px;
-    padding: 0; /* タイトルバーをくっつけるため */
+    max-width: 450px;
+    padding: 0;
 }
 .fin003-title {
     background-color: #0b4c68;
     color: white;
-    padding: 15px 0;
+    padding: 20px 0;
     margin: 0;
-    font-size: 24px;
-    font-weight: bold;
-    border-radius: 8px 8px 0 0;
-    text-align: center; /* h1なのでh2共通スタイルが効かないため */
+    font-size: 22px;
+    font-weight: 600;
+    border-radius: 10px 10px 0 0;
+    text-align: center;
 }
 .fin003-form-wrapper {
-    padding: 30px 40px 40px; /* タイトル以外の部分のpadding */
+    padding: 30px;
+}
+.fin003 .btn {
+    width: 48%;
 }
 /******* FIN003 END ********/
 
 
 /******* FIN004 START ********/
 .fin004 .container {
-    width: 500px;
-    text-align: center; /* h2や.info-blockを中央に */
+    max-width: 500px;
+    text-align: center;
+}
+.fin004 h2 {
+    background-color: #0b4c68;
+    color: white;
+    padding: 20px 0;
+    margin: -30px -40px 30px -40px; 
+    border-radius: 10px 10px 0 0;
+    font-size: 22px;
+    font-weight: 600;
+}
+.info-block {
+    text-align: left;
+    margin: 20px auto 30px;
+    line-height: 2.2;
+    font-size: 16px;
+    border-left: 4px solid #0b4c68;
+    padding-left: 20px;
+}
+.info-block span {
+    font-weight: 600;
+    display: inline-block;
+    width: 140px;
+    text-align: right;
+    margin-right: 15px;
+    color: #555;
+}
+.fin004 .btn {
+    width: 48%;
 }
 /******* FIN004 END ********/
 
 
 /******* FIN005 START ********/
 .fin005 .container {
-    width: 500px;
+    max-width: 500px;
     text-align: center;
 }
-.fin005 .btn {
-    width: 160px; /* TOPに戻るボタンは少し幅広に */
+.fin005 h2 {
+    background-color: #0b4c68;
+    color: white;
+    padding: 20px 0;
+    margin: -30px -40px 30px -40px;
+    border-radius: 10px 10px 0 0;
+    font-size: 22px;
+    font-weight: 600;
 }
 /******* FIN005 END ********/
 
 
 /******* FIN006 START ********/
-.fin006 .container {
-    width: 600px;
-}
-/* アイコン配置のため relative を追加 */
 .fin006-container {
-    position: relative; 
+    padding: 0;
+    max-width: 650px;
+}
+.fin006-title-bar {
+    background-color: #0b4c68;
+    color: white;
+    padding: 15px 20px;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    position: relative;
+    justify-content: center; 
+    text-align: center;
+    border-radius: 10px 10px 0 0;
+}
+.fin006-title-bar h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
 }
 .fin006-search-box {
-    background-color: #fef0f0; 
     padding: 30px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
 }
 .fin006-criteria-row {
     display: flex;
     align-items: center;
     margin-bottom: 25px;
 }
-.fin006-criteria-row:last-child {
-    margin-bottom: 0;
-}
+.fin006-criteria-row:last-child { margin-bottom: 0; }
 .fin006-label {
     width: 150px;
-    font-weight: bold;
-    font-size: 16px;
+    font-weight: 600;
+    font-size: 15px;
     flex-shrink: 0;
+    color: #555;
 }
 .fin006-input-area {
     flex-grow: 1;
     display: flex;
     align-items: center;
+    gap: 15px; 
 }
 .fin006-slider {
     width: 100%;
 }
-.fin006-select {
-    width: 200px;
-    height: 40px; 
+.fin006-value-display {
     font-size: 16px;
-    padding: 5px;
+    font-weight: 600;
+    color: #007bff; 
+    width: 80px; 
+    text-align: right; 
+    flex-shrink: 0; 
+}
+.fin006-select {
+    width: 100%;
+    height: 45px;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    background-color: #fdfdfd;
+    font-size: 16px;
+    padding: 8px 12px;
+    box-sizing: border-box;
+    border-radius: 8px;
 }
 .fin006-checkbox-group {
     display: flex;
@@ -299,22 +426,14 @@ h2 {
     align-items: center;
 }
 .fin006-checkbox-group input {
-    margin-right: 5px;
+    margin-right: 8px;
+}
+.fin006 .button-area {
+    padding: 0 30px 30px;
 }
 .fin006 .btn {
-    width: 200px;
-    height: 50px;
-    font-size: 20px;
-    background-color: #fef0f0;
-    color: #333;
-}
-.fin006 .btn:hover {
-    background-color: #fde0e0;
-    opacity: 1;
-}
-/* アイコン色 (背景が白系なので) */
-.fin006 .page-menu-icon {
-    color: #333; 
+    width: auto;
+    min-width: 200px;
 }
 /******* FIN006 END ********/
 
@@ -325,12 +444,16 @@ h2 {
     color: white;
     padding: 10px 0;
     margin-bottom: 30px;
-    position: relative; /* アイコン配置のため */
+    position: relative; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
 }
 .fin007-title-bar h2 {
     margin: 0;
     font-size: 24px;
     font-weight: bold;
+    text-align: center;
 }
 .fin007-results-container {
     width: 90%;
@@ -379,10 +502,7 @@ h2 {
     font-weight: bold;
     border-radius: 4px;
 }
-.fin007-page-item.dots {
-    border: none;
-    background: none;
-}
+.fin007-page-item.dots { border: none; background: none; }
 .fin007-page-item.active {
     background-color: #0b4c68;
     color: white;
@@ -417,551 +537,529 @@ h2 {
     transform: scale(1.05); 
     opacity: 1; 
 }
-/* アイコン (上下中央揃え) */
-.fin007-menu-icon {
-    color: white; /* 背景が青なので白に */
-    top: 50%; 
-    transform: translateY(-50%);
-}
-.fin007-menu-icon:hover {
-    transform: translateY(-50%) scale(1.1);
-}
 /******* FIN007 END ********/
 
 
 /******* FIN008 START ********/
 .fin008 .container {
-    width: 450px;
-    background-color: #00bfff; /* 画像の明るい青 */
-    padding-top: 20px;
-    border-color: #00bfff;
-    position: relative; 
+    background-color: #ffffff;
+    padding: 20px;
+    border-color: #e0e0e0;
+    max-width: 450px;
 }
-/* ログアウトボタン */
-.fin008-logout-btn {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background-color: #fde9e4; /* 薄いピンク */
-    color: #e60000; /* 赤文字 */
-    border: 1px solid #e60000;
+.fin008-header-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.fin008-back-btn {
+    font-size: 28px;
     font-weight: bold;
+    color: #555;
+    text-decoration: none;
     padding: 5px 10px;
-    border-radius: 4px;
-    cursor: pointer;
 }
-.fin008-logout-btn:hover {
-    opacity: 0.8;
+.fin008-logout-btn {
+    width: auto; 
+    padding-left: 15px; 
+    padding-right: 15px; 
+    height: 40px;
+    line-height: 38px;
+    font-size: 14px;
 }
-/* 写真エリア */
 .fin008-photo-area {
     display: block;
-    width: 200px;
-    height: 200px;
-    background-color: #0b4c68; /* 暗い青 */
-    color: white;
+    width: 150px;
+    height: 150px;
+    background-color: #e9ecef; 
     text-decoration: none;
-    margin: 30px auto 20px;
-    border: 3px solid #e60000; /* 赤い枠 */
+    margin: 20px auto 15px;
+    border: 2px dashed #ccc;
+    border-radius: 50%; 
+    transition: background-color 0.2s, border-color 0.2s;
+    overflow: hidden; 
+    padding: 0; 
+    position: relative; 
+}
+.fin008-photo-area:hover {
+    background-color: #e2e6ea;
+    border-color: #bbb;
+}
+#profilePhotoDisplay {
+    width: 100%;
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
-    position: relative; /* キャプションの基準 */
 }
-.fin008-photo-area div {
-    font-size: 24px;
-    font-weight: bold;
+#profilePhotoDisplay div {
+    font-size: 18px;
+    font-weight: 600;
+    color: #6c757d;
 }
-/* 写真エリア横の矢印テキスト */
-.fin008-photo-caption {
-    position: absolute;
-    left: -180px; /* 左側に配置 */
-    width: 170px;
-    color: #333; /* 背景が白なので */
-    font-weight: bold;
-    text-align: right;
-    font-size: 14px;
+#profilePhotoDisplay img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
 }
-/* 名前 */
 .fin008-username {
     font-size: 24px;
-    font-weight: bold;
-    color: white;
+    font-weight: 600;
+    color: #333;
     text-align: center;
     margin-bottom: 30px;
 }
-/* メニューボタン */
 .fin008-menu-links {
     display: flex;
-    flex-direction: column; /* 縦並び */
-    gap: 15px;
-    width: 80%;
-    margin: 0 auto;
+    flex-direction: column;
+    gap: 1px; 
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden; 
 }
-/* 共通の .btn スタイルを上書き・調整 */
 .fin008-btn {
-    background-color: #f0f8ff; /* 白に近い水色 */
-    color: #0b4c68; /* 暗い青文字 */
+    background-color: #fff;
+    color: #007bff; 
     border: none;
     width: 100%;
     box-sizing: border-box; 
+    height: 55px;
+    line-height: 55px;
+    text-align: left;
+    padding: 0 20px;
+    font-size: 18px;
+    border-bottom: 1px solid #e0e0e0;
+    border-radius: 0;
+}
+.fin008-menu-links a:last-child .fin008-btn {
+    border-bottom: none;
 }
 .fin008-btn:hover {
-    background-color: #e0f0ff;
-    opacity: 1; 
+    background-color: #f8f9fa;
 }
 /******* FIN008 END ********/
 
 
 /******* FIN009 START ********/
-/* タイトルバー (FIN007のスタイルを流用) */
+.fin009 .container {
+    padding: 0;
+}
 .fin009-title-bar {
-    background-color: #0b4c68; /* 共通の青 */
-    color: white;
-    padding: 10px 0;
-    margin-bottom: 30px;
+    border-radius: 10px 10px 0 0;
+    margin-bottom: 0;
 }
-.fin009-title-bar h2 {
-    margin: 0;
-    font-size: 24px;
-    font-weight: bold;
-    text-align: center;
+.fin009-container .form-group {
+    padding: 0 30px;
 }
-/* フォームコンテナ */
-.fin009-container {
-    width: 600px;
+.fin009-container .form-group:first-child {
+    padding-top: 30px;
 }
-/* ID入力欄 (readonly) */
-.fin009-container input[readonly] {
-    background-color: #f0f0f0; /* グレーアウト */
-    color: #555;
-    border-color: #ccc;
-}
-/* 入力欄と変更ボタンのラッパー */
 .fin009-input-wrapper {
     position: relative;
 }
-/* 共通の .form-input を上書き (ボタンの領域を確保) */
 .fin009-input-wrapper .form-input {
-    padding-right: 80px; 
-    background-color: #fff; /* 画像では白なので */
+    padding-right: 90px; 
+    background-color: #fff;
 }
-/* 変更ボタン (共通の .btn スタイルをベースに調整) */
 .fin009-edit-btn {
     position: absolute;
-    right: 5px; /* 右端からの位置 */
-    top: 50%; /* 上下中央 */
+    right: 8px;
+    top: 50%;
     transform: translateY(-50%);
-    height: 34px; 
+    width: 75px;
+    height: 34px;
     line-height: 32px;
     font-size: 14px;
-    font-weight: bold;
-    background-color: #f0f0f0;
-    color: red;
-    border: 1px solid red;
+    font-weight: 600;
+    background-color: #f8f9fa;
+    color: #007bff;
+    border: 1px solid #ccc;
     padding: 0 10px;
 }
 .fin009-edit-btn:hover {
-    background-color: #fee;
-    opacity: 1;
+    background-color: #e9ecef;
 }
 /******* FIN009 END ********/
 
 
-/******* FIN010 START ********/
-.fin010-container {
-    width: 500px; 
-    margin-top: 80px;
-}
-/******* FIN010 END ********/
-
-
-/******* FIN011 START ********/
-.fin011-container {
-    width: 500px;
-    margin-top: 80px;
-    text-align: center; /* h2, p タグを中央揃え */
-}
-.fin011-message {
-    font-size: 16px;
-    margin: 40px 0;
-}
-/******* FIN011 END ********/
-
-
-/******* FIN012 START ********/
-.fin012-container {
-    width: 500px; 
-    margin-top: 80px;
-}
-/******* FIN012 END ********/
-
-
-/******* FIN013 START ********/
-.fin013-container {
-    width: 500px;
-    margin-top: 80px;
-    text-align: center; /* h2, p タグを中央揃え */
-}
-.fin013-message {
-    font-size: 16px;
-    margin: 40px 0;
-}
-/******* FIN013 END ********/
-
-
-/******* FIN014 START ********/
+/******* FIN010 / 012 / 014 (変更系) START ********/
+.fin010-container,
+.fin012-container,
 .fin014-container {
-    width: 500px; 
-    margin-top: 80px;
+    padding: 0;
 }
-/******* FIN014 END ********/
+.fin010 h2,
+.fin012 h2,
+.fin014 h2 {
+    background-color: #0b4c68;
+    color: white;
+    padding: 20px 0;
+    margin: 0;
+    border-radius: 10px 10px 0 0;
+    font-size: 22px;
+    font-weight: 600;
+    text-align: center;
+}
+.fin010 .form-group,
+.fin012 .form-group,
+.fin014 .form-group {
+    padding: 0 30px;
+}
+.fin010 .form-group:first-child,
+.fin012 .form-group:first-child,
+.fin014 .form-group:first-child {
+    padding-top: 30px;
+}
+.fin010 .button-area,
+.fin012 .button-area,
+.fin014 .button-area {
+    padding: 20px 30px 30px;
+}
+.fin010 .btn,
+.fin012 .btn,
+.fin014 .btn {
+    width: 48%;
+}
+/******* FIN010 / 012 / 014 END ********/
 
 
-/******* FIN015 START ********/
+/******* FIN011 / 013 / 015 (完了系) START ********/
+.fin011-container,
+.fin013-container,
 .fin015-container {
-    width: 500px;
-    margin-top: 80px;
-    text-align: center; /* h2, p タグを中央揃え */
+    padding: 0;
+    text-align: center;
 }
+.fin011 h2,
+.fin013 h2,
+.fin015 h2 {
+    background-color: #0b4c68;
+    color: white;
+    padding: 20px 0;
+    margin: 0;
+    border-radius: 10px 10px 0 0;
+    font-size: 22px;
+    font-weight: 600;
+}
+.fin011-message,
+.fin013-message,
 .fin015-message {
-    font-size: 16px;
-    margin: 40px 0;
+    font-size: 18px;
+    margin: 50px 20px;
+    font-weight: 500;
 }
-/******* FIN015 END ********/
+.fin011 .button-area,
+.fin013 .button-area,
+.fin015 .button-area {
+    padding: 20px 30px 30px;
+}
+/******* FIN011 / 013 / 015 END ********/
 
 
 /******* FIN016 START ********/
-/* タイトルバー */
 .fin016-title-bar {
-    background-color: #0b4c68; /* 共通の青 */
+    background-color: #0b4c68; 
     color: white;
-    padding: 10px 0;
-    margin-bottom: 30px;
-    position: relative; /* アイコン配置の基準 */
+    padding: 15px 20px;
+    margin-bottom: 30px; 
+    display: flex; 
+    align-items: center;
+    position: relative;
     text-align: center;
 }
 .fin016-title-bar h2 {
     margin: 0;
-    font-size: 24px;
-    font-weight: bold;
-    display: inline-block; /* 中央揃えのため */
+    font-size: 22px;
+    font-weight: 600;
+    flex-grow: 1; 
 }
-/* 戻るボタン (左側) */
 .fin016-back-btn {
+    position: absolute; 
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: white;
+    text-decoration: none;
+    font-size: 30px;
+    font-weight: bold;
+    padding: 0 10px;
+    line-height: 1;
+}
+.fin016-back-btn:hover {
+    opacity: 0.8;
+}
+.fin016-results-container {
+    width: 90%;
+    max-width: 700px; 
+    margin: 0 auto 100px;
+}
+.fin016-result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff; 
+    padding: 20px;
+    margin-bottom: 15px;
+    border: 1px solid #e0e0e0; 
+    border-radius: 8px; 
+    cursor: pointer;
+    transition: box-shadow 0.2s;
+}
+.fin016-result-item:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
+}
+.fin016-result-info {
+    font-size: 17px;
+    font-weight: 600;
+    color: #333;
+}
+.fin016-result-star { 
+    font-size: 30px; 
+    color: #e60000; 
+}
+/******* FIN016 END ********/
+
+
+/******* FIN0Example017 START ********/
+.fin017-title-bar {
+    background-color: #0b4c68; 
+    color: white;
+    padding: 15px 20px;
+    margin-bottom: 30px; 
+    display: flex; 
+    align-items: center;
+    position: relative;
+    text-align: center;
+}
+.fin017-title-bar h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    flex-grow: 1; 
+}
+.fin017-back-btn {
+    position: absolute; 
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: white;
+    text-decoration: none;
+    font-size: 30px;
+    font-weight: bold;
+    padding: 0 10px;
+    line-height: 1;
+}
+.fin017-back-btn:hover {
+    opacity: 0.8;
+}
+.fin017-add-btn {
+    position: absolute; 
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 6px 12px;
+    background-color: rgba(255,255,255,0.2); 
+    border-radius: 8px;
+    transition: background-color 0.2s;
+}
+.fin017-add-btn:hover {
+    background-color: rgba(255,255,255,0.3);
+}
+.fin017-list-container {
+    width: 90%;
+    max-width: 700px; 
+    margin: 0 auto 100px;
+}
+.fin017-friend-item {
+    display: flex;
+    align-items: center;
+    background-color: #fff; 
+    color: #333; 
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px; 
+    border: 1px solid #e0e0e0; 
+}
+.fin017-icon {
+    width: 60px;
+    height: 60px;
+    background-color: #e9ecef; 
+    color: #6c757d; 
+    font-size: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    border-radius: 50%; 
+}
+.fin017-info {
+    flex-grow: 1;
+    margin: 0 15px;
+}
+.fin017-username {
+    font-size: 18px;
+    font-weight: 600; 
+    display: block;
+    margin-bottom: 5px;
+}
+.fin017-userid {
+    font-size: 14px;
+    color: #6c757d; 
+}
+.fin017-heart {
+    font-size: 30px; 
+    margin-right: 10px;
+    cursor: pointer;
+    color: #dc3545; 
+}
+/******* FIN017 END ********/
+
+
+/******* FIN018 START ********/
+.fin018-title-bar {
+    background-color: #0b4c68; 
+    color: white;
+    padding: 15px 20px;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    text-align: center;
+}
+.fin018-title-bar h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    flex-grow: 1; 
+}
+.fin018-back-btn {
     position: absolute;
     left: 15px;
     top: 50%;
     transform: translateY(-50%);
     color: white;
     text-decoration: none;
-    font-size: 30px; /* 矢印の大きさ */
+    font-size: 30px;
     font-weight: bold;
     padding: 0 10px;
+    line-height: 1;
 }
-.fin016-back-btn:hover {
+.fin018-back-btn:hover {
     opacity: 0.8;
 }
-/* メニューアイコン (右側・FIN007のスタイルを流用) */
-.fin016-menu-icon {
-    color: white; 
-    top: 50%; 
-    transform: translateY(-50%);
+.fin0array18-container {
+    max-width: 500px;
 }
-.fin016-menu-icon:hover {
-    transform: translateY(-50%) scale(1.1);
-}
-/* お気に入り一覧コンテナ (FIN007流用) */
-.fin016-results-container {
-    width: 90%;
-    max-width: 700px; 
-    margin: 0 auto 100px;
-}
-/* お気に入りアイテム (FIN007のスタイルを流用・調整) */
-.fin016-result-item {
-    display: flex;
-    align-items: center;
-    background-color: #fde9e4; /* 共通の薄ピンク */
-    padding: 20px;
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-.fin016-result-item:hover {
-    background-color: #fbe0d6; 
-}
-.fin016-result-info {
-    font-size: 18px;
-    font-weight: bold;
-    color: #333;
-}
-/******* FIN016 END ********/
-
-
-/******* FIN017 START ********/
-/* タイトルバー (FIN016のスタイルを流用・調整) */
-.fin017-title-bar {
-    background-color: #0b4c68; /* 共通の青 */
-    color: white;
-    padding: 10px 0;
-    margin-bottom: 30px;
-    position: relative; /* アイコン配置の基準 */
-    text-align: center;
-    display: flex; /* ボタン配置のため */
-    justify-content: space-between;
-    align-items: center;
-}
-.fin017-title-bar h2 {
-    margin: 0;
-    font-size: 24px;
-    font-weight: bold;
-}
-/* 戻るボタン (左側) */
-.fin017-back-btn {
-    color: white;
-    text-decoration: none;
-    font-size: 30px; /* 矢印の大きさ */
-    font-weight: bold;
-    padding: 0 15px;
-    background-color: #335f75; /* 少し明るい青 */
-    border-radius: 8px;
-    margin-left: 10px;
-    line-height: 45px;
-}
-.fin017-back-btn:hover {
-    opacity: 0.8;
-}
-/* フレンド追加ボタン (右側) */
-.fin017-add-btn {
-    color: white;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: bold;
-    padding: 10px 15px;
-    background-color: #335f75; /* 少し明るい青 */
-    border-radius: 8px;
-    margin-right: 10px;
-}
-.fin017-add-btn:hover {
-    opacity: 0.8;
-}
-/* フレンド一覧コンテナ (FIN016流用) */
-.fin017-list-container {
-    width: 90%;
-    max-width: 700px; 
-    margin: 0 auto 100px;
-}
-/* フレンドアイテム */
-.fin017-friend-item {
-    display: flex;
-    align-items: center;
-    background-color: #555; /* 画像の濃いグレー */
-    color: white;
-    padding: 15px;
-    margin-bottom: 15px;
-    border-radius: 20px; /* 角を丸く */
-}
-/* アイコン */
-.fin017-icon {
-    width: 60px;
-    height: 60px;
-    background-color: #fff;
-    color: #333; /* 文字色 */
-    font-size: 14px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-shrink: 0; /* 縮まないように */
-}
-/* ユーザー名・ID */
-.fin017-info {
-    flex-grow: 1; /* 残りの幅をすべて使う */
-    margin: 0 15px;
-}
-.fin017-username {
-    font-size: 18px;
-    font-weight: bold;
-    display: block;
-    margin-bottom: 5px;
-}
-.fin017-userid {
-    font-size: 14px;
-}
-/* ハートマーク */
-.fin017-heart {
-    font-size: 36px; /* 絵文字のサイズ */
-    margin-right: 10px;
-    cursor: pointer;
-}
-/******* FIN017 END ********/
-
-
-/******* FIN018 START ********/
-/* タイトルバー (FIN009/010などと共通) */
-.fin018-title-bar {
-    background-color: #0b4c68; /* 共通の青 */
-    color: white;
-    padding: 10px 0;
-    margin-bottom: 30px;
-}
-.fin018-title-bar h2 {
-    margin: 0;
-    font-size: 24px;
-    font-weight: bold;
-    text-align: center;
-}
-/* 検索フォームコンテナ */
-.fin018-container {
-    width: 500px;
-    padding-bottom: 20px; /* 検索ボタンとの隙間 */
-}
-/* 検索入力欄 (共通の .form-input を上書き) */
 .fin018-input {
-    background-color: #fff; /* 画像に合わせて白背景 */
-    border-color: #aaa; /* 枠線 */
-    text-align: center; /* 画像に合わせて中央揃え */
-    font-size: 20px; /* 画像に合わせて大きめ */
-    font-weight: bold;
-    height: 45px;
+    background-color: #fff;
+    border-color: #aaa;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 500;
+    height: 48px;
 }
-/* 共通の .form-group のマージンを調整 */
 .fin018-container .form-group {
     margin-bottom: 20px;
 }
-/* 検索ボタン (黄色) */
 .fin018-search-btn {
-    background-color: #fdd835; /* 黄色 */
-    color: #333;
-    border: none;
-    width: 120px;
-    height: 40px; 
-    font-size: 16px;
-    font-weight: bold;
+    width: auto;
+    min-width: 150px;
 }
-.fin018-search-btn:hover {
-    background-color: #fbc02d; /* 少し濃い黄色 */
-    opacity: 1;
-}
-/* 検索結果コンテナ (FIN017のスタイルを流用) */
 .fin018-result-container {
-    margin-top: 20px;
+    margin-top: 30px;
     min-height: 150px; 
-}
-/* 戻るボタンエリア (右下) */
-.fin018-back-btn-area {
-    width: 90%; 
-    max-width: 700px; 
-    margin: 20px auto;
-    text-align: right;
 }
 /******* FIN018 END ********/
 
 
 /******* FIN019 START ********/
-/* モーダルウィンドウ (ぼかし処理削除版) */
-/* style.css の FIN019 セクションを修正 */
-
 .fin019-modal-overlay {
+    display: none; 
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7); 
-    display: flex; /* ← 形状（中央揃え）のために flex を指定 */
+    background-color: rgba(0, 0, 0, 0.6); 
     justify-content: center;
     align-items: center;
-    z-index: 1000; 
-    
-    display: none; /* ★★★ ただし、初期状態では非表示にする ★★★ */
+    z-index: 1000;
 }
 .fin019-modal-content {
-    background-color: #333; /* 画像の濃いグレー */
-    padding: 20px;
+    background-color: #ffffff; 
+    padding: 0; 
     border-radius: 10px;
     width: 90%;
     max-width: 600px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-    position: relative;
-    color: white; /* テキスト色を白に */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    color: #333; 
 }
 .fin019-modal-title {
-    font-size: 24px;
-    margin-top: 0;
-    margin-bottom: 30px;
-    text-align: left; /* 画像に合わせて左寄せ */
-    color: #f0f0f0;
+    font-size: 20px;
+    margin: 0;
+    padding: 20px 25px;
+    font-weight: 600;
+    border-bottom: 1px solid #e0e0e0;
 }
 .fin019-image-grid {
-    background-color: #adcde2; /* 明るい水色 */
-    border-radius: 10px;
+    background-color: #f4f7f6; 
+    border-radius: 0;
     padding: 25px;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); /* レスポンシブに5列表示 */
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
     gap: 15px;
-    margin-bottom: 30px;
+    margin: 0;
+    max-height: 300px;
+    overflow-y: auto;
 }
 .fin019-image-item {
     width: 80px;
     height: 80px;
-    background-color: #0b4c68; /* 濃い青 */
-    border-radius: 50%; /* 円形 */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 14px;
-    font-weight: bold;
-    color: white;
+    object-fit: cover; 
+    border-radius: 50%; 
+    border: 3px solid transparent; 
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: border-color 0.2s, transform 0.2s;
+    margin: 0 auto; 
+    display: block;
 }
-.fin019-image-item:hover {
-    background-color: #1a6d91;
+.fin019-image-item.selected {
+    border-color: #007bff; 
+    transform: scale(1.05); 
+}
+.fin019-image-item:hover:not(.selected) {
+    border-color: #a0a0a0; 
 }
 .fin019-footer {
+    padding: 20px 25px;
     display: flex;
-    justify-content: space-between;
+    justify-content: center; 
     align-items: center;
-    gap: 15px;
+    gap: 15px; 
+    border-top: 1px solid #e0e0e0;
+    background-color: #f8f9fa;
+    border-radius: 0 0 10px 10px;
 }
-.fin019-text-input {
-    background-color: #333; /* 背景色を画像に合わせる */
-    border: 1px solid #555;
-    color: white;
-    padding: 10px 15px;
-    border-radius: 5px;
-    flex-grow: 1; /* 残りのスペースを使う */
-    font-size: 16px;
-    height: 40px; /* ボタンと高さを合わせる */
-    box-sizing: border-box;
-}
-/* 閉じるボタン */
+/* .fin019-text-input のスタイルは削除 */
 .fin019-close-btn {
-    background-color: #555; /* グレー */
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    transition: background-color 0.2s;
+    width: 100px; 
+    height: 42px;
+    line-height: 40px;
+    font-size: 15px;
 }
-.fin019-close-btn:hover {
-    background-color: #777;
-}
-/* 保存ボタン */
 .fin019-save-btn {
-    background-color: #555; /* グレー */
-    color: #888; /* 無効状態を表現 */
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: not-allowed; /* 無効状態を表現 */
+    width: 100px; 
+    height: 42px;
+    line-height: 40px;
+    font-size: 15px;
+    background-color: #a0a0a0; 
+    border-color: #a0a0a0;
+    cursor: not-allowed;
 }
 /******* FIN019 END ********/
