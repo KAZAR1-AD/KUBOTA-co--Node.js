@@ -3,24 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>登録確認</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title><%= typeof pageTitle !== 'undefined' ? pageTitle : '新規登録内容の確認（FIN004）' %></title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body class="fin004">
 
     <div class="container">
-        <h2>登録確認</h2>
+        <h2 class="fin004-title"><%= typeof pageTitle !== 'undefined' ? pageTitle : '新規登録内容の確認' %></h2>
+        
+        <% if (error && error.length > 0) { %>
+            <p class="error-message" style="color: red; padding: 10px; margin-bottom: 15px;">
+                <%= error %>
+            </p>
+        <% } %>
+        
+        <% if (typeof userId !== 'undefined' && userId !== '未登録') { %>
+            <h3>ようこそ、<%= userName %>さん！</h3>
+            <div class="info-block">
+                <p><span>ユーザーID：</span><%= userId %></p>
+                <p><span>メールアドレス：</span><%= email %></p>
+            </div>
+            <div class="button-area">
+                <form action="/logout" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-default">ログアウト</button>
+                </form>
+            </div>
+        <% } else { %>
+            <div class="info-block">
+                <p><span>ユーザー名：</span><%= typeof username !== 'undefined' ? username : userName %></p>
+                <p><span>メールアドレス：</span><%= email %></p>
+                <p><span>パスワード：</span>********</p> 
+            </div>
 
-        <div class="info-block">
-            <p><span>ユーザー名：</span><% username %></p>
-            <p><span>メールアドレス：</span><% email %></p>
-            <p><span>パスワード：</span><% password %>表示無し予定</p>
-        </div>
-
-        <div class="button-area">
-            <button class="btn btn-danger">登録</button>
-            <button class="btn btn-default">編集</button>
-        </div>
+            <div class="button-area">
+                <form action="/register-final" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">登録を完了する</button>
+                </form>
+                
+                <a href="/FIN003" class="btn btn-default" role="button">
+                    内容を編集
+                </a>
+            </div>
+        <% } %>
     </div>
 </body>
 </html>
