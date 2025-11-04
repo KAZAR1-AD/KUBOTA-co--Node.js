@@ -135,6 +135,6 @@ app.use((req, res, next) => {
 
 app.listen(port, () => {
     console.log(`サーバーが起動しました: http://localhost:${port}`);
-    // console.log(`アクセス: http://localhost:8080`);
-    // console.log(`動的レポート例: http://localhost:8080/report/5 (MySQLデータが必要)`);
+    console.log(`アクセス: http://localhost:${port}`);
+    console.log(`動的レポート例: http://localhost:8080/report/5 (MySQLデータが必要)`);
 });
