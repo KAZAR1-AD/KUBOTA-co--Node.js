@@ -4,7 +4,9 @@
 const express = require('express');
 const app = express();
 // 環境変数PORTがあればそれを使用し、なければ8080を使用
-const port = process.env.PORT || 8080;
+//各個人でかぶらないように変更してください
+//default const port = process.env.PORT || 8080;
+const port = 3000;
 
 // ===================================
 // ★ DB接続とDAOのインポート (追加/変更)
@@ -113,6 +115,6 @@ app.use((req, res, next) => {
 
 app.listen(port, () => {
     console.log(`サーバーが起動しました: http://localhost:${port}`);
-    console.log(`アクセス: http://localhost:8080`);
+    console.log(`アクセス: http://localhost:${port}`);
     console.log(`動的レポート例: http://localhost:8080/report/5 (MySQLデータが必要)`);
 });
