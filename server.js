@@ -37,6 +37,10 @@ app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 // JSONデータを解析するミドルウェア
 app.use(express.json());
+// body-parserミドルウェアの設定 (既存)
+const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({extended: true}))
+app.use(bodyParser.json())
 
 
 // ===================================
