@@ -6,9 +6,10 @@ const app = express();
 const session = require('express-session');
 const path = require('path');
 
-// 開発用にダミーのDAOオブジェクトを定義（エラーを防ぐため）
+// ===================================
+// 0. ダミーDAOの定義 (実際には別途ファイルで実装が必要です)
+// ===================================
 const UserDAO = {
-    // 認証情報があればここで更新してください
     authenticateUser: async (id, pw) => ({ user_id: 1, user_name: 'テストユーザー', email: 'test@example.com' }),
     registerUser: async (name, email, pw) => ({ success: true, userId: 2 }),
     updateUsername: async (id, newName) => true,
@@ -23,18 +24,11 @@ const port = process.env.PORT || 8080;
 
 
 // ===================================
-// 1. DB接続とDAOの初期化 (ここではダミー)
-// ===================================
-// require('./database'); 
-
-
-// ===================================
-// 2. ミドルウェアの設定
+// 1. ミドルウェアの設定
 // ===================================
 
 // EJSテンプレートエンジンの設定
 app.set('view engine', 'ejs');
-// viewsディレクトリの場所を指定
 app.set('views', path.join(__dirname, 'views'));
 
 // 静的ファイル（publicディレクトリ）のホスティング
@@ -57,7 +51,7 @@ app.use(session({
 
 
 // ===================================
-// 3. 共通処理
+// 2. 共通処理とミドルウェア
 // ===================================
 
 /**
@@ -106,7 +100,7 @@ const requireLogin = (req, res, next) => {
 
 
 // ===================================
-// 4. ルーティングの設定 (FIN001 - 認証)
+// 3. ルーティングの設定
 // ===================================
 
 // --- FIN001: ルートパス ("/") へのGETリクエスト ---
@@ -116,9 +110,42 @@ app.get('/', (req, res) => {
 });
 
 // ----------------------------------------------------
-// FIN002, FIN003, FIN004, /login, /register-final (省略)
+// FIN002: ログイン画面の表示 (GET)
 // ----------------------------------------------------
+app.get('/FIN002', (req, res) => {
+    const errorMsg = req.session.error;
+    delete req.session.error;
 
+    res.render('FIN002', {
+        error: errorMsg,
+        pageTitle: 'ログイン',
+    });
+});
+
+// ----------------------------------------------------
+// /login: ログイン認証処理 (POST)
+// ----------------------------------------------------
+app.post('/login', async (req, res) => {
+    const { login_id, password } = req.body;
+    try {
+        const user = await UserDAO.authenticateUser(login_id, password);
+
+        if (user) {
+            req.session.user = { id: user.user_id, name: user.user_name, email: user.email };
+            return res.redirect('/FIN004'); 
+        } else {
+            req.session.error = 'ID/メールアドレスまたはパスワードが正しくありません。';
+            return res.redirect('/FIN002');
+        }
+    } catch (error) {
+        req.session.error = 'システムエラーが発生しました。';
+        return res.redirect('/FIN002');
+    }
+});
+
+// ----------------------------------------------------
+// FIN003 (新規登録), FIN004 (ホーム/確認) ルートは省略...
+// ----------------------------------------------------
 
 // ----------------------------------------------------
 // /logout: ログアウト処理 (POST)
@@ -134,17 +161,13 @@ app.post('/logout', (req, res) => {
 });
 
 // ----------------------------------------------------
-// /search: お店検索ページの表示 (FIN006) (GET) - 未修正のまま
+// /search: お店検索ページの表示 (FIN006) (GET) - 依頼通り未修正で配置
 // ----------------------------------------------------
 app.get('/search', (req, res) => {
     // 🚨 注意: res.render('/FIN006', ...) は Express のパス指定として正しくありません。
     res.render('/FIN006', { pageTitle: 'お店検索' }); 
 });
 
-
-// ===================================
-// 5. 個人設定関連のルーティング (FIN009以降)
-// ===================================
 
 // ----------------------------------------------------
 // FIN009: マイページ表示 (GET)
@@ -160,7 +183,6 @@ app.get('/FIN009', requireLogin, (req, res) => {
 
 // ----------------------------------------------------
 // FIN_Profile_Edit: ユーザー名/メールアドレス変更画面 (GET) - 共通化
-// FIN010およびFIN012を統合
 // ----------------------------------------------------
 app.get('/FIN_Profile_Edit/:mode', requireLogin, (req, res) => {
     const mode = req.params.mode; 
@@ -188,7 +210,7 @@ app.get('/FIN_Profile_Edit/:mode', requireLogin, (req, res) => {
 });
 
 // ----------------------------------------------------
-// FIN014: パスワード変更画面 (GET) - 独立した画面
+// FIN014: パスワード変更画面 (GET)
 // ----------------------------------------------------
 app.get('/FIN014', requireLogin, (req, res) => {
     const viewData = getCommonViewData(req);
@@ -199,12 +221,16 @@ app.get('/FIN014', requireLogin, (req, res) => {
 // ----------------------------------------------------
 // 更新処理 (POST) - 完了後FIN009へ共通リダイレクト
 // ----------------------------------------------------
+
 app.post('/update-username', requireLogin, async (req, res) => {
     const { newUsername } = req.body;
     
     try {
+        // 1. DB更新
         await UserDAO.updateUsername(req.session.user.id, newUsername);
+        // 2. セッション更新
         req.session.user.name = newUsername; 
+        
         req.session.message = `ユーザー名を「${newUsername}」に変更しました。`;
         return res.redirect('/FIN009'); 
     } catch (e) {
@@ -217,8 +243,11 @@ app.post('/update-email', requireLogin, async (req, res) => {
     const { newEmail } = req.body;
     
     try {
+        // 1. DB更新
         await UserDAO.updateEmail(req.session.user.id, newEmail);
+        // 2. セッション更新
         req.session.user.email = newEmail; 
+        
         req.session.message = `メールアドレスを「${newEmail}」に変更しました。`;
         return res.redirect('/FIN009');
     } catch (e) {
@@ -231,7 +260,6 @@ app.post('/update-password', requireLogin, async (req, res) => {
     const { currentPassword, newPassword, confirmPassword } = req.body;
     
     // **TODO:** パスワードのバリデーション、現在のパスワード認証、DB更新処理を実装
-    // if (newPassword !== confirmPassword) { ... }
     
     try {
         await UserDAO.updatePassword(req.session.user.id, currentPassword, newPassword);
@@ -251,7 +279,7 @@ app.use((req, res, next) => {
 
 
 // ===================================
-// 6. サーバーの起動
+// 4. サーバーの起動
 // ===================================
 
 app.listen(port, () => {

@@ -4,32 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>パスワード変更（FIN014）</title>
-    <link rel="stylesheet" href="css/style.css"> </head>
+    <link rel="stylesheet" href="css/style.css"> 
+</head>
 <body class="fin014">
+
+    <%- include('header_common.ejs', { isLoggedIn: isLoggedIn, userName: userName, userId: userId }) %>
 
     <div class="container fin014-container">
         
         <h2>パスワード変更</h2>
 
-        <div class="form-group">
-            <label for="current-password" class="form-label">現在のパスワード</label>
-            <input type="password" id="current-password" class="form-input">
-        </div>
+        <% if (error) { %>
+            <p class="error-message" style="color: red;"><%= error %></p>
+        <% } %>
+        
+        <form action="/update-password" method="POST">
+            <div class="form-group">
+                <label for="current-password" class="form-label">現在のパスワード</label>
+                <input type="password" id="current-password" name="currentPassword" class="form-input" required>
+            </div>
 
-        <div class="form-group">
-            <label for="new-password" class="form-label">新しいパスワード</label>
-            <input type="password" id="new-password" class="form-input">
-        </div>
+            <div class="form-group">
+                <label for="new-password" class="form-label">新しいパスワード</label>
+                <input type="password" id="new-password" name="newPassword" class="form-input" required>
+            </div>
 
-        <div class="form-group">
-            <label for="confirm-password" class="form-label">新しいパスワード（確認用）</label>
-            <input type="password" id="confirm-password" class="form-input">
-        </div>
+            <div class="form-group">
+                <label for="confirm-password" class="form-label">新しいパスワード（確認用）</label>
+                <input type="password" id="confirm-password" name="confirmPassword" class="form-input" required>
+            </div>
 
-        <div class="button-area">
-            <button class="btn btn-primary">確定</button>
-            <button class="btn btn-primary" onclick="history.back()">戻る</button>
-        </div>
+            <div class="button-area">
+                <button type="submit" class="btn btn-primary">確定</button>
+                <a href="/FIN009" class="btn btn-secondary">戻る</a>
+            </div>
+        </form>
 
     </div>
 
