@@ -53,8 +53,12 @@ app.use(session({
 // --- FIN001: ルートパス ("/") へのGETリクエスト ---
 app.get('/', (req, res) => {
     const viewData = {
-        isLoggedIn: !!req.session.user, // セッションにユーザー情報があれば true
-        userName: req.session.user ? req.session.user.name : null,
+        // isLoggedIn のチェックを簡略化
+        isLoggedIn: !!req.session.user, 
+        // ユーザー名 (ログインしていない場合は null)
+        userName: req.session.user ? req.session.user.name : null, 
+        // ユーザーID (ログインしていない場合は null)
+        userId: req.session.user ? req.session.user.id : null,
     };
     res.render('FIN001', viewData);
 });

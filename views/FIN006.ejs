@@ -8,10 +8,35 @@
 </head>
 <body class="fin006">
 
+    <header class="main-header">
+        <div class="header-content">
+            <h1 class="site-title"><a href="/">お店検索サービス</a></h1>
+            
+            <nav class="header-nav">
+                <% if (isLoggedIn) { %>
+                    <span class="welcome-message">
+                        ようこそ、<%= userName %>さん！
+                    </span>
+                    <a href="/profile/<%= userId %>" class="btn btn-setting">
+                        個人設定
+                    </a>
+                    <form action="/logout" method="POST" style="display: inline;">
+                        <button type="submit" class="btn btn-logout">
+                            ログアウト
+                        </button>
+                    </form>
+                <% } else { %>
+                    <a href="/FIN002" class="btn btn-login">
+                        ログイン
+                    </a>
+                    <a href="/FIN003" class="btn btn-register">
+                        新規登録
+                    </a>
+                <% } %>
+            </nav>
+        </div>
+    </header>
     <div class="container fin006-container"> 
-
-        <a href="FIN008.html" class="page-menu-icon">😊</a>
-
         <h2 class="fin006-title">どんなお店をお探しですか？</h2>
 
         <div class="fin006-search-box">
@@ -20,7 +45,7 @@
                 <label for="budget" class="fin006-label">1人当たりの予算</label>
                 <div class="fin006-input-area">
                     <input type="range" id="budget" class="fin006-slider" min="1000" max="20000" step="1000">
-                    </div>
+                </div>
             </div>
 
             <div class="fin006-criteria-row">
@@ -49,7 +74,7 @@
         <div class="button-area button-area-center">
             <button class="btn fin006-btn">検索</button>
         </div>
-        </div>
+    </div>
 
 </body>
 </html>
