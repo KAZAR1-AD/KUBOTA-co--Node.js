@@ -1,20 +1,83 @@
 @charset "UTF-8";
 
 /* ==================================
-   リセット & 共通スタイル
+   共通固定ヘッダー
 ================================== */
-
 body {
+    padding-top: 60px; /* ★ 80pxから60pxに戻す */
+    
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     background-color: #f4f7f6; 
     color: #333;
     margin: 0;
-    padding: 0;
     font-size: 16px;
     line-height: 1.6;
 }
 
-/* --- コンテナ (画面中央のボックス) --- */
+.fixed-header {
+    background-color: #0b4c68; 
+    color: white;
+    height: 60px; /* ★ 80pxから60pxに戻す */
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; 
+    position: fixed; 
+    top: 0;
+    left: 0;
+    width: 100%;
+    box-sizing: border-box;
+    z-index: 1000;
+}
+.fixed-header-left {
+    flex: 1; 
+    display: flex; 
+    align-items: center; 
+}
+.fixed-header-title {
+    font-size: 20px;
+    font-weight: 600;
+    flex: 1; 
+    text-align: center;
+    white-space: nowrap; 
+}
+.fixed-header-icon-area {
+    flex: 1; 
+    display: flex;
+    justify-content: flex-end; 
+    align-items: center; 
+}
+
+/* ヘッダー内の戻るボタン */
+.fixed-header .page-back-btn {
+    position: static; 
+    transform: none; 
+    padding: 0 10px; 
+}
+
+/* ★ 変更点：ヘッダー内のプロフィールアイコン */
+.fixed-header .header-profile-icon {
+    width: 44px; /* 64pxから44pxに戻す */
+    height: 44px; /* 64pxから44pxに戻す */
+}
+
+/* ★ 変更点：ヘッダー内のログインボタン (全ページ共通) */
+.fixed-header .header-login-btn {
+    height: 38px; /* 44pxから38pxに戻す */
+    line-height: 36px; /* 42pxから36pxに戻す */
+    font-size: 14px;
+    font-weight: 600;
+    padding: 0 15px;
+    width: auto; 
+    text-align: center;
+    display: inline-block; 
+}
+
+
+/* ==================================
+   リセット & 共通スタイル
+================================== */
+
 .container {
     width: 90%;
     max-width: 600px; 
@@ -26,7 +89,7 @@ body {
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
-/* --- タイトルバー (全ページ共通) --- */
+/* --- タイトルバー (共通) --- */
 .page-title-bar {
     background-color: #0b4c68; 
     color: white;
@@ -43,7 +106,6 @@ body {
     font-weight: 600;
     flex-grow: 1; 
 }
-/* 戻るボタン (タイトルバー用) */
 .page-back-btn {
     position: absolute;
     left: 15px;
@@ -155,20 +217,15 @@ body {
     min-width: 150px;
 }
 
-/* ★★★ 変更点 START (共通スタイル) ★★★ */
-/* --- ページ共通 ヘッダーアイコン (FIN001, 006, 007) --- */
-/* .page-menu-icon と .page-menu-icon img スタイルを削除 */
-
-/* 新しい共通アイコンのスタイル (旧 .fin001-menu-btn) */
+/* --- ページ共通 ヘッダーアイコン --- */
 .header-profile-icon {
     display: block;
-    width: 64px;
-    height: 64px;
     border-radius: 50%;
     overflow: hidden;
     cursor: pointer;
     transition: transform 0.2s;
     text-decoration: none;
+    /* width/height は .fixed-header側で指定 */
 }
 .header-profile-icon:hover {
     transform: scale(1.1);
@@ -178,28 +235,6 @@ body {
     height: 100%;
     object-fit: cover;
 }
-/* ★★★ 変更点 END (共通スタイル) ★★★ */
-
-
-/* ヘッダーのアイコン/ボタン用コンテナ (FIN006, 007用) */
-.header-icon-area {
-    position: absolute;
-    top: 50%;
-    right: 20px;
-    transform: translateY(-50%);
-    z-index: 10;
-}
-
-/* ヘッダー用の小型ログインボタン (FIN006, 007用) */
-.header-login-btn {
-    display: block;
-    height: 30px; 
-    line-height: 28px; 
-    font-size: 13px; 
-    font-weight: 600;
-    padding: 0 10px; 
-    /* .btn と .btn-secondary のスタイルを継承します */
-}
 
 
 /* ==================================
@@ -208,25 +243,8 @@ body {
 
 /******* FIN001 START ********/
 .fin001-header {
-    text-align: right;
-    padding: 20px 30px;
-    position: absolute;
-    top: 0;
-    right: 0;
-    z-index: 10; 
+    display: none; 
 }
-.fin001-login-btn {
-    width: 120px;
-    height: 42px;
-    line-height: 40px;
-    font-size: 15px;
-}
-
-/* ★★★ 変更点 START (FIN001) ★★★ */
-/* .fin001-menu-btn と .fin001-menu-btn img のスタイル定義を削除 */
-/* (共通スタイルの .header-profile-icon を使うため) */
-/* ★★★ 変更点 END (FIN001) ★★★ */
-
 .fin001-main-container {
     text-align: center;
     margin-top: 150px;
@@ -355,21 +373,7 @@ body {
     max-width: 650px;
 }
 .fin006-title-bar {
-    background-color: #0b4c68;
-    color: white;
-    padding: 15px 20px;
-    margin-bottom: 0;
-    display: flex;
-    align-items: center;
-    position: relative;
-    justify-content: center; 
-    text-align: center;
-    border-radius: 10px 10px 0 0;
-}
-.fin006-title-bar h2 {
-    margin: 0;
-    font-size: 22px;
-    font-weight: 600;
+    display: none; 
 }
 .fin006-search-box {
     padding: 30px;
@@ -431,7 +435,7 @@ body {
 .fin006 .button-area {
     padding: 0 30px 30px;
 }
-.fin006 .btn {
+.fin006-btn {
     width: auto;
     min-width: 200px;
 }
@@ -440,20 +444,7 @@ body {
 
 /******* FIN007 START ********/
 .fin007-title-bar {
-    background-color: #0b4c68; 
-    color: white;
-    padding: 10px 0;
-    margin-bottom: 30px;
-    position: relative; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-}
-.fin007-title-bar h2 {
-    margin: 0;
-    font-size: 24px;
-    font-weight: bold;
-    text-align: center;
+    display: none; 
 }
 .fin007-results-container {
     width: 90%;
@@ -466,6 +457,7 @@ body {
     align-items: center;
     background-color: #fde9e4; 
     padding: 20px;
+    margin-top:  16px;
     margin-bottom: 15px;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -475,15 +467,21 @@ body {
 .fin007-result-item:hover {
     background-color: #fbe0d6; 
 }
-.fin007-result-info {
-    font-size: 18px;
-    font-weight: bold;
+/* ★ 変更点 START ★ */
+.fin016-result-info {
+    font-size: 17px;
+    font-weight: 600;
     color: #333;
+    flex-grow: 1; /* ★ 追加：利用可能なスペースをすべて使う */
+    text-align: center; /* ★ 追加：テキストを中央揃えにする */
+    margin-right: 15px; /* ★ 追加：星との間に余白を設ける */
 }
-.fin007-result-star {
-    font-size: 40px; 
-    color: #0b4c68; 
+.fin016-result-star { 
+    font-size: 30px; 
+    color: #e60000; 
+    flex-shrink: 0; /* ★ 追加：星が縮まないようにする */
 }
+/* ★ 変更点 END ★ */
 .fin007-pagination {
     text-align: center;
     margin: 30px 0;
@@ -652,6 +650,7 @@ body {
 }
 .fin009-container .form-group {
     padding: 0 30px;
+    margin-top: 16px;
 }
 .fin009-container .form-group:first-child {
     padding-top: 30px;
@@ -706,6 +705,7 @@ body {
 .fin012 .form-group,
 .fin014 .form-group {
     padding: 0 30px;
+    margin-top: 16px;
 }
 .fin010 .form-group:first-child,
 .fin012 .form-group:first-child,
@@ -759,36 +759,9 @@ body {
 
 
 /******* FIN016 START ********/
+/* ★ 変更点：古いタイトルバーを非表示 */
 .fin016-title-bar {
-    background-color: #0b4c68; 
-    color: white;
-    padding: 15px 20px;
-    margin-bottom: 30px; 
-    display: flex; 
-    align-items: center;
-    position: relative;
-    text-align: center;
-}
-.fin016-title-bar h2 {
-    margin: 0;
-    font-size: 22px;
-    font-weight: 600;
-    flex-grow: 1; 
-}
-.fin016-back-btn {
-    position: absolute; 
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: white;
-    text-decoration: none;
-    font-size: 30px;
-    font-weight: bold;
-    padding: 0 10px;
-    line-height: 1;
-}
-.fin016-back-btn:hover {
-    opacity: 0.8;
+    display: none;
 }
 .fin016-results-container {
     width: 90%;
@@ -801,6 +774,7 @@ body {
     align-items: center;
     background-color: #fff; 
     padding: 20px;
+    margin-top: 16px;
     margin-bottom: 15px;
     border: 1px solid #e0e0e0; 
     border-radius: 8px; 
@@ -822,55 +796,26 @@ body {
 /******* FIN016 END ********/
 
 
-/******* FIN0Example017 START ********/
+/******* FIN017 START ********/
+/* ★ 変更点：古いタイトルバーを非表示 */
 .fin017-title-bar {
-    background-color: #0b4c68; 
-    color: white;
-    padding: 15px 20px;
-    margin-bottom: 30px; 
-    display: flex; 
-    align-items: center;
-    position: relative;
-    text-align: center;
+    display: none;
 }
-.fin017-title-bar h2 {
-    margin: 0;
-    font-size: 22px;
-    font-weight: 600;
-    flex-grow: 1; 
-}
-.fin017-back-btn {
-    position: absolute; 
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
+
+/* ★ 変更点：ヘッダー用の「＋」ボタンのサイズ調整 */
+.fin017-add-btn-header {
     color: white;
     text-decoration: none;
-    font-size: 30px;
+    font-size: 26px; /* 30pxから調整 */
     font-weight: bold;
     padding: 0 10px;
-    line-height: 1;
+    /* margin-left: 10px; を削除 (icon-areaが担当) */
+    transition: transform 0.2s;
 }
-.fin017-back-btn:hover {
-    opacity: 0.8;
+.fin017-add-btn-header:hover {
+    transform: scale(1.1);
 }
-.fin017-add-btn {
-    position: absolute; 
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: white;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 600;
-    padding: 6px 12px;
-    background-color: rgba(255,255,255,0.2); 
-    border-radius: 8px;
-    transition: background-color 0.2s;
-}
-.fin017-add-btn:hover {
-    background-color: rgba(255,255,255,0.3);
-}
+
 .fin017-list-container {
     width: 90%;
     max-width: 700px; 
@@ -882,6 +827,7 @@ body {
     background-color: #fff; 
     color: #333; 
     padding: 15px;
+    margin-top: 16px;
     margin-bottom: 15px;
     border-radius: 8px; 
     border: 1px solid #e0e0e0; 
@@ -922,38 +868,16 @@ body {
 
 
 /******* FIN018 START ********/
+/* ★ 変更点：古いタイトルバーを非表示 */
 .fin018-title-bar {
-    background-color: #0b4c68; 
-    color: white;
-    padding: 15px 20px;
-    margin-bottom: 30px;
-    display: flex;
-    align-items: center;
-    position: relative;
-    text-align: center;
+    display: none;
 }
-.fin018-title-bar h2 {
-    margin: 0;
-    font-size: 22px;
-    font-weight: 600;
-    flex-grow: 1; 
-}
+/* ★ 変更点：古い戻るボタンを非表示 */
 .fin018-back-btn {
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: white;
-    text-decoration: none;
-    font-size: 30px;
-    font-weight: bold;
-    padding: 0 10px;
-    line-height: 1;
+    display: none;
 }
-.fin018-back-btn:hover {
-    opacity: 0.8;
-}
-.fin0array18-container {
+
+.fin018-container {
     max-width: 500px;
 }
 .fin018-input {
@@ -1046,7 +970,6 @@ body {
     background-color: #f8f9fa;
     border-radius: 0 0 10px 10px;
 }
-/* .fin019-text-input のスタイルは削除 */
 .fin019-close-btn {
     width: 100px; 
     height: 42px;

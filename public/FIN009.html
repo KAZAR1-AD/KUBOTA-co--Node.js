@@ -4,43 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>マイページ（FIN009）</title>
-    <link rel="stylesheet" href="../CSS/style.css"> </head>
+    <link rel="stylesheet" href="../CSS/style.css">
+</head>
 <body class="fin009">
-
-    <div class="fin009-title-bar">
-        <h2>マイページ</h2>
-    </div>
-
     <div class="container fin009-container">
+        
+        <div class="page-title-bar fin009-title-bar">
+            <a href="javascript:history.back()" class="page-back-btn fin009-back-btn">＜</a>
+            <h2>マイページ</h2>
+        </div>
         
         <div class="form-group">
             <label for="user-id" class="form-label">ID</label>
             <input type="text" id="user-id" class="form-input" value="12345678" readonly>
         </div>
-
         <div class="form-group">
             <label for="username" class="form-label">ユーザーネーム</label>
             <div class="fin009-input-wrapper">
                 <input type="text" id="username" class="form-input" value="ゆうと">
-                <button class="btn fin009-edit-btn">変更</button>
+                <button class="btn fin009-edit-btn" onclick="location.href='FIN010.html'">変更</button>
             </div>
         </div>
-
         <div class="form-group">
             <label for="email" class="form-label">メールアドレス</label>
             <div class="fin009-input-wrapper">
                 <input type="email" id="email" class="form-input" value="yuto041215@gmail.com">
-                <button class="btn fin009-edit-btn">変更</button>
+                <button class="btn fin009-edit-btn" onclick="location.href='FIN012.html'">変更</button>
             </div>
         </div>
-
         <div class="form-group">
             <label for="password" class="form-label">パスワード</label>
-            <div class="fin009-input-wrapper"> <input type="password" id="password" class="form-input" value="YUTO1215">
-                <button class="btn fin009-edit-btn">変更</button> </div>
+            <div class="fin009-input-wrapper"> 
+                <input type="password" id="password" class="form-input" value="YUTO1215">
+                <button class="btn fin009-edit-btn" onclick="location.href='FIN014.html'">変更</button> 
+            </div>
         </div>
-
     </div>
-
-    </body>
+</body>
 </html>

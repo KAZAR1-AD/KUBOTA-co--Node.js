@@ -10,11 +10,15 @@
 
     <div class="container fin008-container">
         
-        <button class="fin008-logout-btn" id="logoutButton">ログアウト</button>
+        <div class="fin008-header-buttons">
+            <a href="javascript:history.back()" class="fin008-back-btn">＜</a>
+            <button class="btn btn-danger fin008-logout-btn" id="logoutButton">ログアウト</button>
+        </div>
 
         <a href="#" class="fin008-photo-area" id="openPhotoModal">
-            <div>写真</div>
-            <span class="fin008-photo-caption">選択式の写真を<br>設定する画面へ遷移</span>
+            <div id="profilePhotoDisplay">
+                <div>写真</div>
+            </div>
         </a>
 
         <div class="fin008-username">
@@ -22,64 +26,135 @@
         </div>
 
         <div class="fin008-menu-links">
-            <a href="#" class="btn fin008-btn">マイページ</a>
-            <a href="#" class="btn fin008-btn">フレンド</a>
-            <a href="#" class="btn fin008-btn">お気に入り</a>
+            <a href="FIN009.html" class="btn fin008-btn">マイページ</a>
+            <a href="FIN016.html" class="btn fin008-btn">お気に入り</a>
+            <a href="FIN017.html" class="btn fin008-btn">フレンド</a>
         </div>
     </div>
     <div id="photoModal" class="fin019-modal-overlay">
         <div class="fin019-modal-content">
             <h3 class="fin019-modal-title">プロフィール画像の変更</h3>
             
-            <div class="fin019-image-grid">
-                <div class="fin019-image-item">画像</div>
-                <div class="fin019-image-item">画像</div>
-                <div class="fin019-image-item">画像</div>
-                <div class="fin019-image-item">画像</div>
-                <div class="fin019-image-item">画像</div>
-                <div class="fin019-image-item">画像</div>
-                <div class="fin019-image-item">画像</div>
-                <div class="fin019-image-item">画像</div>
-                <div class="fin019-image-item">画像</div>
-                <div class="fin019-image-item">画像</div>
-            </div>
+            <div class="fin019-image-grid" id="imageGrid">
+                </div>
 
             <div class="fin019-footer">
-                <input type="text" class="fin019-text-input" placeholder="（テキスト入力欄）">
-                <button class="btn fin019-close-btn" id="closePhotoModal">閉じる</button>
-                <button class="btn fin019-save-btn">保存</button>
+                <button class="btn btn-primary fin019-save-btn" id="savePhotoModal" disabled>保存</button>
+                <button class="btn btn-secondary fin019-close-btn" id="closePhotoModal">閉じる</button>
             </div>
         </div>
     </div>
     <script>
-        // ログアウトボタンの処理
-        document.getElementById("logoutButton").addEventListener("click", function() {
-            if (confirm("ログアウトしますか？")) {
-                window.location.href = "FIN001.html"; 
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // --- ログアウト処理 ---
+            document.getElementById("logoutButton").addEventListener("click", function() {
+                if (confirm("ログアウトしますか？")) {
+                    localStorage.removeItem('isLoggedIn');
+                    localStorage.removeItem('profileImage'); // ★ 追加：プロフィール画像もリセット
+                    window.location.href = "FIN001.html"; 
+                }
+            });
+
+            // --- ★ 変更点：ページ読み込み時に保存された画像を表示 ---
+            const photoDisplay = document.getElementById('profilePhotoDisplay');
+            const savedImageUrl = localStorage.getItem('profileImage');
+            if (savedImageUrl) {
+                photoDisplay.innerHTML = `<img src="${savedImageUrl}" alt="プロフィール写真">`;
             }
-        });
 
-        // モーダル関連の要素を取得
-        const openPhotoModalBtn = document.getElementById("openPhotoModal");
-        const closePhotoModalBtn = document.getElementById("closePhotoModal");
-        const photoModal = document.getElementById("photoModal");
+            // --- モーダル関連の要素を取得 ---
+            const openPhotoModalBtn = document.getElementById("openPhotoModal");
+            const closePhotoModalBtn = document.getElementById("closePhotoModal");
+            const savePhotoModalBtn = document.getElementById("savePhotoModal");
+            const photoModal = document.getElementById("photoModal");
+            const imageGrid = document.getElementById("imageGrid");
+            
+            let selectedImageElement = null; 
+            let storedImageUrl = null; 
 
-        // 「写真」(#openPhotoModal) がクリックされたら
-        openPhotoModalBtn.addEventListener("click", function(e) {
-            e.preventDefault(); // リンク遷移を止める
-            photoModal.style.display = "flex"; // モーダルを表示
-        });
+            // 画像のリスト
+            const imageUrls = [
+                '../images/kubota_icon1.png', 
+                '../images/kubota_icon2.png', 
+                '../images/icon3.png',
+                '../images/icon4.png', 
+                '../images/icon5.png', 
+                '../images/icon6.png',
+                '../images/icon7.png', 
+                '../images/icon8.png', 
+                '../images/icon9.png',
+                '../images/icon10.png'
+            ];
 
-        // 「閉じる」(#closePhotoModal) がクリックされたら
-        closePhotoModalBtn.addEventListener("click", function() {
-            photoModal.style.display = "none"; // モーダルを非表示
-        });
+            // モーダル内に画像を動的に生成
+            imageUrls.forEach(url => {
+                const img = document.createElement('img');
+                img.src = url;
+                img.alt = 'アイコン';
+                img.classList.add('fin019-image-item');
+                
+                img.addEventListener('click', function() {
+                    if (selectedImageElement) {
+                        selectedImageElement.classList.remove('selected');
+                    }
+                    this.classList.add('selected');
+                    selectedImageElement = this;
+                    storedImageUrl = this.src; 
+                    
+                    savePhotoModalBtn.disabled = false;
+                    savePhotoModalBtn.style.backgroundColor = '';
+                    savePhotoModalBtn.style.borderColor = '';
+                    savePhotoModalBtn.style.cursor = 'pointer';
+                });
+                imageGrid.appendChild(img);
+            });
 
-        // モーダルの背景（黒い部分）がクリックされたら
-        photoModal.addEventListener("click", function(e) {
-            if (e.target === photoModal) { 
-                photoModal.style.display = "none"; // モーダルを非表示
+
+            // --- モーダルの開閉処理 ---
+            openPhotoModalBtn.addEventListener("click", function(e) {
+                e.preventDefault(); 
+                photoModal.style.display = "flex"; 
+            });
+
+            function closeModal() {
+                photoModal.style.display = "none";
+                storedImageUrl = null; 
+                if (selectedImageElement) {
+                    selectedImageElement.classList.remove('selected');
+                    selectedImageElement = null;
+                }
+                savePhotoModalBtn.disabled = true;
+                savePhotoModalBtn.style.backgroundColor = '#a0a0a0';
+                savePhotoModalBtn.style.borderColor = '#a0a0a0';
+                savePhotoModalBtn.style.cursor = 'not-allowed';
             }
+
+            closePhotoModalBtn.addEventListener("click", closeModal);
+
+            // 「保存」ボタンの処理
+            savePhotoModalBtn.addEventListener("click", function() {
+                if (storedImageUrl) {
+                    
+                    // ★ 変更点 1：ブラウザに画像URLを保存
+                    localStorage.setItem('profileImage', storedImageUrl);
+                    
+                    alert('プロフィール画像が変更されました');
+                    
+                    if (photoDisplay) {
+                        // 2. FIN008の「写真」エリアを更新
+                        photoDisplay.innerHTML = `<img src="${storedImageUrl}" alt="プロフィール写真">`;
+                    }
+                    
+                    closeModal(); // モーダルを閉じる
+                }
+            });
+
+            photoModal.addEventListener("click", function(e) {
+                if (e.target === photoModal) { 
+                    closeModal(); 
+                }
+            });
         });
     </script>
 

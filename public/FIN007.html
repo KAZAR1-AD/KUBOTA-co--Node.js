@@ -4,44 +4,73 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>検索結果（FIN007）</title>
-    <link rel="stylesheet" href="../CSS/style.css"> 
+    <link rel="stylesheet" href="../CSS/style.css">
 </head>
 <body class="fin007">
 
-    <div class="fin007-title-bar">
-        <h2>検索結果</h2>
-
-        <a href="FIN008.html" class="page-menu-icon fin007-menu-icon">😊</a>
-    </div>
-
+    <header class="fixed-header">
+        <div class="fixed-header-left">
+            </div>
+        <div class="fixed-header-title">船橋今なにする？</div>
+        <div class="fixed-header-icon-area" id="headerIconArea">
+            </div>
+    </header>
     <div class="fin007-results-container">
-
         <div class="fin007-result-item">
             <span class="fin007-result-info">店名 徒歩○分 1000円〜1400円</span>
             <span class="fin007-result-star">★</span>
         </div>
-
         <div class="fin007-result-item">
             <span class="fin007-result-info">店名 徒歩○分 1000円〜1400円</span>
             <span class="fin007-result-star">★</span>
         </div>
-
-        <div class="fin007-result-item">
-            <span class="fin007-result-info">店名 徒歩○分 1000円〜1400円</span>
-            <span class="fin007-result-star">★</span>
-        </div>
-
         <div class="fin007-pagination">
             <span class="fin007-page-item active">1</span>
             <a href="#" class="fin007-page-item">2</a>
-            <a href="#" class="fin007-page-item">3</a>
-            <span class="fin007-page-item dots">...</span>
         </div>
-
     </div>
 
     <a href="FIN006.html" class="fin007-change-criteria-btn">
         条件<br>を変える
     </a>
-    </body>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // --- ログイン状態チェック処理 ---
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            const savedImageUrl = localStorage.getItem('profileImage');
+
+            // ★ 変更点：セレクタを 'headerIconArea' に変更
+            const iconArea = document.getElementById('headerIconArea');
+
+            if (!iconArea) return; 
+
+            if (isLoggedIn === 'true') {
+                let imageUrlToShow = savedImageUrl ? savedImageUrl : '../images/kubota_icon0.png';
+                
+                // ★ 変更点：クラス名を .header-profile-icon に統一
+                iconArea.innerHTML = `
+                    <a href="FIN008.html" class="header-profile-icon"> 
+                        <img src="${imageUrlToShow}" alt="メニュー">
+                    </a>`;
+            } else {
+                // ★ 変更点：クラス名を .header-login-btn に統一
+                iconArea.innerHTML = '<a href="FIN002.html" class="btn btn btn-primary header-login-btn">ログイン</a>';
+                
+                const loginBtn = iconArea.querySelector('.header-login-btn');
+                if (loginBtn) {
+                    loginBtn.addEventListener('click', function(e) {
+                        e.preventDefault(); 
+                        const currentUrl = window.location.href;
+                        localStorage.setItem('redirectUrl', currentUrl); 
+                        localStorage.setItem('loginRedirect', currentUrl); 
+                        window.location.href = e.target.href; 
+                    });
+                }
+            }
+        });
+    </script>
+
+</body>
 </html>
