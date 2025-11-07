@@ -79,6 +79,10 @@ app.get('/FIN002', (req, res) => {
 app.post('/login', async (req, res) => {
     const { login_id, password } = req.body;
 
+    // デバッグ用ログ (本番環境では削除またはログレベルを調整)
+    console.log(`[SERVER] 🔐 ログイン試行: login_id=${login_id}`);
+    console.log(`[SERVER] 🔐 パスワード: ${password}`);
+
     if (!login_id || !password) {
         req.session.error = 'ID/メールアドレスとパスワードの両方を入力してください。';
         return res.redirect('/FIN002');
@@ -228,6 +232,14 @@ app.post('/logout', (req, res) => {
         }
         res.redirect('/FIN002'); // ログイン画面へリダイレクト
     });
+});
+
+// ----------------------------------------------------
+// /search: お店検索ページの表示 (GET)
+// ----------------------------------------------------
+// 作りかけです
+app.get('/search', (req, res) => {
+    res.render('/FIN006', { pageTitle: 'お店検索' });
 });
 
 
