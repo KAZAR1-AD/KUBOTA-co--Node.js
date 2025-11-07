@@ -1,0 +1,28 @@
+<header class="main-header">
+    <div class="header-content">
+        <h1 class="site-title"><a href="/">お店検索サービス</a></h1>
+        
+        <nav class="header-nav">
+            <% if (isLoggedIn) { %>
+                <span class="welcome-message">
+                    ようこそ、<%= userName %>さん！
+                </span>
+                <a href="/FIN009" class="btn btn-setting">
+                    個人設定
+                </a>
+                <form action="/logout" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-logout">
+                        ログアウト
+                    </button>
+                </form>
+            <% } else { %>
+                <a href="/FIN002" class="btn btn-login">
+                    ログイン
+                </a>
+                <a href="/FIN003" class="btn btn-register">
+                    新規登録
+                </a>
+            <% } %>
+        </nav>
+    </div>
+</header>
