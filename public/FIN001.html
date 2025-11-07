@@ -6,7 +6,75 @@
     <title>船橋今なにする？</title>
     <link rel="stylesheet" href="../CSS/style.css"> </head>
 <body class="fin001">
-
+    <!DOCTYPE html>
+    <html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>船橋今なにする？</title>
+        <link rel="stylesheet" href="../CSS/style.css"> 
+    </head>
+    <body class="fin001">
+    
+        <header class="fixed-header">
+            <div class="fixed-header-left">
+                </div>
+            <div class="fixed-header-title">船橋今なにする？</div>
+            <div class="fixed-header-icon-area" id="headerIconArea">
+                </div>
+        </header>
+        <main>
+            <div class="container fin001-main-container">
+                <h1>船橋今なにする？</h1>
+                <button 
+                    class="btn btn-primary fin001-start-btn" 
+                    onclick="location.href='FIN006.html'">
+                    START
+                </button>
+            </div>
+        </main>
+    
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const isLoggedIn = localStorage.getItem('isLoggedIn');
+                const savedImageUrl = localStorage.getItem('profileImage'); 
+                const headerIconArea = document.getElementById('headerIconArea');
+    
+                if (!headerIconArea) return; // エラー防止
+    
+                if (isLoggedIn === 'true') {
+                    // ログインしている場合
+                    let imageUrlToShow = savedImageUrl ? savedImageUrl : '../images/kubota_icon0.png';
+                    
+                    headerIconArea.innerHTML = `
+                        <a href="FIN008.html" class="header-profile-icon"> 
+                            <img src="${imageUrlToShow}" alt="メニュー">
+                        </a>`;
+                    
+                } else {
+                    // ログインしていない場合
+                    // ★ 変更点：<button> から <a> タグに変更
+                    headerIconArea.innerHTML = `
+                        <a href="FIN002.html" class="btn btn-primary header-login-btn" id="headerLoginButton"> 
+                            ログイン
+                        </a>
+                    `;
+                    
+                    const loginBtn = document.getElementById('headerLoginButton');
+                    if (loginBtn) {
+                        // ★ 変更点：<a> タグのクリックイベントに変更
+                        loginBtn.addEventListener('click', function(e) {
+                            e.preventDefault(); // <a>タグのデフォルト動作を停止
+                            localStorage.setItem('loginRedirect', 'FIN001.html');
+                            localStorage.removeItem('redirectUrl'); 
+                            location.href = this.href; // 'FIN002.html' へ遷移
+                        });
+                    }
+                }
+            });
+        </script>
+    </body>
+    </html>
     <header class="fin001-header">
         <button 
             class="btn btn-default fin001-login-btn" 

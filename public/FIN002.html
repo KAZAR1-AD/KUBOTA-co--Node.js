@@ -9,31 +9,58 @@
 <body class="fin002">
 
     <div class="container">
-
         <div class="fin002-register">
             <a href="FIN003.html" class="fin002-register-link">新規登録はこちら</a>
         </div>
-
         <div class="form-group">
             <label for="email" class="form-label">メールアドレス or ID</label>
             <input type="text" id="email" class="form-input">
         </div>
-
         <div class="form-group">
             <label for="password" class="form-label">パスワード</label>
             <input type="password" id="password" class="form-input">
         </div>
-
+        
         <div class="button-area">
-            <button class="btn btn-pink">ログイン</button>
+            <button class="btn btn-primary" id="loginButton">ログイン</button>
             
-            <button 
-                class="btn btn-pink" 
-                onclick="location.href='FIN001.html'">
-                戻る
-            </button>
+            <button class="btn btn-secondary" id="backButton">戻る</button>
         </div>
-
     </div>
+
+    <script>
+        // ログインボタンの処理
+        document.getElementById('loginButton').addEventListener('click', function() {
+            localStorage.setItem('isLoggedIn', 'true');
+            const redirectUrl = localStorage.getItem('redirectUrl');
+            
+            if (redirectUrl) {
+                localStorage.removeItem('redirectUrl');
+                localStorage.removeItem('loginRedirect'); // 戻り先も削除
+                location.href = redirectUrl;
+            } else {
+                localStorage.removeItem('loginRedirect'); // 戻り先も削除
+                location.href = 'FIN001.html';
+            }
+        });
+
+        // ★ 追加：戻るボタンの処理
+        document.getElementById('backButton').addEventListener('click', function() {
+            // 「戻る」ボタン用の戻り先を取得
+            const loginRedirect = localStorage.getItem('loginRedirect');
+            
+            // 戻り先（FIN001やFIN006）を削除
+            localStorage.removeItem('loginRedirect');
+            localStorage.removeItem('redirectUrl'); // 念のためこちらも削除
+            
+            if (loginRedirect) {
+                // 戻り先が保存されていれば、そこに戻る
+                location.href = loginRedirect;
+            } else {
+                // 保存されていなければ（直接FIN002を開いた場合など）、FIN001に戻る
+                location.href = 'FIN001.html';
+            }
+        });
+    </script>
 </body>
 </html>
