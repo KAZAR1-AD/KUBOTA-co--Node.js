@@ -6,17 +6,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>船橋今なにする？</title>
     <link rel="stylesheet" href="/css/style.css">
+    
+    <style>
+        .fin001-header {
+            display: flex; /* 要素を横並びにする */
+            justify-content: flex-end; /* 右端に寄せる */
+            align-items: center; /* 縦方向中央揃え */
+            padding: 10px 20px; /* パディング */
+            gap: 10px; /* 要素間のスペース */
+        }
+        /* メッセージとボタンを横並びにするためのスタイル */
+        .fin001-user-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
 </head>
 
 <body class="fin001">
 
     <header class="fin001-header">
         <% if (isLoggedIn) { %>
-            <form action="/logout" method="POST" style="display: inline;">
-                <button type="submit" class="btn btn-default fin001-login-btn">
-                    ログアウト (<%= userName %>)
-                </button>
-            </form>
+            <div class="fin001-user-controls">
+                
+                <span class="fin001-welcome-msg">ようこそ、<%= userName %>さん！</span>
+                
+                <a href="/FIN009" class="btn btn-default fin001-setting-btn" role="button">
+                    個人設定
+                </a>
+                
+                <form action="/logout" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-default fin001-login-btn">
+                        ログアウト
+                    </button>
+                </form>
+            </div>
 
         <% } else { %>
             <a href="/FIN002" class="btn btn-default fin001-login-btn" role="button">
@@ -28,8 +53,8 @@
     <main>
         <div class="container fin001-main-container">
             <h1>船橋今なにする？</h1>
-            <button class="btn btn-danger fin001-start-btn">START</button>
-            </div>
+            <a href="/search" class="btn btn-danger fin001-start-btn" role="button">START</a>
+        </div>
     </main>
     
 

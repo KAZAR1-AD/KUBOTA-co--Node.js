@@ -9,9 +9,10 @@ const path = require('path');
 // ===================================
 // 0. ダミーDAOの定義 (実際には別途ファイルで実装が必要です)
 // ===================================
+// ⚠️ 実際の開発では、このオブジェクトを require('../dao/UserDAO') に置き換えてください
 const UserDAO = {
     authenticateUser: async (id, pw) => ({ user_id: 1, user_name: 'テストユーザー', email: 'test@example.com' }),
-    registerUser: async (name, email, pw) => ({ success: true, userId: 2 }),
+    registerUser: async (name, email, pw) => ({ success: true, userId: 2 }), // ここも実際はUserDAO.jsの実装を使う
     updateUsername: async (id, newName) => true,
     updateEmail: async (id, newEmail) => true,
     updatePassword: async (id, currentPw, newPw) => true,
@@ -131,9 +132,11 @@ app.post('/login', async (req, res) => {
         const user = await UserDAO.authenticateUser(login_id, password);
 
         if (user) {
+            // 認証成功: セッションにユーザー情報を保存し、FIN004へリダイレクト
             req.session.user = { id: user.user_id, name: user.user_name, email: user.email };
             return res.redirect('/FIN004'); 
         } else {
+            // 認証失敗
             req.session.error = 'ID/メールアドレスまたはパスワードが正しくありません。';
             return res.redirect('/FIN002');
         }
@@ -144,8 +147,61 @@ app.post('/login', async (req, res) => {
 });
 
 // ----------------------------------------------------
-// FIN003 (新規登録), FIN004 (ホーム/確認) ルートは省略...
+// ⭐ FIN003: 新規登録画面の表示 (GET) ⭐
 // ----------------------------------------------------
+app.get('/FIN003', (req, res) => {
+    const viewData = getCommonViewData(req);
+    res.render('FIN003', {
+        pageTitle: '新規登録',
+        // FIN003では通常、ログイン情報は不要だが、共通データ取得関数を使う
+        error: viewData.error 
+    });
+});
+
+// ----------------------------------------------------
+// ⭐ /register-final: 新規登録処理 (POST) ⭐
+// ----------------------------------------------------
+app.post('/register-final', async (req, res) => {
+    const { username, email, password, confirm_password } = req.body;
+
+    if (password !== confirm_password) {
+        req.session.error = 'パスワードと確認用パスワードが一致しません。';
+        return res.redirect('/FIN003');
+    }
+    
+    try {
+        const result = await UserDAO.registerUser(username, email, password);
+
+        if (result.success) {
+            // 登録成功: ユーザーを即座にログイン状態にし、FIN004へリダイレクト
+            // ⚠️ 登録処理がユーザー名とメールを返すことをUserDAOに依存している
+            req.session.user = { id: result.userId, name: username, email: email };
+            req.session.message = '新規登録が完了しました！'; // 登録完了メッセージ
+            return res.redirect('/FIN004'); 
+        } else {
+            // 登録失敗 (例: メールアドレス重複など)
+            req.session.error = result.message || '登録に失敗しました。';
+            return res.redirect('/FIN003');
+        }
+    } catch (error) {
+        req.session.error = 'システムエラーが発生しました。';
+        return res.redirect('/FIN003');
+    }
+});
+
+
+// ----------------------------------------------------
+// ⭐ FIN004: ホーム画面/登録完了確認画面 (GET) ⭐
+// ----------------------------------------------------
+app.get('/FIN004', requireLogin, (req, res) => {
+    const viewData = getCommonViewData(req);
+    // FIN004はログイン後のトップ画面を想定
+    res.render('FIN004', {
+        pageTitle: 'ホーム',
+        ...viewData
+    });
+});
+
 
 // ----------------------------------------------------
 // /logout: ログアウト処理 (POST)
@@ -161,11 +217,11 @@ app.post('/logout', (req, res) => {
 });
 
 // ----------------------------------------------------
-// /search: お店検索ページの表示 (FIN006) (GET) - 依頼通り未修正で配置
+// /search: お店検索ページの表示 (FIN006) (GET)
 // ----------------------------------------------------
 app.get('/search', (req, res) => {
-    // 🚨 注意: res.render('/FIN006', ...) は Express のパス指定として正しくありません。
-    res.render('/FIN006', { pageTitle: 'お店検索' }); 
+    // FIN006 テンプレートをレンダリングすることを想定
+    res.render('FIN006', { pageTitle: 'お店検索' }); 
 });
 
 
@@ -259,14 +315,25 @@ app.post('/update-email', requireLogin, async (req, res) => {
 app.post('/update-password', requireLogin, async (req, res) => {
     const { currentPassword, newPassword, confirmPassword } = req.body;
     
-    // **TODO:** パスワードのバリデーション、現在のパスワード認証、DB更新処理を実装
+    // **TODO:** パスワードのバリデーション (例: 長さチェック)
+    if (newPassword !== confirmPassword) {
+        req.session.error = '新しいパスワードと確認用パスワードが一致しません。';
+        return res.redirect('/FIN014');
+    }
     
     try {
-        await UserDAO.updatePassword(req.session.user.id, currentPassword, newPassword);
+        const success = await UserDAO.updatePassword(req.session.user.id, currentPassword, newPassword);
+        
+        if (!success) {
+            req.session.error = '現在のパスワードが正しくありません。';
+            return res.redirect('/FIN014');
+        }
+        
         req.session.message = 'パスワードの変更が完了しました。';
         return res.redirect('/FIN009');
     } catch (e) {
-        req.session.error = 'パスワードの更新中にエラーが発生しました。';
+        // UserDAOから投げられたデータベースエラーを捕捉
+        req.session.error = e.message || 'パスワードの更新中にエラーが発生しました。';
         return res.redirect('/FIN014'); 
     }
 });
