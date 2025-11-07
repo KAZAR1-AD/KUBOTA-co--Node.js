@@ -9,7 +9,7 @@ const UserDAO = require('./dao/UserDAO'); // 作成したUserDAOをインポー�
 const ReportDAO = require('./dao/ReportDAO'); // ReportDAOをインポート
 
 // 環境変数PORTがあればそれを使用し、なければ8080を使用
-const port = process.env.PORT || 8080;
+const port =  8585;
 
 
 // ===================================
