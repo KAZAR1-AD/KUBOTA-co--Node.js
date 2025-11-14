@@ -1,31 +1,44 @@
-// database.js
-//　まだ途中だから作業してくれめんす2025年10月24日
+// 必要なモジュールを読み込む
 const mysql = require('mysql2/promise');
-
-// データベース接続情報 (🚨 ここをあなたの環境に合わせて修正してください 🚨)
-const dbConfig = {
-    host: 'localhost',      
-    user: 'db_editor', // MySQLのユーザー名
-    password: '047642', // MySQLのパスワード
+// ⚠️ データベース接続情報 ⚠️
+// 環境に合わせて、以下の情報を正確に設定してください。
+const pool = mysql.createPool({
+    host: '172.16.198.201',      // データベースサーバーのホスト名
+    user: 'db_editor',// データベースユーザー名
+    password: '047642', // データベースパスワード
     database: 'kubota_corp', // 使用するデータベース名
     waitForConnections: true,
-    connectionLimit: 10, // 同時接続数の上限
+    connectionLimit: 10,
     queueLimit: 0
+});
+
+/**
+ * 接続プールを使用してクエリを実行する関数
+ * @param {string} sql - 実行するSQLクエリ
+ * @param {Array<any>} params - クエリパラメータ
+ * @returns {Promise<[rows: Array<any>, fields: Array<any>]>}
+ */
+exports.query = async (sql, params) => {
+    try {
+        // pool.queryは [rows, fields] のタプルを返します
+        const [rows, fields] = await pool.query(sql, params);
+        return [rows, fields];
+    } catch (error) {
+        console.error('MySQL Query Error:', error);
+        // エラーを呼び出し元に再スロー
+        throw error;
+    }
 };
 
-// 接続プールを作成
-const pool = mysql.createPool(dbConfig);
-
-// プールをエクスポート
-module.exports = pool;
-
-// サーバー起動時に接続確認を行う（オプション）
+// 接続テスト
 pool.getConnection()
     .then(connection => {
         console.log('✅ MySQL接続プールが正常に作成されました。');
-        connection.release(); // 接続をプールに戻す
+        connection.release();
     })
     .catch(err => {
         console.error('❌ MySQL接続エラー:', err.message);
-        // エラーが発生した場合は、DB設定やMySQLサーバーの稼働状況を確認してください。
+        console.error('データベースのクレデンシャル（host, user, password, database）を確認してください。');
     });
+
+module.exports = pool; // UserDAOがpool.queryを使用できるようにpoolをエクスポート
