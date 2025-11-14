@@ -1,273 +1,194 @@
+// 実際のデータベース接続オブジェクトを読み込む (database.js - MySQL Pool)
 const db = require('../database');
+// パスワードのハッシュ化/検証に使うライブラリ (npm install bcrypt を想定)
+// ⚠️ このコードを動作させるには、プロジェクトで `npm install bcrypt` が実行されている必要があります。
 const bcrypt = require('bcrypt');
-const { v4: uuidv4 } = require('uuid');
 
-// user_idを生成するためのヘルパー関数を定義
-const generateRandomId = () => {
-    // 8桁のランダムな数字IDを生成 (INT型であると想定)
-    // 10,000,000から99,999,999まで
-    return Math.floor(10000000 + Math.random() * 90000000);
+// ソルトはランダムに生成されます。bcrypt.hash(password, saltRounds) の形式を使用。
+const saltRounds = 10;
+
+/**
+ * ログイン認証
+ * @param {string} login_id - ログインID（またはメールアドレス）
+ * @param {string} password - パスワード
+ * @returns {Promise<{user_id: number, user_name: string, email: string} | null>} 認証成功したユーザー情報、またはnull
+ */
+exports.authenticateUser = async (login_id, password) => {
+    console.log(`[UserDAO] 認証処理開始: ID=${login_id}`);
+    
+    // 修正済み: テーブル名 'table_user'、カラム名 'password'
+    const query = `
+SELECT user_id, user_name, email, password 
+FROM table_user 
+WHERE email = ? OR user_id = ?
+`;
+    
+    try {
+        // 1. データベースからユーザーを取得 (MySQL: [rows, fields] が返る)
+        const [rows] = await db.query(query, [login_id, login_id]);
+        
+        if (rows.length === 0) {
+            console.log('[UserDAO] ユーザーが見つかりません。');
+            return null;
+        }
+
+        const user = rows[0];
+        // 修正済み: user.password を使用
+        const passwordHash = user.password;
+        
+        // 2. パスワードの検証 (⭐ bcrypt.compare が格納されたハッシュからランダムソルトを抽出して比較 ⭐)
+        const isMatch = await bcrypt.compare(password, passwordHash);
+
+        if (isMatch) {
+            console.log(`[UserDAO] 認証成功: UserID=${user.user_id}`);
+            return {
+                user_id: user.user_id,
+                user_name: user.user_name,
+                email: user.email
+            };
+        } else {
+            console.log('[UserDAO] パスワードが一致しません。');
+            return null;
+        }
+
+    } catch (error) {
+        console.error('[UserDAO] 認証クエリ実行エラー:', error);
+        throw new Error('データベース認証エラー');
+    }
 };
 
-// 認証に必要なテーブルとカラム名を定義
-const USER_TABLE = 'table_user';
-const AUTH_FIELDS = 'user_id, password, user_name, email';
-const DEFAULT_PROFILE_PHOTO_ID = 999; // table_user_icon の初期値を想定
-// ⚠️ SALT_ROUNDS 定数は削除しました。bcryptのhashメソッド内で直接強度を10と指定します。
-
-class UserDAO {
+/**
+ * 新規ユーザー登録
+ * @param {string} username - ユーザー名
+ * @param {string} email - メールアドレス
+ * @param {string} password - パスワード
+ * @returns {Promise<{success: boolean, userId: number, message?: string}>} 登録結果
+ */
+exports.registerUser = async (username, email, password) => {
+    console.log(`[UserDAO] 登録処理開始: Email=${email}`);
     
-    /**
-     * ログインIDとパスワードでユーザー認証を行う
-     * ... (変更なし)
-     */
-    async authenticateUser(loginId, plainPassword) {
-        let connection;
-        try {
-            connection = await db.getConnection();
-            const sql = `
-                SELECT ${AUTH_FIELDS} 
-                FROM ${USER_TABLE} 
-                WHERE email = ? OR user_id = ?
-            `;
+    // 1. パスワードのハッシュ化 (⭐ ランダムソルトが自動生成され、ハッシュに結合される ⭐)
+    const passwordHash = await bcrypt.hash(password, saltRounds);
 
-            const [rows] = await connection.execute(sql, [loginId, loginId]);
+    // MySQLで安全にカウントを取得するためのエイリアス
+    const checkDuplicateQuery = `SELECT COUNT(*) AS count FROM table_user WHERE email = ?`;
+    // 修正済み: カラム名 'password' を使用
+    const insertQuery = `
+INSERT INTO table_user (user_name, email, password) 
+VALUES (?, ?, ?) 
+`;
 
-            if (rows.length === 0) {
-                console.log(`[DAO-AUTH] ❌ 認証失敗: ログインID ${loginId} のユーザーが見つかりませんでした。`);
-                return null;
-            }
-
-            const user = rows[0];
-            const isMatch = await bcrypt.compare(plainPassword, user.password);
-
-            if (isMatch) {
-                const { password, ...userInfo } = user;
-                console.log(`[DAO-AUTH] ✅ 認証成功: UserID ${userInfo.user_id} (${userInfo.email})`);
-                return userInfo;
-            } else {
-                console.log(`[DAO-AUTH] ❌ 認証失敗: UserID ${user.user_id} のパスワードが一致しませんでした。`);
-                return null;
-            }
-
-        } catch (error) {
-            console.error('【UserDAO.js】認証処理でデータベースエラーが発生:', error.message);
-            throw new Error('データベース認証処理中に予期せぬエラーが発生しました。');
-        } finally {
-            if (connection) connection.release();
+    try {
+        // メールアドレスの重複チェック (MySQL)
+        const [duplicateCheckRows] = await db.query(checkDuplicateQuery, [email]);
+        // rows[0].count を使用
+        if (duplicateCheckRows.length > 0 && duplicateCheckRows[0].count > 0) {
+            return { success: false, userId: null, message: 'このメールアドレスは既に登録されています。' };
         }
-    }
 
-    /**
-     * user_idがデータベースに既に存在するか確認する
-     * ... (変更なし)
-     */
-    async isUserIdExists(userId) {
-        let connection;
-        try {
-            connection = await db.getConnection();
-            const sql = `SELECT COUNT(*) AS count FROM ${USER_TABLE} WHERE user_id = ?`;
-            const [rows] = await connection.execute(sql, [userId]);
-            return rows[0].count > 0;
-        } catch (error) {
-            console.error('[DAO-CHECK] 💣 ID衝突チェック中にDBエラー:', error.message);
-            throw new Error('ID衝突チェック中に予期せぬエラーが発生しました。');
-        } finally {
-            if (connection) connection.release();
+        // 2. ユーザー情報の挿入 (MySQL: [result, fields] が返る)
+        const [result] = await db.query(insertQuery, [username, email, passwordHash]);
+
+        // MySQLでは通常、挿入されたIDは insertId プロパティで取得
+        const newUserId = result.insertId;
+
+        console.log(`[UserDAO] 登録成功: UserID=${newUserId}`);
+        return { 
+            success: true, 
+            userId: newUserId, 
+            message: 'ユーザー登録成功' 
+        };
+    } catch (error) {
+        console.error('[UserDAO] 登録クエリ実行エラー:', error);
+        
+        // エラーコード1062 (ER_DUP_ENTRY) は重複キーエラー
+        if (error.code === 'ER_DUP_ENTRY') {
+             return { success: false, userId: null, message: 'このメールアドレスは既に登録されています。' };
         }
+        
+        throw new Error('データベース登録エラー');
     }
+};
 
-    /**
-     * 新規ユーザーをデータベースに登録する 
-     */
-    async registerUser(username, email, plainPassword) {
-        const MAX_RETRIES = 5;
-        let connection;
+/**
+ * ユーザー名更新
+ */
+exports.updateUsername = async (userId, newUsername) => {
+    console.log(`[UserDAO] ユーザー名更新処理: UserID=${userId}, NewName=${newUsername}`);
+    const query = `UPDATE table_user SET user_name = ? WHERE user_id = ?`;
 
-        try {
-            // 1. メールアドレスの重複チェック
-            const existingUser = await this.findByEmail(email);
-            if (existingUser) {
-                console.log(`[DAO-REG] ❌ 登録失敗: メールアドレス ${email} は既に使用されています。`);
-                return { success: false, message: 'このメールアドレスは既に使用されています。' };
-            }
+    try {
+        // MySQL: UPDATE文の実行
+        await db.query(query, [newUsername, userId]);
+        console.log('[UserDAO] ユーザー名更新成功。');
+        return true; 
+    } catch (error) {
+        console.error('[UserDAO] ユーザー名更新クエリ実行エラー:', error);
+        throw new Error('ユーザー名の更新中にエラーが発生しました。');
+    }
+};
 
-            // 2. パスワードのハッシュ化 (強度を10で指定)
-            // 💡 bcryptはこの処理内で自動的にソルトを生成し、ハッシュに埋め込みます。
-            const hashedPassword = await bcrypt.hash(plainPassword, 10); 
-            
-            // 3. ユニークな user_id の生成ループ (変更なし)
-            let userId = null;
-            let retries = 0;
+/**
+ * メールアドレス更新
+ */
+exports.updateEmail = async (userId, newEmail) => {
+    console.log(`[UserDAO] メールアドレス更新処理: UserID=${userId}, NewEmail=${newEmail}`);
+    const query = `UPDATE table_user SET email = ? WHERE user_id = ?`;
 
-            while (retries < MAX_RETRIES) {
-                const newId = generateRandomId(); 
-                const exists = await this.isUserIdExists(newId); 
-
-                if (!exists) {
-                    userId = newId; 
-                    break;
-                }
-                retries++;
-                console.warn(`[DAO-REG] ⚠️ ID ${newId} は既に存在します。リトライ回数: ${retries}`);
-            }
-
-            if (userId === null) {
-                console.error('[DAO-REG] ❌ ユニークIDの生成に失敗しました。最大リトライ回数を超過しました。');
-                return { success: false, message: 'IDの生成に失敗しました。時間をおいて再試行してください。' };
-            }
-            
-            // 4. データベースに挿入
-            connection = await db.getConnection();
-            const sql = `
-                INSERT INTO ${USER_TABLE} (user_id, user_name, email, password, profile_photo_id) 
-                VALUES (?, ?, ?, ?, ?)
-            `;
-            
-            await connection.execute(sql, [
-                userId, 
-                username,
-                email,
-                hashedPassword,
-                DEFAULT_PROFILE_PHOTO_ID
-            ]);
-
-            console.log(`[DAO-REG] ✅ 登録成功: New UserID ${userId} (${email})`); 
-            
-            return { success: true, userId: userId };
-
-        } catch (error) {
-            console.error(`[DAO-REG] ❌ 登録処理でデータベースエラーが発生 (${email}):`, error.message);
-            throw new Error('新規登録処理中に予期せぬデータベースエラーが発生しました。');
-        } finally {
-            if (connection) connection.release();
+    try {
+        // MySQL: UPDATE文の実行
+        await db.query(query, [newEmail, userId]);
+        console.log('[UserDAO] メールアドレス更新成功。');
+        return true; 
+    } catch (error) {
+        // MySQLの重複エラーコードを捕捉し、ユーザーフレンドリーなメッセージを投げる
+        if (error.code === 'ER_DUP_ENTRY') {
+            throw new Error('このメールアドレスは既に他のユーザーに使用されています。');
         }
+        console.error('[UserDAO] メールアドレス更新クエリ実行エラー:', error);
+        throw new Error('メールアドレスの更新中にエラーが発生しました。');
     }
+};
 
-    /**
-     * メールアドレスでユーザーを検索する (内部重複チェック用)
-     * ... (変更なし)
-     */
-    async findByEmail(email) {
-        let connection;
-        try {
-            connection = await db.getConnection();
-            const sql = `SELECT user_id FROM ${USER_TABLE} WHERE email = ?`;
-            const [rows] = await connection.execute(sql, [email]);
-            return rows.length > 0 ? rows[0] : null;
-        } catch (error) {
-            console.error('【UserDAO.js】findByEmailエラー:', error.message);
-            throw new Error('メールアドレス検索中に予期せぬエラーが発生しました。');
-        } finally {
-            if (connection) connection.release();
-        }
-    }
+/**
+ * パスワード更新
+ * @returns {Promise<boolean>} 現在のパスワードが正しければ true
+ */
+exports.updatePassword = async (userId, currentPassword, newPassword) => {
+    console.log(`[UserDAO] パスワード更新処理: UserID=${userId}`);
     
-    // ===============================================
-    // ユーザー情報更新メソッド (FIN009 関連)
-    // ===============================================
+    // 1. 現在のパスワードハッシュを取得 (MySQL)
+    // 修正済み: カラム名 'password' を使用
+    const fetchHashQuery = `SELECT password FROM table_user WHERE user_id = ?`;
+    // 修正済み: カラム名 'password' を使用
+    const updatePassQuery = `UPDATE table_user SET password = ? WHERE user_id = ?`;
 
-    /**
-     * ユーザー名を更新する
-     * ... (変更なし)
-     */
-    async updateUsername(userId, newUsername) {
-        let connection;
-        try {
-            connection = await db.getConnection();
-            const sql = `
-                UPDATE ${USER_TABLE} SET user_name = ?, updated_at = NOW() 
-                WHERE user_id = ?
-            `;
-            
-            const [result] = await connection.execute(sql, [newUsername, userId]);
-            console.log(`[DAO-UPDATE] ✅ UserID ${userId} のユーザー名を更新しました。`);
-            return result.affectedRows === 1;
-        } catch (error) {
-            console.error(`[DAO-UPDATE] ❌ UserID ${userId} のユーザー名更新エラー:`, error.message);
-            throw new Error("ユーザー名の更新に失敗しました。");
-        } finally {
-            if (connection) connection.release();
+    try {
+        const [rows] = await db.query(fetchHashQuery, [userId]);
+        if (rows.length === 0) {
+            throw new Error('ユーザーが見つかりません');
         }
-    }
+        const user = rows[0];
+        // 修正済み: user.password を使用
+        const storedHash = user.password;
+        
+        // 2. 現在のパスワードの検証
+        const isMatch = await bcrypt.compare(currentPassword, storedHash);
 
-    /**
-     * メールアドレスを更新する
-     * ... (変更なし)
-     */
-    async updateEmail(userId, newEmail) {
-        let connection;
-        try {
-            // 1. メールアドレスの重複チェック
-            const existingUser = await this.findByEmail(newEmail);
-            if (existingUser && existingUser.user_id !== userId) {
-                 throw new Error("このメールアドレスは既に他のユーザーに使用されています。");
-            }
-            
-            connection = await db.getConnection();
-            const sql = `
-                UPDATE ${USER_TABLE} SET email = ?, updated_at = NOW() 
-                WHERE user_id = ?
-            `;
-            
-            const [result] = await connection.execute(sql, [newEmail, userId]);
-            console.log(`[DAO-UPDATE] ✅ UserID ${userId} のメールアドレスを更新しました。`);
-            return result.affectedRows === 1;
-        } catch (error) {
-            console.error(`[DAO-UPDATE] ❌ UserID ${userId} のメールアドレス更新エラー:`, error.message);
-            // データベースエラーの場合、具体的なメッセージは外部に出さず、一般的なエラーを投げる
-            throw new Error(error.message.includes("既に") ? error.message : "メールアドレスの更新に失敗しました。");
-        } finally {
-            if (connection) connection.release();
+        if (!isMatch) {
+            return false; // 現在のパスワードが正しくない
         }
+        
+        // 3. 新しいパスワードのハッシュ化 (⭐ ランダムソルトが自動生成され、ハッシュに結合される ⭐)
+        const newPasswordHash = await bcrypt.hash(newPassword, saltRounds);
+
+        // 4. 新しいハッシュをDBに保存 (MySQL)
+        await db.query(updatePassQuery, [newPasswordHash, userId]);
+        
+        console.log('[UserDAO] パスワード更新成功。');
+        return true; 
+    } catch (error) {
+        console.error('[UserDAO] パスワード更新クエリ実行エラー:', error);
+        throw new Error(error.message || 'パスワードの更新中にエラーが発生しました。');
     }
-
-    /**
-     * パスワードを更新する
-     */
-    async updatePassword(userId, currentPassword, newPassword) {
-        let connection;
-        try {
-            connection = await db.getConnection();
-            
-            // 1. 現在のハッシュ化されたパスワードを取得
-            const userSql = `SELECT password FROM ${USER_TABLE} WHERE user_id = ?`;
-            const [userRows] = await connection.execute(userSql, [userId]);
-            
-            if (userRows.length === 0) {
-                throw new Error("更新対象のユーザーが見つかりません。");
-            }
-
-            const hashedPassword = userRows[0].password;
-
-            // 2. 現在のパスワードを検証
-            const isMatch = await bcrypt.compare(currentPassword, hashedPassword);
-            if (!isMatch) {
-                console.log(`[DAO-UPDATE] ❌ UserID ${userId} パスワード更新失敗: 現在のパスワードが不一致。`);
-                return false; 
-            }
-
-            // 3. 新しいパスワードをハッシュ化 (強度を10で指定)
-            // 💡 bcryptはこの処理内で自動的にソルトを生成し、ハッシュに埋め込みます。
-            const newHashedPassword = await bcrypt.hash(newPassword, 10);
-
-            // 4. DBを更新
-            const updateSql = `
-                UPDATE ${USER_TABLE} SET password = ?, updated_at = NOW() 
-                WHERE user_id = ?
-            `;
-            const [updateResult] = await connection.execute(updateSql, [newHashedPassword, userId]);
-            
-            console.log(`[DAO-UPDATE] ✅ UserID ${userId} のパスワードを更新しました。`);
-            return updateResult.affectedRows === 1;
-
-        } catch (error) {
-            console.error(`[DAO-UPDATE] ❌ UserID ${userId} パスワード更新処理エラー:`, error.message);
-            throw new Error("パスワードの更新に失敗しました。");
-        } finally {
-            if (connection) connection.release();
-        }
-    }
-}
-
-module.exports = new UserDAO();
+};
