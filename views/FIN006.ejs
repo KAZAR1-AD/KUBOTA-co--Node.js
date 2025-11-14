@@ -72,9 +72,30 @@
         </div>
 
         <div class="button-area button-area-center">
-            <button class="btn fin006-btn">検索</button>
+            <button class="btn fin006-btn" onclick="execPost('/search', setValues());return false;">検索</button>
         </div>
     </div>
 
+    <script src="js/execPost.js"></script>
+    <script>
+        /**
+         * フォームの値を取得してオブジェクトにまとめる
+         * @return {Object} フォームの値を格納したオブジェクト
+         */
+        function setValues() {
+            const budget = document.getElementById('budget').value;
+            const distance = document.getElementById('distance').value;
+            const genreElements = document.querySelectorAll('input[name="genre"]:checked');
+            const genres = Array.from(genreElements).map(el => el.value);
+
+            const values = {
+                budget: budget,
+                distance: distance,
+                genre: genres
+            };
+
+            return values;
+        }
+    </script>
 </body>
 </html>
