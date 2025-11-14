@@ -233,7 +233,16 @@ app.post('/logout', (req, res) => {
 app.get('/search', (req, res) => {
     const viewData = getCommonViewData(req);
     // FIN006 テンプレートをレンダリングすることを想定
-    res.render('FIN006', { pageTitle: 'お店検索', ...viewData }); 
+    res.render('FIN006', getCommonViewData(req)); 
+});
+
+// ----------------------------------------------------
+// /search: お店検索処理 (POST)
+// ----------------------------------------------------
+app.post('/search', (req, res) => {
+    // 検索処理の実装をここに追加
+    console.log(req.body);
+    res.send('検索機能は未実装です。');
 });
 
 
