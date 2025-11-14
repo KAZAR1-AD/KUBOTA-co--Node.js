@@ -54,7 +54,14 @@
   sudo apt update
   sudo apt install python3
   ```
-  
+
+### 4.MySQLのインストール
+
+### 5.UFWの設定
+
+### 6.
+
+
 ---
 
 
