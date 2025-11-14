@@ -12,10 +12,11 @@ const path = require('path');
 // 実際には、プロジェクト構造に応じてパスを修正する必要があります
 const UserDAO = require('./dao/UserDAO'); 
 const ReportDAO = require('./dao/ReportDAO');
+const ShopDAO = require('./dao/ShopDAO');
 
 
 // 環境変数PORTがあればそれを使用し、なければ8080を使用
-const port = 8585;
+const port = 3000;
 
 
 // ===================================
@@ -240,9 +241,14 @@ app.get('/search', (req, res) => {
 // /search: お店検索処理 (POST)
 // ----------------------------------------------------
 app.post('/search', (req, res) => {
-    // 検索処理の実装をここに追加
-    console.log(req.body);
-    res.send('検索機能は未実装です。');
+    try {
+        const result = ShopDAO.findAll();
+        return res.render('FIN007', { shop: result });  // FIN007は作業中
+    } catch (error) {
+        console.error('お店検索処理エラー:', error);
+        req.session.error = 'お店の検索中にエラーが発生しました。';
+        return res.redirect('/search');
+    }
 });
 
 
