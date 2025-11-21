@@ -1,160 +1,112 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>お店検索（FIN006）</title>
-    <link rel="stylesheet" href="../CSS/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>お店検索（FIN006）</title>
+  <link rel="stylesheet" href="../CSS/style.css" />
 </head>
+
 <body class="fin006">
 
-    <div class="cont<!DOCTYPE html>
-        <html lang="ja">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>お店検索（FIN006）</title>
-            <link rel="stylesheet" href="../CSS/style.css">
-        </head>
-        <body class="fin006">
-        
-            <header class="fixed-header">
-                <div class="fixed-header-left">
-                    </div>
-                <div class="fixed-header-title">船橋今なにする？</div>
-                <div class="fixed-header-icon-area" id="headerIconArea">
-                    </div>
-            </header>
-            <div class="container fin006-container"> 
-                
-                <div class="fin006-search-box">
-                    <div class="fin006-criteria-row">
-                        <label for="budgetSlider" class="fin006-label">1人当たりの予算</label>
-                        <div class="fin006-input-area">
-                            <input type="range" id="budgetSlider" class="fin006-slider" min="1000" max="20000" step="1000" value="1000">
-                            <span id="budgetValue" class="fin006-value-display">10000円</span>
-                        </div>
-                    </div>
-                    <div class="fin006-criteria-row">
-                        <label for="distance" class="fin006-label">距離</label>
-                        <div class="fin006-input-area">
-                            <select id="distance" class="fin006-select">
-                                <option value="1">指定なし</option>
-                                <option value="2">500m以内</option>
-                                <option value="3">1km以内</option>
-                                <option value="4">3km以内</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="fin006-criteria-row">
-                        <span class="fin006-label">ジャンル</span>
-                        <div class="fin006-input-area fin006-checkbox-group">
-                            <label><input type="checkbox" name="genre" value="jp"> 和食</label>
-                            <label><input type="checkbox" name="genre" value="we"> 洋食</label>
-                            <label><input type="checkbox" name="genre" value="cn"> 中華</label>
-                            <label><input type="checkbox" name="genre" value="ot"> その他</label>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="button-area button-area-center">
-                    <button class="btn btn-primary fin006-btn" onclick="location.href='FIN007.html'">
-                        検索
-                    </button>
-                </div>
-            </div>
-        
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    
-                    // --- スライダー処理 ---
-                    const budgetSlider = document.getElementById('budgetSlider');
-                    const budgetValue = document.getElementById('budgetValue');
-                    if (budgetSlider && budgetValue) {
-                        budgetSlider.addEventListener('input', function() {
-                            budgetValue.textContent = this.value + '円';
-                        });
-                        budgetValue.textContent = budgetSlider.value + '円';
-                    }
-        
-                    // --- ログイン状態チェック処理 ---
-                    const isLoggedIn = localStorage.getItem('isLoggedIn');
-                    const savedImageUrl = localStorage.getItem('profileImage');
-                    
-                    // ★ 変更点：セレクタを 'headerIconArea' に変更
-                    const iconArea = document.getElementById('headerIconArea');
-        
-                    if (!iconArea) return; 
-        
-                    if (isLoggedIn === 'true') {
-                        let imageUrlToShow = savedImageUrl ? savedImageUrl : '../images/kubota_icon0.png';
-        
-                        // ★ 変更点：クラス名を .header-profile-icon に統一
-                        iconArea.innerHTML = `
-                            <a href="FIN008.html" class="header-profile-icon"> 
-                                <img src="${imageUrlToShow}" alt="メニュー">
-                            </a>`;
-                    } else {
-                        // ★ 変更点：クラス名を .header-login-btn に統一
-                        iconArea.innerHTML = '<a href="FIN002.html" class="btn btn btn-primary header-login-btn">ログイン</a>';
-                        
-                        const loginBtn = iconArea.querySelector('.header-login-btn');
-                        if (loginBtn) {
-                            loginBtn.addEventListener('click', function(e) {
-                                e.preventDefault(); 
-                                const currentUrl = window.location.href;
-                                localStorage.setItem('redirectUrl', currentUrl); 
-                                localStorage.setItem('loginRedirect', currentUrl); 
-                                window.location.href = e.target.href; 
-                            });
-                        }
-                    }
-                });
-            </script>
-        
-        </body>
-        </html>iner fin006-container"> 
+  <header class="fixed-header">
+    <div class="fixed-header-left"></div>
+    <div class="fixed-header-title">船橋今なにする？</div>
+    <div class="fixed-header-icon-area" id="headerIconArea"></div>
+  </header>
 
-        <a href="FIN008.html" class="page-menu-icon">😊</a>
+  <div class="container fin006-container">
+    <a href="FIN008.html" class="page-menu-icon">😊</a>
+    <h2 class="fin006-title">どんなお店をお探しですか？</h2>
 
-        <h2 class="fin006-title">どんなお店をお探しですか？</h2>
-
-        <div class="fin006-search-box">
-
-            <div class="fin006-criteria-row">
-                <label for="budget" class="fin006-label">1人当たりの予算</label>
-                <div class="fin006-input-area">
-                    <input type="range" id="budget" class="fin006-slider" min="1000" max="20000" step="1000">
-                    </div>
-            </div>
-
-            <div class="fin006-criteria-row">
-                <label for="distance" class="fin006-label">距離</label>
-                <div class="fin006-input-area">
-                    <select id="distance" class="fin006-select">
-                        <option value="1">指定なし</option>
-                        <option value="2">500m以内</option>
-                        <option value="3">1km以内</option>
-                        <option value="4">3km以内</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="fin006-criteria-row">
-                <span class="fin006-label">ジャンル</span>
-                <div class="fin006-input-area fin006-checkbox-group">
-                    <label><input type="checkbox" name="genre" value="jp"> 和食</label>
-                    <label><input type="checkbox" name="genre" value="we"> 洋食</label>
-                    <label><input type="checkbox" name="genre" value="cn"> 中華</label>
-                    <label><input type="checkbox" name="genre" value="ot"> その他</label>
-                </div>
-            </div>
+    <div class="fin006-search-box">
+      <div class="fin006-criteria-row">
+        <label for="budgetSlider" class="fin006-label">1人当たりの予算</label>
+        <div class="fin006-input-area">
+          <input type="range" id="budgetSlider" class="fin006-slider" min="1000" max="20000" step="1000" value="1000" />
+          <span id="budgetValue" class="fin006-value-display">1000円</span>
         </div>
+      </div>
 
-        <div class="button-area button-area-center">
-            <button class="btn fin006-btn">検索</button>
+      <div class="fin006-criteria-row">
+        <label for="distance" class="fin006-label">距離</label>
+        <div class="fin006-input-area">
+          <select id="distance" class="fin006-select">
+            <option value="1">指定なし</option>
+            <option value="2">500m以内</option>
+            <option value="3">1km以内</option>
+            <option value="4">3km以内</option>
+          </select>
         </div>
+      </div>
+
+      <div class="fin006-criteria-row">
+        <span class="fin006-label">ジャンル</span>
+        <div class="fin006-input-area fin006-checkbox-group">
+          <label><input type="checkbox" name="genre" value="jp"> 和食</label>
+          <label><input type="checkbox" name="genre" value="we"> 洋食</label>
+          <label><input type="checkbox" name="genre" value="cn"> 中華</label>
+          <label><input type="checkbox" name="genre" value="ot"> その他</label>
         </div>
+      </div>
+    </div>
+
+    <div class="button-area button-area-center">
+      <button class="btn btn-primary fin006-btn" id="searchBtn">検索</button>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // スライダー表示
+      const budgetSlider = document.getElementById('budgetSlider');
+      const budgetValue = document.getElementById('budgetValue');
+      if (budgetSlider && budgetValue) {
+        const updateBudget = () => budgetValue.textContent = budgetSlider.value + '円';
+        budgetSlider.addEventListener('input', updateBudget);
+        updateBudget();
+      }
+
+      // ヘッダーのログイン状態
+      const isLoggedIn = localStorage.getItem('isLoggedIn');
+      const savedImageUrl = localStorage.getItem('profileImage');
+      const iconArea = document.getElementById('headerIconArea');
+      if (iconArea) {
+        if (isLoggedIn === 'true') {
+          const imageUrlToShow = savedImageUrl ? savedImageUrl : '../images/kubota_icon0.png';
+          iconArea.innerHTML = `
+            <a href="FIN008.html" class="header-profile-icon">
+              <img src="${imageUrlToShow}" alt="メニュー">
+            </a>`;
+        } else {
+          iconArea.innerHTML = '<a href="FIN002.html" class="btn btn-primary header-login-btn">ログイン</a>';
+          const loginBtn = iconArea.querySelector('.header-login-btn');
+          if (loginBtn) {
+            loginBtn.addEventListener('click', function (e) {
+              e.preventDefault();
+              const currentUrl = window.location.href;
+              localStorage.setItem('redirectUrl', currentUrl);
+              localStorage.setItem('loginRedirect', currentUrl);
+              window.location.href = this.href;
+            });
+          }
+        }
+      }
+
+      // 検索条件を保存して結果画面へ
+      const searchBtn = document.getElementById('searchBtn');
+      searchBtn.addEventListener('click', () => {
+        const distance = document.getElementById('distance').value;
+        const genres = Array.from(document.querySelectorAll('input[name="genre"]:checked')).map(g => g.value);
+        localStorage.setItem('searchBudget', budgetSlider.value);
+        localStorage.setItem('searchDistance', distance);
+        localStorage.setItem('searchGenres', JSON.stringify(genres));
+        location.href = 'FIN007.html';
+      });
+    });
+  </script>
 
 </body>
+
 </html>

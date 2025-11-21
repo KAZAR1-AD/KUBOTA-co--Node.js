@@ -1,66 +1,62 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>フレンド検索（FIN018）</title>
-    <link rel="stylesheet" href="../CSS/style.css"> </head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>フレンド追加（FIN018）</title>
+  <link rel="stylesheet" href="../CSS/style.css"/>
+</head>
 <body class="fin018">
 
-    <div class="fin018-title-bar">
-        <h2>フレンド検索</h2>
+  <header class="fixed-header">
+    <div class="fixed-header-left">
+      <a href="javascript:history.back()" class="page-back-btn">＜</a>
+    </div>
+    <div class="fixed-header-title">フレンド追加</div>
+    <div class="fixed-header-icon-area"></div>
+  </header>
+
+  <div class="container fin018-container">
+    <div class="form-group">
+      <label for="searchId" class="form-label">IDで検索</label>
+      <input type="text" id="searchId" class="form-input fin018-input" placeholder="IDを入力してください"/>
     </div>
 
-    <div class="container fin018-container">
-        
-        <div class="form-group">
-            <inp<!DOCTYPE html>
-                <html lang="ja">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>フレンド追加（FIN018）</title>
-                    <link rel="stylesheet" href="../CSS/style.css">
-                </head>
-                <body class="fin018">
-                
-                    <header class="fixed-header">
-                        <div class="fixed-header-left">
-                            <a href="javascript:history.back()" class="page-back-btn">＜</a>
-                        </div>
-                        <div class="fixed-header-title">フレンド追加</div>
-                        <div class="fixed-header-icon-area">
-                            </div>
-                    </header>
-                    <div class="container fin018-container">
-                        <div class="form-group">
-                            <label for="searchId" class="form-label">IDで検索</label>
-                            <input type="text" id="searchId" class="form-input fin018-input" placeholder="IDを入力してください">
-                        </div>
-                        
-                        <div class="button-area button-area-center">
-                            <button class="btn btn-primary fin018-search-btn">検索</button>
-                        </div>
-                
-                        <div class="fin018-result-container">
-                            </div>
-                    </div>
-                
-                </body>
-                </html>ut type="text" id="search-id" class="form-input fin018-input" placeholder="12345678">
-        </div>
-
-        <div class="button-area button-area-center">
-            <button class="btn fin018-search-btn">検索</button>
-        </div>
+    <div class="button-area button-area-center">
+      <button class="btn btn-primary fin018-search-btn" id="searchBtn">検索</button>
     </div>
 
-    <div class="fin017-list-container fin018-result-container">
-        </div>
+    <div class="fin018-result-container" id="resultContainer"></div>
 
     <div class="fin018-back-btn-area">
-        <a href="FIN017.html" class="btn btn-primary">戻る</a>
+      <a href="FIN017.html" class="btn btn-primary">戻る</a>
     </div>
+  </div>
+
+  <script>
+    // 仮のダミー検索（DB連携前のプレースホルダ）
+    document.getElementById('searchBtn').addEventListener('click', function() {
+      const id = document.getElementById('searchId').value.trim();
+      const container = document.getElementById('resultContainer');
+      container.innerHTML = '';
+      if (!id) {
+        container.innerHTML = '<p>IDを入力してください。</p>';
+        return;
+      }
+      // ここで本来はAPI経由でDB検索
+      const found = { id, username: 'ユーザー' + id.slice(-1), icon: id.slice(0,1).toUpperCase() };
+      container.innerHTML = `
+        <div class="fin017-friend-item">
+          <div class="fin017-icon">${found.icon}</div>
+          <div class="fin017-info">
+            <span class="fin017-username">${found.username}</span>
+            <span class="fin017-userid">ID: ${found.id}</span>
+          </div>
+          <button class="btn btn-secondary">追加</button>
+        </div>
+      `;
+    });
+  </script>
 
 </body>
 </html>
