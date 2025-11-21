@@ -32,7 +32,63 @@
                 
                 <span class="fin001-welcome-msg">ようこそ、<%= userName %>さん！</span>
                 
-                <a href="/FIN009" class="btn btn-default fin001-setting-btn" role="button">
+              <!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= pageTitle || '船橋今なにする？（FIN001）' %></title>
+  <link rel="stylesheet" href="/CSS/style.css" />
+</head>
+<body class="fin001">
+
+  <!-- 固定ヘッダー（非表示） -->
+  <header class="fixed-header fin001-header">
+    <div class="fixed-header-left"></div>
+    <div class="fixed-header-title">船橋今なにする？</div>
+    <div class="fixed-header-icon-area" id="headerIconArea"></div>
+  </header>
+
+  <!-- メインコンテンツ -->
+  <div class="container fin001-main-container">
+    <h1>船橋今なにする？</h1>
+    <div class="button-area button-area-center">
+      <a href="/FIN006" class="btn btn-primary fin001-start-btn">はじめる</a>
+    </div>
+  </div>
+
+  <script>
+    // ログイン状態に応じたヘッダーアイコン表示
+    document.addEventListener('DOMContentLoaded', function () {
+      const isLoggedIn = localStorage.getItem('isLoggedIn');
+      const savedImageUrl = localStorage.getItem('profileImage');
+      const iconArea = document.getElementById('headerIconArea');
+      if (!iconArea) return;
+
+      if (isLoggedIn === 'true') {
+        const imageUrl = savedImageUrl || '/images/kubota_icon0.png';
+        iconArea.innerHTML = `
+          <a href="/FIN008" class="header-profile-icon">
+            <img src="${imageUrl}" alt="メニュー">
+          </a>`;
+      } else {
+        iconArea.innerHTML = '<a href="/FIN002" class="btn btn-primary header-login-btn">ログイン</a>';
+        const loginBtn = iconArea.querySelector('.header-login-btn');
+        if (loginBtn) {
+          loginBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            const currentUrl = window.location.href;
+            localStorage.setItem('redirectUrl', currentUrl);
+            window.location.href = e.target.href;
+          });
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>
+  <a href="/FIN009" class="btn btn-default fin001-setting-btn" role="button">
                     個人設定
                 </a>
                 

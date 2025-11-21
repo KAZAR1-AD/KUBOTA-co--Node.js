@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>登録完了（FIN005）</title>
     <link rel="stylesheet" href="../CSS/style.css">
 </head>
+
 <body class="fin005">
 
     <div class="container">
@@ -21,7 +23,7 @@
     </div>
 
     <script>
-        document.getElementById('returnToTopButton').addEventListener('click', function() {
+        document.getElementById('returnToTopButton').addEventListener('click', function () {
             // 1. ブラウザに「isLoggedIn = true」という情報を保存
             localStorage.setItem('isLoggedIn', 'true');
             // 2. FIN001に遷移（履歴を置き換え）
@@ -29,4 +31,5 @@
         });
     </script>
 </body>
+
 </html>

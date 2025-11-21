@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ログイン画面（FIN002）</title>
     <link rel="stylesheet" href="../CSS/style.css">
 </head>
+
 <body class="fin002">
 
     <div class="container">
@@ -20,20 +22,20 @@
             <label for="password" class="form-label">パスワード</label>
             <input type="password" id="password" class="form-input">
         </div>
-        
+
         <div class="button-area">
             <button class="btn btn-primary" id="loginButton">ログイン</button>
-            
+
             <button class="btn btn-secondary" id="backButton">戻る</button>
         </div>
     </div>
 
     <script>
         // ログインボタンの処理
-        document.getElementById('loginButton').addEventListener('click', function() {
+        document.getElementById('loginButton').addEventListener('click', function () {
             localStorage.setItem('isLoggedIn', 'true');
             const redirectUrl = localStorage.getItem('redirectUrl');
-            
+
             if (redirectUrl) {
                 localStorage.removeItem('redirectUrl');
                 localStorage.removeItem('loginRedirect'); // 戻り先も削除
@@ -45,14 +47,14 @@
         });
 
         // ★ 追加：戻るボタンの処理
-        document.getElementById('backButton').addEventListener('click', function() {
+        document.getElementById('backButton').addEventListener('click', function () {
             // 「戻る」ボタン用の戻り先を取得
             const loginRedirect = localStorage.getItem('loginRedirect');
-            
+
             // 戻り先（FIN001やFIN006）を削除
             localStorage.removeItem('loginRedirect');
             localStorage.removeItem('redirectUrl'); // 念のためこちらも削除
-            
+
             if (loginRedirect) {
                 // 戻り先が保存されていれば、そこに戻る
                 location.href = loginRedirect;
@@ -63,4 +65,5 @@
         });
     </script>
 </body>
+
 </html>

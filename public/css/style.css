@@ -4,10 +4,11 @@
    共通固定ヘッダー
 ================================== */
 body {
-    padding-top: 60px; /* ★ 80pxから60pxに戻す */
-    
+    padding-top: 60px;
+    /* ★ 80pxから60pxに戻す */
+
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-    background-color: #f4f7f6; 
+    background-color: #f4f7f6;
     color: #333;
     margin: 0;
     font-size: 16px;
@@ -15,62 +16,70 @@ body {
 }
 
 .fixed-header {
-    background-color: #0b4c68; 
+    background-color: #0b4c68;
     color: white;
-    height: 60px; /* ★ 80pxから60pxに戻す */
+    height: 60px;
+    /* ★ 80pxから60pxに戻す */
     padding: 0 20px;
     display: flex;
     align-items: center;
-    justify-content: space-between; 
-    position: fixed; 
+    justify-content: space-between;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     box-sizing: border-box;
     z-index: 1000;
 }
+
 .fixed-header-left {
-    flex: 1; 
-    display: flex; 
-    align-items: center; 
+    flex: 1;
+    display: flex;
+    align-items: center;
 }
+
 .fixed-header-title {
     font-size: 20px;
     font-weight: 600;
-    flex: 1; 
+    flex: 1;
     text-align: center;
-    white-space: nowrap; 
+    white-space: nowrap;
 }
+
 .fixed-header-icon-area {
-    flex: 1; 
+    flex: 1;
     display: flex;
-    justify-content: flex-end; 
-    align-items: center; 
+    justify-content: flex-end;
+    align-items: center;
 }
 
 /* ヘッダー内の戻るボタン */
 .fixed-header .page-back-btn {
-    position: static; 
-    transform: none; 
-    padding: 0 10px; 
+    position: static;
+    transform: none;
+    padding: 0 10px;
 }
 
 /* ★ 変更点：ヘッダー内のプロフィールアイコン */
 .fixed-header .header-profile-icon {
-    width: 44px; /* 64pxから44pxに戻す */
-    height: 44px; /* 64pxから44pxに戻す */
+    width: 44px;
+    /* 64pxから44pxに戻す */
+    height: 44px;
+    /* 64pxから44pxに戻す */
 }
 
 /* ★ 変更点：ヘッダー内のログインボタン (全ページ共通) */
 .fixed-header .header-login-btn {
-    height: 38px; /* 44pxから38pxに戻す */
-    line-height: 36px; /* 42pxから36pxに戻す */
+    height: 38px;
+    /* 44pxから38pxに戻す */
+    line-height: 36px;
+    /* 42pxから36pxに戻す */
     font-size: 14px;
     font-weight: 600;
     padding: 0 15px;
-    width: auto; 
+    width: auto;
     text-align: center;
-    display: inline-block; 
+    display: inline-block;
 }
 
 
@@ -80,18 +89,18 @@ body {
 
 .container {
     width: 90%;
-    max-width: 600px; 
+    max-width: 600px;
     margin: 20px auto;
     padding: 25px 30px;
     background-color: #ffffff;
     border: 1px solid #e0e0e0;
     border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 /* --- タイトルバー (共通) --- */
 .page-title-bar {
-    background-color: #0b4c68; 
+    background-color: #0b4c68;
     color: white;
     padding: 15px 20px;
     margin-bottom: 30px;
@@ -100,12 +109,14 @@ body {
     position: relative;
     text-align: center;
 }
+
 .page-title-bar h2 {
     margin: 0;
     font-size: 22px;
     font-weight: 600;
-    flex-grow: 1; 
+    flex-grow: 1;
 }
+
 .page-back-btn {
     position: absolute;
     left: 15px;
@@ -118,6 +129,7 @@ body {
     padding: 0 10px;
     line-height: 1;
 }
+
 .page-back-btn:hover {
     opacity: 0.8;
 }
@@ -127,6 +139,7 @@ body {
     margin-bottom: 20px;
     text-align: left;
 }
+
 .form-label {
     font-size: 14px;
     font-weight: 600;
@@ -134,22 +147,25 @@ body {
     margin-bottom: 8px;
     color: #555;
 }
+
 .form-input {
     width: 100%;
     height: 45px;
     border: 1px solid #ccc;
-    background-color: #fdfdfd; 
+    background-color: #fdfdfd;
     font-size: 16px;
     padding: 8px 12px;
     box-sizing: border-box;
     border-radius: 8px;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
+
 .form-input:focus {
-    border-color: #007bff; 
-    box-shadow: 0 0 0 3px rgba(0,123,255,0.2);
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
     outline: none;
 }
+
 .form-input[readonly] {
     background-color: #e9ecef;
     color: #6c757d;
@@ -158,12 +174,13 @@ body {
 /* --- ボタン共通 --- */
 .button-area {
     display: flex;
-    justify-content: space-between; 
+    justify-content: space-between;
     margin-top: 30px;
     gap: 15px;
 }
+
 .button-area-center {
-    justify-content: center; 
+    justify-content: center;
 }
 
 .btn {
@@ -178,40 +195,48 @@ body {
     padding: 0 25px;
     line-height: 46px;
     text-decoration: none;
-    width: 100%; 
+    width: 100%;
     box-sizing: border-box;
 }
+
 .btn-primary {
-    background-color: #007bff; 
+    background-color: #007bff;
     color: white;
     border-color: #007bff;
 }
+
 .btn-primary:hover {
     background-color: #0069d9;
     border-color: #0062cc;
 }
+
 .btn-secondary {
-    background-color: #ffffff; 
+    background-color: #ffffff;
     color: #333;
     border-color: #ccc;
 }
+
 .btn-secondary:hover {
     background-color: #f8f9fa;
     border-color: #bbb;
 }
+
 .btn-danger {
-    background-color: #dc3545; 
+    background-color: #dc3545;
     color: white;
     border-color: #dc3545;
 }
+
 .btn-danger:hover {
     background-color: #c82333;
     border-color: #bd2130;
 }
+
 .button-area-center .btn {
     width: auto;
     min-width: 150px;
 }
+
 .button-area .btn:only-child {
     width: auto;
     min-width: 150px;
@@ -227,9 +252,11 @@ body {
     text-decoration: none;
     /* width/height は .fixed-header側で指定 */
 }
+
 .header-profile-icon:hover {
     transform: scale(1.1);
 }
+
 .header-profile-icon img {
     width: 100%;
     height: 100%;
@@ -243,8 +270,9 @@ body {
 
 /******* FIN001 START ********/
 .fin001-header {
-    display: none; 
+    display: none;
 }
+
 .fin001-main-container {
     text-align: center;
     margin-top: 150px;
@@ -252,41 +280,52 @@ body {
     box-shadow: none;
     background-color: transparent;
 }
+
 .fin001-main-container h1 {
     font-size: 40px;
     margin-bottom: 40px;
-    color: #0b4c68; 
+    color: #0b4c68;
 }
+
 .fin001-start-btn {
     width: 200px;
     height: 60px;
     font-size: 22px;
     line-height: 58px;
 }
+
 .fin001-start-btn:hover {
     background-color: #0069d9;
 }
+
 /******* FIN001 END ********/
 
 
 /******* FIN002 START ********/
-.fin002 .container { max-width: 450px; }
+.fin002 .container {
+    max-width: 450px;
+}
+
 .fin002-register {
     text-align: right;
     margin-bottom: 25px;
 }
+
 .fin002-register-link {
     font-size: 14px;
     color: #007bff;
     text-decoration: none;
     font-weight: 600;
 }
+
 .fin002-register-link:hover {
     text-decoration: underline;
 }
+
 .fin002 .btn {
     width: 48%;
 }
+
 /******* FIN002 END ********/
 
 
@@ -295,6 +334,7 @@ body {
     max-width: 450px;
     padding: 0;
 }
+
 .fin003-title {
     background-color: #0b4c68;
     color: white;
@@ -305,12 +345,15 @@ body {
     border-radius: 10px 10px 0 0;
     text-align: center;
 }
+
 .fin003-form-wrapper {
     padding: 30px;
 }
+
 .fin003 .btn {
     width: 48%;
 }
+
 /******* FIN003 END ********/
 
 
@@ -319,15 +362,17 @@ body {
     max-width: 500px;
     text-align: center;
 }
+
 .fin004 h2 {
     background-color: #0b4c68;
     color: white;
     padding: 20px 0;
-    margin: -30px -40px 30px -40px; 
+    margin: -30px -40px 30px -40px;
     border-radius: 10px 10px 0 0;
     font-size: 22px;
     font-weight: 600;
 }
+
 .info-block {
     text-align: left;
     margin: 20px auto 30px;
@@ -336,6 +381,7 @@ body {
     border-left: 4px solid #0b4c68;
     padding-left: 20px;
 }
+
 .info-block span {
     font-weight: 600;
     display: inline-block;
@@ -344,9 +390,11 @@ body {
     margin-right: 15px;
     color: #555;
 }
+
 .fin004 .btn {
     width: 48%;
 }
+
 /******* FIN004 END ********/
 
 
@@ -355,6 +403,7 @@ body {
     max-width: 500px;
     text-align: center;
 }
+
 .fin005 h2 {
     background-color: #0b4c68;
     color: white;
@@ -364,6 +413,7 @@ body {
     font-size: 22px;
     font-weight: 600;
 }
+
 /******* FIN005 END ********/
 
 
@@ -372,18 +422,25 @@ body {
     padding: 0;
     max-width: 650px;
 }
+
 .fin006-title-bar {
-    display: none; 
+    display: none;
 }
+
 .fin006-search-box {
     padding: 30px;
 }
+
 .fin006-criteria-row {
     display: flex;
     align-items: center;
     margin-bottom: 25px;
 }
-.fin006-criteria-row:last-child { margin-bottom: 0; }
+
+.fin006-criteria-row:last-child {
+    margin-bottom: 0;
+}
+
 .fin006-label {
     width: 150px;
     font-weight: 600;
@@ -391,23 +448,27 @@ body {
     flex-shrink: 0;
     color: #555;
 }
+
 .fin006-input-area {
     flex-grow: 1;
     display: flex;
     align-items: center;
-    gap: 15px; 
+    gap: 15px;
 }
+
 .fin006-slider {
     width: 100%;
 }
+
 .fin006-value-display {
     font-size: 16px;
     font-weight: 600;
-    color: #007bff; 
-    width: 80px; 
-    text-align: right; 
-    flex-shrink: 0; 
+    color: #007bff;
+    width: 80px;
+    text-align: right;
+    flex-shrink: 0;
 }
+
 .fin006-select {
     width: 100%;
     height: 45px;
@@ -418,77 +479,94 @@ body {
     box-sizing: border-box;
     border-radius: 8px;
 }
+
 .fin006-checkbox-group {
     display: flex;
     flex-wrap: wrap;
     gap: 15px;
 }
+
 .fin006-checkbox-group label {
     cursor: pointer;
     font-size: 16px;
     display: flex;
     align-items: center;
 }
+
 .fin006-checkbox-group input {
     margin-right: 8px;
 }
+
 .fin006 .button-area {
     padding: 0 30px 30px;
 }
+
 .fin006-btn {
     width: auto;
     min-width: 200px;
 }
+
 /******* FIN006 END ********/
 
 
 /******* FIN007 START ********/
+
 .fin007-title-bar {
-    display: none; 
+    display: none;
 }
+
 .fin007-results-container {
     width: 90%;
-    max-width: 700px; 
-    margin: 0 auto 150px; 
+    max-width: 700px;
+    margin: 0 auto 150px;
 }
+
 .fin007-result-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #fde9e4; 
+    background-color: #fde9e4;
     padding: 20px;
-    margin-top:  16px;
+    margin-top: 16px;
     margin-bottom: 15px;
     border: 1px solid #ddd;
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.2s;
 }
+
 .fin007-result-item:hover {
-    background-color: #fbe0d6; 
+    background-color: #fbe0d6;
 }
-/* ★ 変更点 START ★ */
-.fin016-result-info {
+
+.fin007-result-info {
     font-size: 17px;
     font-weight: 600;
     color: #333;
-    flex-grow: 1; /* ★ 追加：利用可能なスペースをすべて使う */
-    text-align: center; /* ★ 追加：テキストを中央揃えにする */
-    margin-right: 15px; /* ★ 追加：星との間に余白を設ける */
+    flex-grow: 1;
+    text-align: center;
+    margin-right: 15px;
 }
-.fin016-result-star { 
-    font-size: 30px; 
-    color: #e60000; 
-    flex-shrink: 0; /* ★ 追加：星が縮まないようにする */
+
+.fin007-result-star {
+    font-size: 30px;
+    color: #e60000;
+    flex-shrink: 0;
 }
-/* ★ 変更点 END ★ */
+
+/* ページネーション */
 .fin007-pagination {
     text-align: center;
     margin: 30px 0;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
 }
+
 .fin007-page-item {
     display: inline-block;
-    width: 35px;
+    min-width: 35px;
     height: 35px;
     line-height: 35px;
     text-align: center;
@@ -496,46 +574,70 @@ body {
     background-color: #fff;
     color: #333;
     text-decoration: none;
-    margin: 0 3px;
     font-weight: bold;
     border-radius: 4px;
+    cursor: pointer;
+    user-select: none;
+    padding: 0 8px;
 }
-.fin007-page-item.dots { border: none; background: none; }
+
+.fin007-page-item:hover:not(.active):not(.disabled):not(.dots) {
+    background-color: #e6f0f5;
+}
+
 .fin007-page-item.active {
     background-color: #0b4c68;
     color: white;
     border-color: #0b4c68;
+    pointer-events: none;
 }
-.fin007-page-item:not(.dots):not(.active):hover {
-    background-color: #f4f4f4;
+
+.fin007-page-item.disabled {
+    color: #aaa;
+    border-color: #ddd;
+    background-color: #f9f9f9;
+    pointer-events: none;
 }
+
+.fin007-page-item.dots {
+    border: none;
+    background: none;
+    color: #999;
+    cursor: default;
+    pointer-events: none;
+}
+
+/* 条件変更ボタン */
 .fin007-change-criteria-btn {
-    position: fixed; 
+    position: fixed;
     bottom: 25px;
     right: 25px;
     width: 90px;
     height: 90px;
-    background-color: #0b4c68; 
+    background-color: #0b4c68;
     color: white;
     border-radius: 50%;
     text-align: center;
     font-size: 14px;
     font-weight: bold;
     text-decoration: none;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    display: flex; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
     justify-content: center;
     align-items: center;
-    line-height: 1.3; 
+    line-height: 1.3;
     transition: transform 0.2s;
-    padding: 5px; 
+    padding: 5px;
     box-sizing: border-box;
 }
+
 .fin007-change-criteria-btn:hover {
-    transform: scale(1.05); 
-    opacity: 1; 
+    transform: scale(1.05);
+    opacity: 1;
 }
+
 /******* FIN007 END ********/
+
 
 
 /******* FIN008 START ********/
@@ -545,12 +647,14 @@ body {
     border-color: #e0e0e0;
     max-width: 450px;
 }
+
 .fin008-header-buttons {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
 }
+
 .fin008-back-btn {
     font-size: 28px;
     font-weight: bold;
@@ -558,32 +662,36 @@ body {
     text-decoration: none;
     padding: 5px 10px;
 }
+
 .fin008-logout-btn {
-    width: auto; 
-    padding-left: 15px; 
-    padding-right: 15px; 
+    width: auto;
+    padding-left: 15px;
+    padding-right: 15px;
     height: 40px;
     line-height: 38px;
     font-size: 14px;
 }
+
 .fin008-photo-area {
     display: block;
     width: 150px;
     height: 150px;
-    background-color: #e9ecef; 
+    background-color: #e9ecef;
     text-decoration: none;
     margin: 20px auto 15px;
     border: 2px dashed #ccc;
-    border-radius: 50%; 
+    border-radius: 50%;
     transition: background-color 0.2s, border-color 0.2s;
-    overflow: hidden; 
-    padding: 0; 
-    position: relative; 
+    overflow: hidden;
+    padding: 0;
+    position: relative;
 }
+
 .fin008-photo-area:hover {
     background-color: #e2e6ea;
     border-color: #bbb;
 }
+
 #profilePhotoDisplay {
     width: 100%;
     height: 100%;
@@ -592,16 +700,19 @@ body {
     align-items: center;
     text-align: center;
 }
+
 #profilePhotoDisplay div {
     font-size: 18px;
     font-weight: 600;
     color: #6c757d;
 }
+
 #profilePhotoDisplay img {
     width: 100%;
     height: 100%;
-    object-fit: cover; 
+    object-fit: cover;
 }
+
 .fin008-username {
     font-size: 24px;
     font-weight: 600;
@@ -609,20 +720,22 @@ body {
     text-align: center;
     margin-bottom: 30px;
 }
+
 .fin008-menu-links {
     display: flex;
     flex-direction: column;
-    gap: 1px; 
+    gap: 1px;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
-    overflow: hidden; 
+    overflow: hidden;
 }
+
 .fin008-btn {
     background-color: #fff;
-    color: #007bff; 
+    color: #007bff;
     border: none;
     width: 100%;
-    box-sizing: border-box; 
+    box-sizing: border-box;
     height: 55px;
     line-height: 55px;
     text-align: left;
@@ -631,12 +744,15 @@ body {
     border-bottom: 1px solid #e0e0e0;
     border-radius: 0;
 }
+
 .fin008-menu-links a:last-child .fin008-btn {
     border-bottom: none;
 }
+
 .fin008-btn:hover {
     background-color: #f8f9fa;
 }
+
 /******* FIN008 END ********/
 
 
@@ -644,24 +760,30 @@ body {
 .fin009 .container {
     padding: 0;
 }
+
 .fin009-title-bar {
     border-radius: 10px 10px 0 0;
     margin-bottom: 0;
 }
+
 .fin009-container .form-group {
     padding: 0 30px;
     margin-top: 16px;
 }
+
 .fin009-container .form-group:first-child {
     padding-top: 30px;
 }
+
 .fin009-input-wrapper {
     position: relative;
 }
+
 .fin009-input-wrapper .form-input {
-    padding-right: 90px; 
+    padding-right: 90px;
     background-color: #fff;
 }
+
 .fin009-edit-btn {
     position: absolute;
     right: 8px;
@@ -677,9 +799,11 @@ body {
     border: 1px solid #ccc;
     padding: 0 10px;
 }
+
 .fin009-edit-btn:hover {
     background-color: #e9ecef;
 }
+
 /******* FIN009 END ********/
 
 
@@ -689,6 +813,7 @@ body {
 .fin014-container {
     padding: 0;
 }
+
 .fin010 h2,
 .fin012 h2,
 .fin014 h2 {
@@ -701,27 +826,32 @@ body {
     font-weight: 600;
     text-align: center;
 }
+
 .fin010 .form-group,
 .fin012 .form-group,
 .fin014 .form-group {
     padding: 0 30px;
     margin-top: 16px;
 }
+
 .fin010 .form-group:first-child,
 .fin012 .form-group:first-child,
 .fin014 .form-group:first-child {
     padding-top: 30px;
 }
+
 .fin010 .button-area,
 .fin012 .button-area,
 .fin014 .button-area {
     padding: 20px 30px 30px;
 }
+
 .fin010 .btn,
 .fin012 .btn,
 .fin014 .btn {
     width: 48%;
 }
+
 /******* FIN010 / 012 / 014 END ********/
 
 
@@ -732,6 +862,7 @@ body {
     padding: 0;
     text-align: center;
 }
+
 .fin011 h2,
 .fin013 h2,
 .fin015 h2 {
@@ -743,6 +874,7 @@ body {
     font-size: 22px;
     font-weight: 600;
 }
+
 .fin011-message,
 .fin013-message,
 .fin015-message {
@@ -750,11 +882,13 @@ body {
     margin: 50px 20px;
     font-weight: 500;
 }
+
 .fin011 .button-area,
 .fin013 .button-area,
 .fin015 .button-area {
     padding: 20px 30px 30px;
 }
+
 /******* FIN011 / 013 / 015 END ********/
 
 
@@ -763,36 +897,42 @@ body {
 .fin016-title-bar {
     display: none;
 }
+
 .fin016-results-container {
     width: 90%;
-    max-width: 700px; 
+    max-width: 700px;
     margin: 0 auto 100px;
 }
+
 .fin016-result-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #fff; 
+    background-color: #fff;
     padding: 20px;
     margin-top: 16px;
     margin-bottom: 15px;
-    border: 1px solid #e0e0e0; 
-    border-radius: 8px; 
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
     cursor: pointer;
     transition: box-shadow 0.2s;
 }
+
 .fin016-result-item:hover {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
+
 .fin016-result-info {
     font-size: 17px;
     font-weight: 600;
     color: #333;
 }
-.fin016-result-star { 
-    font-size: 30px; 
-    color: #e60000; 
+
+.fin016-result-star {
+    font-size: 30px;
+    color: #e60000;
 }
+
 /******* FIN016 END ********/
 
 
@@ -806,64 +946,73 @@ body {
 .fin017-add-btn-header {
     color: white;
     text-decoration: none;
-    font-size: 26px; /* 30pxから調整 */
+    font-size: 26px;
+    /* 30pxから調整 */
     font-weight: bold;
     padding: 0 10px;
     /* margin-left: 10px; を削除 (icon-areaが担当) */
     transition: transform 0.2s;
 }
+
 .fin017-add-btn-header:hover {
     transform: scale(1.1);
 }
 
 .fin017-list-container {
     width: 90%;
-    max-width: 700px; 
+    max-width: 700px;
     margin: 0 auto 100px;
 }
+
 .fin017-friend-item {
     display: flex;
     align-items: center;
-    background-color: #fff; 
-    color: #333; 
+    background-color: #fff;
+    color: #333;
     padding: 15px;
     margin-top: 16px;
     margin-bottom: 15px;
-    border-radius: 8px; 
-    border: 1px solid #e0e0e0; 
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
 }
+
 .fin017-icon {
     width: 60px;
     height: 60px;
-    background-color: #e9ecef; 
-    color: #6c757d; 
+    background-color: #e9ecef;
+    color: #6c757d;
     font-size: 14px;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-shrink: 0;
-    border-radius: 50%; 
+    border-radius: 50%;
 }
+
 .fin017-info {
     flex-grow: 1;
     margin: 0 15px;
 }
+
 .fin017-username {
     font-size: 18px;
-    font-weight: 600; 
+    font-weight: 600;
     display: block;
     margin-bottom: 5px;
 }
+
 .fin017-userid {
     font-size: 14px;
-    color: #6c757d; 
+    color: #6c757d;
 }
+
 .fin017-heart {
-    font-size: 30px; 
+    font-size: 30px;
     margin-right: 10px;
     cursor: pointer;
-    color: #dc3545; 
+    color: #dc3545;
 }
+
 /******* FIN017 END ********/
 
 
@@ -872,6 +1021,7 @@ body {
 .fin018-title-bar {
     display: none;
 }
+
 /* ★ 変更点：古い戻るボタンを非表示 */
 .fin018-back-btn {
     display: none;
@@ -880,6 +1030,7 @@ body {
 .fin018-container {
     max-width: 500px;
 }
+
 .fin018-input {
     background-color: #fff;
     border-color: #aaa;
@@ -888,42 +1039,48 @@ body {
     font-weight: 500;
     height: 48px;
 }
+
 .fin018-container .form-group {
     margin-bottom: 20px;
 }
+
 .fin018-search-btn {
     width: auto;
     min-width: 150px;
 }
+
 .fin018-result-container {
     margin-top: 30px;
-    min-height: 150px; 
+    min-height: 150px;
 }
+
 /******* FIN018 END ********/
 
 
 /******* FIN019 START ********/
 .fin019-modal-overlay {
-    display: none; 
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.6); 
+    background-color: rgba(0, 0, 0, 0.6);
     justify-content: center;
     align-items: center;
     z-index: 1000;
 }
+
 .fin019-modal-content {
-    background-color: #ffffff; 
-    padding: 0; 
+    background-color: #ffffff;
+    padding: 0;
     border-radius: 10px;
     width: 90%;
     max-width: 600px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    color: #333; 
+    color: #333;
 }
+
 .fin019-modal-title {
     font-size: 20px;
     margin: 0;
@@ -931,8 +1088,9 @@ body {
     font-weight: 600;
     border-bottom: 1px solid #e0e0e0;
 }
+
 .fin019-image-grid {
-    background-color: #f4f7f6; 
+    background-color: #f4f7f6;
     border-radius: 0;
     padding: 25px;
     display: grid;
@@ -942,47 +1100,54 @@ body {
     max-height: 300px;
     overflow-y: auto;
 }
+
 .fin019-image-item {
     width: 80px;
     height: 80px;
-    object-fit: cover; 
-    border-radius: 50%; 
-    border: 3px solid transparent; 
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid transparent;
     cursor: pointer;
     transition: border-color 0.2s, transform 0.2s;
-    margin: 0 auto; 
+    margin: 0 auto;
     display: block;
 }
+
 .fin019-image-item.selected {
-    border-color: #007bff; 
-    transform: scale(1.05); 
+    border-color: #007bff;
+    transform: scale(1.05);
 }
+
 .fin019-image-item:hover:not(.selected) {
-    border-color: #a0a0a0; 
+    border-color: #a0a0a0;
 }
+
 .fin019-footer {
     padding: 20px 25px;
     display: flex;
-    justify-content: center; 
+    justify-content: center;
     align-items: center;
-    gap: 15px; 
+    gap: 15px;
     border-top: 1px solid #e0e0e0;
     background-color: #f8f9fa;
     border-radius: 0 0 10px 10px;
 }
+
 .fin019-close-btn {
-    width: 100px; 
+    width: 100px;
     height: 42px;
     line-height: 40px;
     font-size: 15px;
 }
+
 .fin019-save-btn {
-    width: 100px; 
+    width: 100px;
     height: 42px;
     line-height: 40px;
     font-size: 15px;
-    background-color: #a0a0a0; 
+    background-color: #a0a0a0;
     border-color: #a0a0a0;
     cursor: not-allowed;
 }
+
 /******* FIN019 END ********/

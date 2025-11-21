@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>検索結果（FIN007）</title>
     <link rel="stylesheet" href="../CSS/style.css">
 </head>
+
 <body class="fin007">
 
     <header class="fixed-header">
         <div class="fixed-header-left">
-            </div>
+        </div>
         <div class="fixed-header-title">船橋今なにする？</div>
         <div class="fixed-header-icon-area" id="headerIconArea">
-            </div>
+        </div>
     </header>
     <div class="fin007-results-container">
         <div class="fin007-result-item">
@@ -24,9 +26,14 @@
             <span class="fin007-result-info">店名 徒歩○分 1000円〜1400円</span>
             <span class="fin007-result-star">★</span>
         </div>
-        <div class="fin007-pagination">
-            <span class="fin007-page-item active">1</span>
-            <a href="#" class="fin007-page-item">2</a>
+        <div class="fin007-pagination" id="pagination">
+            <span class="fin007-page-item" data-page="prev">«</span>
+            <span class="fin007-page-item active" data-page="1">1</span>
+            <span class="fin007-page-item" data-page="2">2</span>
+            <span class="fin007-page-item" data-page="3">3</span>
+            <span class="fin007-page-item" data-page="4">4</span>
+            <span class="fin007-page-item" data-page="5">5</span>
+            <span class="fin007-page-item" data-page="next">»</span>
         </div>
     </div>
 
@@ -35,42 +42,79 @@
     </a>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            
+        document.addEventListener('DOMContentLoaded', function () {
             // --- ログイン状態チェック処理 ---
             const isLoggedIn = localStorage.getItem('isLoggedIn');
             const savedImageUrl = localStorage.getItem('profileImage');
-
-            // ★ 変更点：セレクタを 'headerIconArea' に変更
             const iconArea = document.getElementById('headerIconArea');
 
-            if (!iconArea) return; 
-
-            if (isLoggedIn === 'true') {
-                let imageUrlToShow = savedImageUrl ? savedImageUrl : '../images/kubota_icon0.png';
-                
-                // ★ 変更点：クラス名を .header-profile-icon に統一
-                iconArea.innerHTML = `
-                    <a href="FIN008.html" class="header-profile-icon"> 
-                        <img src="${imageUrlToShow}" alt="メニュー">
-                    </a>`;
-            } else {
-                // ★ 変更点：クラス名を .header-login-btn に統一
-                iconArea.innerHTML = '<a href="FIN002.html" class="btn btn btn-primary header-login-btn">ログイン</a>';
-                
-                const loginBtn = iconArea.querySelector('.header-login-btn');
-                if (loginBtn) {
-                    loginBtn.addEventListener('click', function(e) {
-                        e.preventDefault(); 
-                        const currentUrl = window.location.href;
-                        localStorage.setItem('redirectUrl', currentUrl); 
-                        localStorage.setItem('loginRedirect', currentUrl); 
-                        window.location.href = e.target.href; 
-                    });
+            if (iconArea) {
+                if (isLoggedIn === 'true') {
+                    let imageUrlToShow = savedImageUrl ? savedImageUrl : '../images/kubota_icon0.png';
+                    iconArea.innerHTML = `
+                <a href="FIN008.html" class="header-profile-icon"> 
+                  <img src="${imageUrlToShow}" alt="メニュー">
+                </a>`;
+                } else {
+                    iconArea.innerHTML = '<a href="FIN002.html" class="btn btn btn-primary header-login-btn">ログイン</a>';
+                    const loginBtn = iconArea.querySelector('.header-login-btn');
+                    if (loginBtn) {
+                        loginBtn.addEventListener('click', function (e) {
+                            e.preventDefault();
+                            const currentUrl = window.location.href;
+                            localStorage.setItem('redirectUrl', currentUrl);
+                            localStorage.setItem('loginRedirect', currentUrl);
+                            window.location.href = e.target.href;
+                        });
+                    }
                 }
             }
+
+            // --- ページネーション処理 ---
+            const pagination = document.getElementById('pagination');
+            if (!pagination) return;
+
+            const pageItems = pagination.querySelectorAll('.fin007-page-item');
+            let currentPage = 1;
+            const totalPages = 5;
+
+            function updatePagination() {
+                pageItems.forEach(item => {
+                    const page = item.dataset.page;
+                    item.classList.remove('active', 'disabled');
+
+                    if (page === 'prev') {
+                        if (currentPage === 1) item.classList.add('disabled');
+                    } else if (page === 'next') {
+                        if (currentPage === totalPages) item.classList.add('disabled');
+                    } else if (parseInt(page) === currentPage) {
+                        item.classList.add('active');
+                    }
+                });
+            }
+
+            pagination.addEventListener('click', function (e) {
+                const target = e.target;
+                if (!target.classList.contains('fin007-page-item') || target.classList.contains('disabled')) return;
+
+                const page = target.dataset.page;
+
+                if (page === 'prev' && currentPage > 1) {
+                    currentPage--;
+                } else if (page === 'next' && currentPage < totalPages) {
+                    currentPage++;
+                } else if (!isNaN(parseInt(page))) {
+                    currentPage = parseInt(page);
+                }
+
+                updatePagination();
+            });
+
+            updatePagination(); // 初期表示
         });
     </script>
 
+
 </body>
+
 </html>
