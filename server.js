@@ -240,16 +240,23 @@ app.get('/search', (req, res) => {
 // ----------------------------------------------------
 // /search: お店検索処理 (POST)
 // ----------------------------------------------------
-app.post('/search', (req, res) => {
+app.post('/search', async (req, res) => {
+    const { budget, distance, genre } = req.body;
+
+    console.log(budget); // デバッグ用
+    console.log(distance); // デバッグ用
+    console.log(genre); // デバッグ用
+
     try {
-        const result = ShopDAO.findAll();
-        return res.render('FIN007', { shop: result });  // FIN007は作業中
+        const result = await ShopDAO.findByOptions(budget, distance, genre);
+        return res.render('FIN007', { shop: result });
     } catch (error) {
         console.error('お店検索処理エラー:', error);
         req.session.error = 'お店の検索中にエラーが発生しました。';
         return res.redirect('/search');
     }
 });
+
 
 
 // ----------------------------------------------------
