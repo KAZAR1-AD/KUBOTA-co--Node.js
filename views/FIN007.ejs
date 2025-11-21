@@ -17,6 +17,49 @@
     <div class="fin007-results-container">
 
         <%# EJSわかんね～～～～～ %>
+        
+        <!--
+
+        ループで取り出そうとして頑張ってた部分　後で消す
+
+        <% if (Array.isArray(shop)) { %>
+            <% shop.forEach(item => { %>
+                <table>
+                    <tr>
+                        <th>shop_id</th>
+                        <th>shop_name</th>
+                        <th>budget</th>
+                        <th>distance</th>
+                        <th>genre</th>
+                        <th>photo_address</th>
+                        <th>address</th>
+                        <th>googlemap_link</th>
+                    </tr>
+                    <tr>
+                        <td><%= item.shop_id %></td>
+                        <td><%= item.shop_name %></td>
+                        <td><%= item.budget %></td>
+                        <td><%= item.distance %></td>
+                        <td><%= item.genre %></td>
+                        <td><%= item.photo_address %></td>
+                        <td><%= item.address %></td>
+                        <td><%= item.googlemap_link %></td>
+                    </tr>
+                </table>
+            <% }) %>
+        <% } else { %>
+            <p>データがありません。</p>
+        <% } %>
+        
+        -->
+        
+        <% shop.forEach(item => { %>
+        <div class="fin007-result-item">
+            <span class="fin007-result-info"><%= item.shop_name %> 徒歩<%= item.distance %>分 予算：<%= item.budget %>円</span>
+            <span class="fin007-result-star">★</span>
+        </div>
+        <% }); %>
+
 
         <div class="fin007-result-item">
             <span class="fin007-result-info">店名 徒歩○分 1000円〜1400円</span>
@@ -42,7 +85,7 @@
 
     </div>
 
-    <a href="FIN006.html" class="fin007-change-criteria-btn">
+    <a href="/search" class="fin007-change-criteria-btn">
         条件<br>を変える
     </a>
     </body>
