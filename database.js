@@ -1,12 +1,13 @@
 // 必要なモジュールを読み込む
 const mysql = require('mysql2/promise');
+
 // ⚠️ データベース接続情報 ⚠️
 // 環境に合わせて、以下の情報を正確に設定してください。
 const pool = mysql.createPool({
     host: '172.16.198.201',      // データベースサーバーのホスト名
-    user: 'db_editor',// データベースユーザー名
-    password: '047642', // データベースパスワード
-    database: 'kubota_corp', // 使用するデータベース名
+    user: 'db_editor',          // データベースユーザー名
+    password: '047642',         // データベースパスワード
+    database: 'kubota_corp',    // 使用するデータベース名
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
@@ -18,7 +19,7 @@ const pool = mysql.createPool({
  * @param {Array<any>} params - クエリパラメータ
  * @returns {Promise<[rows: Array<any>, fields: Array<any>]>}
  */
-exports.query = async (sql, params) => {
+const query = async (sql, params) => {
     try {
         // pool.queryは [rows, fields] のタプルを返します
         const [rows, fields] = await pool.query(sql, params);
@@ -41,4 +42,12 @@ pool.getConnection()
         console.error('データベースのクレデンシャル（host, user, password, database）を確認してください。');
     });
 
-module.exports = pool; // UserDAOがpool.queryを使用できるようにpoolをエクスポート
+/**
+ * モジュールが外部からインポートされる際の公開オブジェクト
+ * - query: DAOがデータベース操作のために使用する主要な関数
+ * - pool: 必要に応じて直接プールにアクセスするために使用（非推奨だが互換性のために残す）
+ */
+module.exports = {
+    pool,
+    query
+};

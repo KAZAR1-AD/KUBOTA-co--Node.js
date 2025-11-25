@@ -15,38 +15,46 @@
 
     <div class="container fin008-container">
 
+        <!-- アイコン表示エリア: userIconUrlをサーバーから取得した画像URLに置き換え -->
         <a href="#" class="fin008-photo-area" id="openPhotoModal">
-            <div>写真</div>
+            <!-- <img>タグを追加し、src属性にuserIconUrl変数を埋め込む -->
+            <img src="<%= userIconUrl %>" alt="ユーザーアイコン" class="fin008-icon">
             <span class="fin008-photo-caption">選択式の写真を<br>設定する画面へ遷移</span>
         </a>
-
+    
+        <!-- ユーザーネーム表示エリア: userName変数を埋め込む -->
         <div class="fin008-username">
-            名前
+            <%= userName %>
         </div>
-
+    
         <div class="fin008-menu-links">
             <a href="/FIN009" class="btn fin008-btn">個人設定</a>
             <a href="#" class="btn fin008-btn">フレンド</a>
             <a href="#" class="btn fin008-btn">お気に入り</a>
+            <button class="btn fin008-btn" onclick="history.back()">戻る</button>
         </div>
+    
+    
     </div>
+    <!-- プロフィール画像変更モーダル (データ取得はここでは行わず、表示のみ) -->
     <div id="photoModal" class="fin019-modal-overlay">
         <div class="fin019-modal-content">
             <h3 class="fin019-modal-title">プロフィール画像の変更</h3>
-
+    
             <div class="fin019-image-grid">
-                <div class="fin019-image-item">画像</div>
-                <div class="fin019-image-item">画像</div>
-                <div class="fin019-image-item">画像</div>
-                <div class="fin019-image-item">画像</div>
-                <div class="fin019-image-item">画像</div>
-                <div class="fin019-image-item">画像</div>
-                <div class="fin019-image-item">画像</div>
-                <div class="fin019-image-item">画像</div>
-                <div class="fin019-image-item">画像</div>
-                <div class="fin019-image-item">画像</div>
+                <!-- 選択可能な画像リストは、本来はサーバーから取得してEJSでループ処理を行う -->
+                <div class="fin019-image-item">画像1</div>
+                <div class="fin019-image-item">画像2</div>
+                <div class="fin019-image-item">画像3</div>
+                <div class="fin019-image-item">画像4</div>
+                <div class="fin019-image-item">画像5</div>
+                <div class="fin019-image-item">画像6</div>
+                <div class="fin019-image-item">画像7</div>
+                <div class="fin019-image-item">画像8</div>
+                <div class="fin019-image-item">画像9</div>
+                <div class="fin019-image-item">画像10</div>
             </div>
-
+    
             <div class="fin019-footer">
                 <input type="text" class="fin019-text-input" placeholder="（テキスト入力欄）">
                 <button class="btn fin019-close-btn" id="closePhotoModal">閉じる</button>
@@ -54,9 +62,9 @@
             </div>
         </div>
     </div>
-
-    <script src="/js/fin008.js"></script>
     
+    <!-- JavaScriptファイルは静的ファイルのパスで読み込む -->
+    <script src="/js/fin008.js"></script>
 </body>
 
 </html>
