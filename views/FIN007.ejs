@@ -53,13 +53,17 @@
         
         -->
         
-        <% shop.forEach(item => { %>
-        <div class="fin007-result-item">
-            <span class="fin007-result-info"><%= item.shop_name %> 徒歩<%= item.distance %>分 予算：<%= item.budget %>円</span>
-            <span class="fin007-result-star">★</span>
-        </div>
-        <% }); %>
-
+        <!-- 仮での表示部分 -->
+        <% if (shop === null) { %>
+            <p>条件に合うお店が見つかりませんでした。</p>
+        <% } else { %>
+            <% shop.forEach(item => { %>
+            <div class="fin007-result-item">
+                <span class="fin007-result-info"><%= item.shop_name %> 徒歩<%= item.distance %>分 予算：<%= item.budget %>円</span>
+                <span class="fin007-result-star">★</span>
+            </div>
+            <% }); %>
+        <% } %>
 
         <div class="fin007-result-item">
             <span class="fin007-result-info">店名 徒歩○分 1000円〜1400円</span>
