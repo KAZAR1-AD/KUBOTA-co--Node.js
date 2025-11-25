@@ -110,7 +110,7 @@ const requireLogin = (req, res, next) => {
 // --- FIN001: ルートパス ("/") へのGETリクエスト (Welcome画面) ---
 app.get('/', async (req, res) => { // ★ async を追加
     const viewData = await getCommonViewData(req); // ★ await を追加
-    res.render('FIN001', { ...viewData, pageTitle: 'ウェルカム' });
+    res.render('FIN001', { ...viewData, pageTitle: '船橋いまなにする？' });
 });
 
 // ----------------------------------------------------
