@@ -117,11 +117,17 @@ class ShopDAO {
      */
     async findByOptions(budget, distance, genre) {
         let connection;
+        genre = this.commaToAnd(genre);
         
-        if (distance === 1 && genre === undefined) {
+        // 距離指定なし、ジャンル指定なし
+        if (distance === 1 && genre === "") {
             return this.findBybudget(budget);
-        } else if (genre === undefined) {
+
+        // ジャンル指定なし
+        } else if (genre === "") {
             return this.findByDistance(budget, distance);
+
+        // すべて指定あり
         } else if (distance !== 1) {
             distance = this.convertDistance(distance);
             try {
@@ -131,7 +137,7 @@ class ShopDAO {
                     FROM ${STORE_TABLE} 
                     WHERE budget BETWEEN ${budget - 1000} AND ${budget + 1000}
                     AND distance <= ${distance}
-                    AND genre = ${genre}
+                    AND genre = "${genre}"
                 `;
 
                 console.log(sql);
@@ -168,6 +174,17 @@ class ShopDAO {
                 return 1;
         }
     }
+
+    // ジャンルの値をSQL用に変換するヘルパーメソッド
+    // 例: "jp,we" -> "jp AND we"
+    commaToAnd(str) {
+        if (!str) return "";
+        const parts = str
+          .split(',')
+          .map(s => s.trim())
+          .filter(Boolean);
+        return parts.join('" OR "');
+      }
 }
 
 module.exports = new ShopDAO();
