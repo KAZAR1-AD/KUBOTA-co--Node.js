@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>メニュー（FIN008）</title>
-    <link rel="stylesheet" href="/css/style.css"> 
+
+    <link rel="stylesheet" href="/css/style.css">
 </head>
+
 <body class="fin008">
 
     <div class="container fin008-container">
-        
-        <button class="fin008-logout-btn" id="logoutButton">ログアウト</button>
 
         <a href="#" class="fin008-photo-area" id="openPhotoModal">
             <div>写真</div>
@@ -22,7 +25,7 @@
         </div>
 
         <div class="fin008-menu-links">
-            <a href="#" class="btn fin008-btn">マイページ</a>
+            <a href="/FIN009" class="btn fin008-btn">個人設定</a>
             <a href="#" class="btn fin008-btn">フレンド</a>
             <a href="#" class="btn fin008-btn">お気に入り</a>
         </div>
@@ -30,7 +33,7 @@
     <div id="photoModal" class="fin019-modal-overlay">
         <div class="fin019-modal-content">
             <h3 class="fin019-modal-title">プロフィール画像の変更</h3>
-            
+
             <div class="fin019-image-grid">
                 <div class="fin019-image-item">画像</div>
                 <div class="fin019-image-item">画像</div>
@@ -51,37 +54,9 @@
             </div>
         </div>
     </div>
-    <script>
-        // ログアウトボタンの処理
-        document.getElementById("logoutButton").addEventListener("click", function() {
-            if (confirm("ログアウトしますか？")) {
-                window.location.href = "FIN001.html"; 
-            }
-        });
 
-        // モーダル関連の要素を取得
-        const openPhotoModalBtn = document.getElementById("openPhotoModal");
-        const closePhotoModalBtn = document.getElementById("closePhotoModal");
-        const photoModal = document.getElementById("photoModal");
-
-        // 「写真」(#openPhotoModal) がクリックされたら
-        openPhotoModalBtn.addEventListener("click", function(e) {
-            e.preventDefault(); // リンク遷移を止める
-            photoModal.style.display = "flex"; // モーダルを表示
-        });
-
-        // 「閉じる」(#closePhotoModal) がクリックされたら
-        closePhotoModalBtn.addEventListener("click", function() {
-            photoModal.style.display = "none"; // モーダルを非表示
-        });
-
-        // モーダルの背景（黒い部分）がクリックされたら
-        photoModal.addEventListener("click", function(e) {
-            if (e.target === photoModal) { 
-                photoModal.style.display = "none"; // モーダルを非表示
-            }
-        });
-    </script>
-
+    <script src="/js/fin008.js"></script>
+    
 </body>
+
 </html>
