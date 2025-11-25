@@ -8,34 +8,38 @@
 </head>
 <body class="fin006">
 
-    <header class="main-header">
-        <div class="header-content">
-            <h1 class="site-title"><a href="/">お店検索サービス</a></h1>
-            
-            <nav class="header-nav">
-                <% if (isLoggedIn) { %>
-                    <span class="welcome-message">
-                        ようこそ、<%= userName %>さん！
-                    </span>
-                    <a href="/profile/<%= userId %>" class="btn btn-setting">
-                        個人設定
+    <header class="fixed-header">
+        <div class="fixed-header-left">
+            </div>
+        <div class="fixed-header-title">船橋今なにする？</div>
+        <div class="fixed-header-icon-area">
+
+            <% if (isLoggedIn) { %>
+                <div class="fin001-user-controls">
+                    <span class="fin001-welcome-msg"><%= userName %>さん</span>
+                    
+                    <a href="/FIN008" class="header-profile-icon">
+                        <img id="headerProfileImage" src="" alt="メニュー">
                     </a>
+                    
+                    <a href="/FIN009" class="btn btn-default fin001-setting-btn">個人設定</a>
+
                     <form action="/logout" method="POST" style="display: inline;">
-                        <button type="submit" class="btn btn-logout">
-                            ログアウト
-                        </button>
+                        <button type="submit" class="btn btn-default fin001-logout-btn">ログアウト</button>
                     </form>
-                <% } else { %>
-                    <a href="/FIN002" class="btn btn-login">
-                        ログイン
-                    </a>
-                    <a href="/FIN003" class="btn btn-register">
-                        新規登録
-                    </a>
-                <% } %>
-            </nav>
+                </div>
+
+            <% } else { %>
+                <a href="/FIN002" class="btn btn-default header-login-btn" role="button" id="headerLoginBtn">
+                    ログイン
+                </a>
+                <a href="/FIN003" class="btn btn-default fin006-register-btn" role="button">
+                    新規登録
+                </a>
+            <% } %>
         </div>
     </header>
+    
     <div class="container fin006-container"> 
         <h2 class="fin006-title">どんなお店をお探しですか？</h2>
 
@@ -44,7 +48,8 @@
             <div class="fin006-criteria-row">
                 <label for="budget" class="fin006-label">1人当たりの予算</label>
                 <div class="fin006-input-area">
-                    <input type="range" id="budget" class="fin006-slider" min="1000" max="20000" step="1000">
+                    <input type="range" id="budget" class="fin006-slider" min="1000" max="20000" value="10000" step="1000">
+                    <span id="budgetValue" class="fin006-value-display">10,000円</span>
                 </div>
             </div>
 
@@ -72,16 +77,21 @@
         </div>
 
         <div class="button-area button-area-center">
-            <button class="btn fin006-btn" onclick="execPost('/search', setValues());return false;">検索</button>
+            <button class="btn btn-primary fin006-btn" onclick="execPost('/search', setValues());return false;">検索</button>
         </div>
     </div>
 
     <script src="js/execPost.js"></script>
     <script>
-        /**
-         * フォームの値を取得してオブジェクトにまとめる
-         * @return {Object} フォームの値を格納したオブジェクト
-         */
+        // 予算スライダーの値表示を初期化・更新する関数
+        function updateBudgetValue(value) {
+            const display = document.getElementById('budgetValue');
+            if (display) {
+                display.textContent = parseInt(value).toLocaleString() + '円';
+            }
+        }
+
+        // フォームの値を取得してオブジェクトにまとめる
         function setValues() {
             const budget = document.getElementById('budget').value;
             const distance = document.getElementById('distance').value;
@@ -96,6 +106,46 @@
 
             return values;
         }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // 予算スライダーのイベントリスナー設定
+            const budgetSlider = document.getElementById('budget');
+            if (budgetSlider) {
+                // 初期値の表示
+                updateBudgetValue(budgetSlider.value);
+
+                // スライダーが動いたときの更新
+                budgetSlider.addEventListener('input', function() {
+                    updateBudgetValue(this.value);
+                });
+            }
+
+            // ヘッダー関連のJavaScriptロジック
+            const isLoggedIn = <%= isLoggedIn %>; 
+            const savedImageUrl = localStorage.getItem('profileImage');
+            const headerProfileImage = document.getElementById('headerProfileImage');
+            const loginBtn = document.getElementById('headerLoginBtn');
+
+            // ログイン状態に応じたアイコンの処理
+            if (isLoggedIn) {
+                if (headerProfileImage) {
+                    // ログインしている場合、アイコンのsrcを設定
+                    const imageUrl = savedImageUrl || '/images/kubota_icon0.png';
+                    headerProfileImage.src = imageUrl;
+                }
+            } else {
+                // 非ログイン時のログインボタンのリダイレクト処理
+                if (loginBtn) {
+                    loginBtn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        const currentUrl = window.location.href;
+                        // ログイン後、このページに戻るためのURLを保存
+                        localStorage.setItem('redirectUrl', currentUrl);
+                        window.location.href = e.target.href;
+                    });
+                }
+            }
+        });
     </script>
 </body>
 </html>
