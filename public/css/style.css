@@ -1,25 +1,14 @@
 @charset "UTF-8";
 
 /* ==================================
-   共通固定ヘッダー
+   共通固定ヘッダー (.fixed-header)
 ================================== */
-body {
-    padding-top: 60px;
-    /* ★ 80pxから60pxに戻す */
 
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-    background-color: #f4f7f6;
-    color: #333;
-    margin: 0;
-    font-size: 16px;
-    line-height: 1.6;
-}
-
+/* ヘッダーの基本設定は既存のCSSを使用 */
 .fixed-header {
     background-color: #0b4c68;
     color: white;
     height: 60px;
-    /* ★ 80pxから60pxに戻す */
     padding: 0 20px;
     display: flex;
     align-items: center;
@@ -32,56 +21,92 @@ body {
     z-index: 1000;
 }
 
-.fixed-header-left {
-    flex: 1;
-    display: flex;
-    align-items: center;
-}
-
-.fixed-header-title {
-    font-size: 20px;
-    font-weight: 600;
-    flex: 1;
-    text-align: center;
-    white-space: nowrap;
-}
-
+/* ヘッダー内部のナビゲーションエリア */
 .fixed-header-icon-area {
-    flex: 1;
+    flex: 1; /* アイコンエリアを右端に寄せるために flex: 1 を適用 */
     display: flex;
     justify-content: flex-end;
     align-items: center;
 }
 
-/* ヘッダー内の戻るボタン */
-.fixed-header .page-back-btn {
-    position: static;
-    transform: none;
-    padding: 0 10px;
+.fixed-header .header-nav {
+    display: flex;
+    gap: 10px; /* 要素間のスペース */
+    align-items: center;
 }
 
-/* ★ 変更点：ヘッダー内のプロフィールアイコン */
+/* 戻るボタンの再定義 (page-title-barのものを流用) */
+.fixed-header .page-back-btn {
+    position: static; 
+    transform: none;
+    color: white;
+    font-size: 30px;
+    text-decoration: none;
+    line-height: 1;
+    height: 44px; /* アイコンやボタンと高さを合わせる */
+    display: flex;
+    align-items: center;
+}
+
+/* プロフィールアイコンのスタイル (ログイン時) */
 .fixed-header .header-profile-icon {
     width: 44px;
-    /* 64pxから44pxに戻す */
     height: 44px;
-    /* 64pxから44pxに戻す */
+    background-color: #0a3f55; /* 背景色で目立たせる */
+    border: 2px solid white;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s;
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-/* ★ 変更点：ヘッダー内のログインボタン (全ページ共通) */
+.fixed-header .header-profile-icon:hover {
+    transform: scale(1.05);
+}
+
+/* ログイン/ログアウトボタンのスタイル (共通ボタンのオーバーライド) */
 .fixed-header .header-login-btn {
+    /* 共通ボタンのベースサイズと揃える */
     height: 38px;
-    /* 44pxから38pxに戻す */
-    line-height: 36px;
-    /* 42pxから36pxに戻す */
+    line-height: 36px; /* border 1px込みで中央揃え */
     font-size: 14px;
     font-weight: 600;
     padding: 0 15px;
     width: auto;
+    min-width: 0;
     text-align: center;
-    display: inline-block;
+    box-sizing: border-box;
+    border-radius: 4px; /* 固定ヘッダーでは角丸を小さくする */
 }
 
+/* ログインボタン (未ログイン時) - .btn-primaryを適用 */
+.fixed-header .btn-primary.header-login-btn {
+    background-color: #007bff; 
+    color: white; 
+    border-color: #007bff;
+}
+
+.fixed-header .btn-primary.header-login-btn:hover {
+    background-color: #0069d9;
+    border-color: #0062cc;
+}
+
+/* ログアウトボタン (ログイン時) - 独自のスタイルを適用 */
+.fixed-header .btn-logout {
+    background-color: transparent;
+    color: white;
+    border: 1px solid white;
+    /* transition: background-color 0.2s; */
+}
+
+.fixed-header .btn-logout:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: white;
+}
 
 /* ==================================
    リセット & 共通スタイル

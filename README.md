@@ -13,6 +13,9 @@
   <li>express-session</li>
 </ul>
 
+アイコン画像
+http://flat-icon-design.com/?paged=22
+
 ---
 
 # セットアップ方法
