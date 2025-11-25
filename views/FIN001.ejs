@@ -8,23 +8,23 @@
     <%= pageTitle || '船橋今なにする？（FIN001）' %>
   </title>
   <link rel="stylesheet" href="/css/style.css">
-  
-  </head>
+
+</head>
 
 <body class="fin001">
 
   <header class="fin001-header fixed-header">
     <div class="fixed-header-title">船橋今なにする？</div>
-    
+
     <% if (isLoggedIn) { %>
       <div class="fin001-user-controls">
 
         <span class="fin001-welcome-msg">ようこそ、<%= userName %>さん！</span>
 
-        <a href="/FIN008" class="header-profile-icon">
+        <a href="/mypage" class="header-profile-icon">
           <img id="headerProfileImage" src="" alt="メニュー">
         </a>
-        
+
         <a href="/FIN009" class="btn btn-default fin001-setting-btn" role="button">
           個人設定
         </a>
@@ -36,32 +36,32 @@
         </form>
       </div>
 
-    <% } else { %>
-      <a href="/FIN002" class="btn btn-default fin001-login-btn" role="button" id="headerLoginBtn">
-        ログイン
-      </a>
-    <% } %>
+      <% } else { %>
+        <a href="/FIN002" class="btn btn-default fin001-login-btn" role="button" id="headerLoginBtn">
+          ログイン
+        </a>
+        <% } %>
   </header>
-  
+
   <div class="container fin001-main-container">
     <h1>船橋今なにする？</h1>
     <div class="button-area button-area-center">
       <a href="/search" class="btn btn-primary fin001-start-btn">はじめる</a>
     </div>
-  </div> 
+  </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      const isLoggedIn = <%= isLoggedIn %>; // EJS変数を直接使用
+      const isLoggedIn = <%= isLoggedIn %>;
       const savedImageUrl = localStorage.getItem('profileImage');
       const headerProfileImage = document.getElementById('headerProfileImage');
       const loginBtn = document.getElementById('headerLoginBtn');
-      
+
       // ログイン状態に応じたアイコンの処理
       if (isLoggedIn) {
         if (headerProfileImage) {
           // ログインしている場合、アイコンのsrcを設定
-          const imageUrl = savedImageUrl || '/images/kubota_icon0.png';
+          const imageUrl = savedImageUrl || '/images/user_icon/sample.png';
           headerProfileImage.src = imageUrl;
         }
       } else {

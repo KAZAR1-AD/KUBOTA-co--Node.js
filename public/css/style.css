@@ -1,11 +1,27 @@
 @charset "UTF-8";
 
 /* ==================================
-    共通固定ヘッダー (.fixed-header)
+ * ベーススタイル
+ * ================================== */
+body {
+    font-family: 'Inter', 'Noto Sans JP', sans-serif;
+    color: #333;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: #f7f9fb;
+    /* fixed-headerの高さ(60px)に合わせて調整 */
+    padding-top: 60px;
+}
+
+
+/* ==================================
+    共通固定ヘッダー (.fixed-header)
 ================================== */
 
 .fixed-header {
-    background-color: #0b4c68; /* ヘッダーの背景色 */
+    background-color: #0b4c68;
+    /* ヘッダーの背景色 */
     color: white;
     height: 60px;
     padding: 0 20px;
@@ -16,9 +32,9 @@
     top: 0;
     left: 0;
     width: 100%;
-    box-sizing: border-box; /* paddingをwidthに含める */
+    box-sizing: border-box;
+    /* paddingをwidthに含める */
     z-index: 1000;
-    /* ページコンテンツとの重なり回避のため、padding-topをbodyに設定する必要がある */
 }
 
 /* ヘッダー内部のナビゲーションエリア */
@@ -36,7 +52,7 @@
 
 /* 戻るボタンの再定義 (page-title-barのものを流用) */
 .fixed-header .page-back-btn {
-    position: static; 
+    position: static;
     transform: none;
     color: white;
     font-size: 30px;
@@ -71,7 +87,8 @@
 .fixed-header .btn-logout {
     /* 共通 .btn のスタイルを使用しつつ、ヘッダーに合わせたサイズ調整 */
     height: 38px;
-    line-height: 36px; /* border 1px込みで中央揃え */
+    line-height: 36px;
+    /* border 1px込みで中央揃え */
     font-size: 14px;
     font-weight: 600;
     padding: 0 15px;
@@ -84,8 +101,8 @@
 
 /* ログインボタン (未ログイン時) - .btn-primaryを適用 */
 .fixed-header .btn-primary.header-login-btn {
-    background-color: #007bff; 
-    color: white; 
+    background-color: #007bff;
+    color: white;
     border-color: #007bff;
 }
 
@@ -108,7 +125,7 @@
 
 
 /* ==================================
-    リセット & 共通スタイル
+    リセット & 共通スタイル
 ================================== */
 
 .container {
@@ -217,7 +234,8 @@
     cursor: pointer;
     transition: all 0.2s;
     padding: 0 25px;
-    line-height: 46px; /* border 1px x 2 = 2px を考慮して 48px - 2px = 46px */
+    line-height: 46px;
+    /* border 1px x 2 = 2px を考慮して 48px - 2px = 46px */
     text-decoration: none;
     width: 100%;
     box-sizing: border-box;
@@ -286,9 +304,23 @@
     object-fit: cover;
 }
 
+/* --- ページ共通 エラーメッセージ --- */
+/* 以前のFIN003のスタイルを調整して再定義（色を統一） */
+.error-message {
+    color: #dc3545;
+    /* btn-dangerの色 */
+    background-color: #f8d7da;
+    /* 薄い赤 */
+    border: 1px solid #f5c6cb;
+    padding: 10px 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
 
 /* ==================================
-    ページ個別スタイル
+    ページ個別スタイル
 ================================== */
 
 /******* FIN001 START ********/
@@ -310,7 +342,8 @@
 .fin001-welcome-msg {
     white-space: nowrap;
     font-weight: 600;
-    color: #333;
+    /* fixed-headerの背景色に合わせて白に変更 */
+    color: white;
 }
 
 /* ログイン/ログアウト/設定ボタンのスタイルを共通ボタンに合わせて調整 */
@@ -323,7 +356,8 @@
     font-size: 14px;
     padding: 0 15px;
     min-width: 0;
-    width: auto; /* 共通ボタンの width: 100% をリセット */
+    width: auto;
+    /* 共通ボタンの width: 100% をリセット */
 }
 
 .fin001-main-container {
@@ -376,8 +410,9 @@
     text-decoration: underline;
 }
 
-.fin002 .btn {
+.fin002 .button-area .btn {
     width: 48%;
+    /* 共通の width: 100% をオーバーライド */
 }
 
 /******* FIN002 END ********/
@@ -405,8 +440,17 @@
     padding: 30px;
 }
 
-.fin003 .btn {
+.fin003 .button-area .btn {
     width: 48%;
+    /* 共通の width: 100% をオーバーライド */
+}
+
+.password-hint {
+    font-size: 0.75rem;
+    /* text-xs */
+    color: #6c757d;
+    /* text-gray-500 */
+    margin-top: 0.25rem;
 }
 
 /******* FIN003 END ********/
@@ -448,7 +492,7 @@
     color: #555;
 }
 
-.fin004 .btn {
+.fin004 .button-area .btn {
     width: 48%;
 }
 
@@ -569,7 +613,6 @@
 /******* FIN006 END ********/
 
 ---
-
 /******* FIN007 START ********/
 
 .fin007-title-bar {
@@ -860,7 +903,8 @@
     color: #007bff;
     border: 1px solid #ccc;
     padding: 0 10px;
-    border-radius: 4px; /* 共通ボタンの角丸(8px)より小さくする */
+    border-radius: 4px;
+    /* 共通ボタンの角丸(8px)より小さくする */
 }
 
 .fin009-edit-btn:hover {
@@ -910,9 +954,9 @@
     padding: 20px 30px 30px;
 }
 
-.fin010 .btn,
-.fin012 .btn,
-.fin014 .btn {
+.fin010 .button-area .btn,
+.fin012 .button-area .btn,
+.fin014 .button-area .btn {
     width: 48%;
 }
 
@@ -1239,16 +1283,6 @@
     padding-bottom: 10px;
 }
 
-.error-message {
-    color: #dc3545 !important;
-    background-color: #f8d7da;
-    border: 1px solid #f5c6cb;
-    padding: 10px 15px;
-    border-radius: 5px;
-    margin-bottom: 20px;
-    text-align: center;
-}
-
 /* -------------------------------------------------------------------
  * ボタンエリア (旧提案スタイル。共通スタイルとの調整が必要)
  * ------------------------------------------------------------------- */
@@ -1256,20 +1290,26 @@
 /* 共通 .button-area のスタイルをオーバーライド */
 .fin-profile-edit-container .button-area {
     /* 共通スタイルからの差分を適用 */
-    justify-content: space-around; /* 共通の space-between と異なる設定 */
+    justify-content: space-around;
+    /* 共通の space-between と異なる設定 */
     margin-top: 30px;
     padding-top: 20px;
     border-top: 1px solid #eee;
-    gap: 0; /* 共通の gap: 15px をリセット */
+    gap: 0;
+    /* 共通の gap: 15px をリセット */
 }
 
 .fin-profile-edit-container .btn {
     /* 共通 .btn の min-width: 150px をリセットし、旧提案の min-width: 120px を適用 */
-    min-width: 120px; 
-    width: auto; /* width: 100% をリセット */
-    padding: 10px 25px; /* 共通 .btn と line-height が異なるため調整 */
-    line-height: normal; /* 共通 .btn の line-height: 46px をリセット */
-    height: auto; /* 共通 .btn の height: 48px をリセット */
+    min-width: 120px;
+    width: auto;
+    /* width: 100% をリセット */
+    padding: 10px 25px;
+    /* 共通 .btn と line-height が異なるため調整 */
+    line-height: normal;
+    /* 共通 .btn の line-height: 46px をリセット */
+    height: auto;
+    /* 共通 .btn の height: 48px をリセット */
 }
 
 /* プライマリボタン (変更) */
@@ -1286,7 +1326,8 @@
 /* セカンダリボタン (戻る) */
 .fin-profile-edit-container .btn-secondary {
     background-color: #6c757d;
-    color: white; /* 共通 .btn-secondary と色が異なるため上書き */
+    color: white;
+    /* 共通 .btn-secondary と色が異なるため上書き */
     border: 1px solid #6c757d;
 }
 
@@ -1294,6 +1335,7 @@
     background-color: #5a6268;
     border-color: #5a6268;
 }
+
 /* -------------------------------------------------------------------
  * FIN_Profile_Edit 画面専用スタイル  END
  * ------------------------------------------------------------------- */
