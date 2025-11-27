@@ -4,21 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>登録完了</title>
-    <link rel="stylesheet" href="css/style.css">
+    <!-- 外部CSSファイル style.css を読み込みます -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body class="fin005">
 
     <div class="container">
+        
+        <!-- FIN005 STARTで要求されているタイトルバー風のデザインを適用 -->
         <h2>登録が完了しました</h2>
 
+        <div class="fin005-icon-wrapper">
+            <!-- 登録成功アイコン (FIN011/013/015の完了系画面と近いイメージ) -->
+            <svg style="width: 4rem; height: 4rem; margin: 0 auto 1.5rem auto; color: #10b981;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.01 12.01 0 002 15.466c0 5.564 3.84 10.763 9 11.835l1-.22c5.16 1.072 9-4.271 9-9.835a12.01 12.01 0 00-1.618-7.513z"></path></svg>
+            <p class="fin005-success-message">ご登録いただきありがとうございます。以下の情報でアカウントを作成しました。</p>
+        </div>
+
+
         <div class="info-block">
-            <p><span>ユーザー名：</span><%= username %></p>
-            <p><span>メールアドレス：</span><%= useremail %></p>
-            <p><span>パスワード：</span>********</p>
-            <p><span>あなたのID：</span><%= userID %></p>
+            <!-- EJS変数を使用 -->
+            <p><span>ユーザー名：</span><span><%= username %></span></p>
+            <p><span>メールアドレス：</span><span><%= useremail %></span></p>
+            <p><span>パスワード：</span><span>********</span></p>
+            <p><span>あなたのID：</span><span><%= userID %></span></p>
         </div>
 
         <div class="button-area button-area-center">
+            <!-- 共通CSSの .btn-danger を使用 -->
             <a href="/" class="btn btn-danger fin005-btn" role="button">TOPに戻る</a>
         </div>
     </div>

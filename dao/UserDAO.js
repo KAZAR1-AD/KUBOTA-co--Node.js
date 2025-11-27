@@ -8,6 +8,17 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
 /**
+ * 8桁のランダムなユーザーIDを生成する関数
+ * 範囲: 10,000,000 ～ 99,999,999
+ */
+function generateUserId() {
+    const min = 10000000;
+    const max = 99999999;
+    // INT型として先頭0欠けしない8桁の数値を生成
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+/**
  * ログイン認証 (profile_photo_id を返すよう修正)
  * @param {string} login_id - ログインID（またはメールアドレス）
  * @param {string} password - パスワード
@@ -59,57 +70,92 @@ WHERE email = ? OR user_id = ?
 };
 
 /**
- * 新規ユーザー登録
+ * 新規ユーザー登録 (IDランダム生成と重複チェックを実装)
  * @param {string} username - ユーザー名
  * @param {string} email - メールアドレス
  * @param {string} password - パスワード
- * @returns {Promise<{success: boolean, userId: number, message?: string}>} 登録結果
+ * @returns {Promise<{success: boolean, userId: number | null, message?: string}>} 登録結果
  */
 exports.registerUser = async (username, email, password) => {
     console.log(`[UserDAO] 登録処理開始: Email=${email}`);
 
-    // 1. パスワードのハッシュ化 (⭐ ランダムソルトが自動生成され、ハッシュに結合される ⭐)
-    const passwordHash = await bcrypt.hash(password, saltRounds);
-
-    // MySQLで安全にカウントを取得するためのエイリアス
+    // メールアドレスの重複チェック
     const checkDuplicateQuery = `SELECT COUNT(*) AS count FROM table_user WHERE email = ?`;
-    // 修正済み: カラム名 'password' を使用
-    // 注意: 新規登録時は profile_photo_id はNULLまたはデフォルト値がDB側で設定されていることを想定
-    const insertQuery = `
-INSERT INTO table_user (user_name, email, password) 
-VALUES (?, ?, ?) 
-`;
-
     try {
-        // メールアドレスの重複チェック (MySQL)
         const [duplicateCheckRows] = await db.query(checkDuplicateQuery, [email]);
-        // rows[0].count を使用
         if (duplicateCheckRows.length > 0 && duplicateCheckRows[0].count > 0) {
             return { success: false, userId: null, message: 'このメールアドレスは既に登録されています。' };
         }
-
-        // 2. ユーザー情報の挿入 (MySQL: [result, fields] が返る)
-        const [result] = await db.query(insertQuery, [username, email, passwordHash]);
-
-        // MySQLでは通常、挿入されたIDは insertId プロパティで取得
-        const newUserId = result.insertId;
-
-        console.log(`[UserDAO] 登録成功: UserID=${newUserId}`);
-        return {
-            success: true,
-            userId: newUserId,
-            message: 'ユーザー登録成功'
-        };
     } catch (error) {
-        console.error('[UserDAO] 登録クエリ実行エラー:', error);
-
-        // エラーコード1062 (ER_DUP_ENTRY) は重複キーエラー
-        if (error.code === 'ER_DUP_ENTRY') {
-            return { success: false, userId: null, message: 'このメールアドレスは既に登録されています。' };
-        }
-
-        throw new Error('データベース登録エラー');
+        console.error('[UserDAO] メール重複チェッククエリ実行エラー:', error);
+        throw new Error('データベースチェックエラー');
     }
+
+    // パスワードのハッシュ化
+    const passwordHash = await bcrypt.hash(password, saltRounds);
+    
+    const maxRetries = 5; // ID重複時の最大再試行回数
+    let retryCount = 0;
+    let isRegistered = false;
+    let newUserId = null;
+
+    // 🌟 修正ポイント: INSERT クエリの profile_photo_id の値を 999 に変更
+    const insertQuery = `
+INSERT INTO table_user (user_id, user_name, email, password, profile_photo_id) 
+VALUES (?, ?, ?, ?, 999) 
+`;
+
+    // 8桁IDのランダム生成と重複チェック、登録を試みる
+    while (!isRegistered && retryCount < maxRetries) {
+        
+        // 1. ランダムIDの生成
+        newUserId = generateUserId();
+
+        try {
+            // 2. IDの重複チェック
+            const checkIdSql = "SELECT COUNT(*) as count FROM table_user WHERE user_id = ?";
+            const [rows] = await db.query(checkIdSql, [newUserId]);
+
+            if (rows[0].count > 0) {
+                // ID重複
+                console.log(`[UserDAO] ID重複検出: ${newUserId}. リトライ...`);
+                retryCount++;
+                continue; // 次のループへ（新しいIDを生成）
+            }
+
+            // 3. 登録実行
+            const [result] = await db.query(insertQuery, [newUserId, username, email, passwordHash]);
+            
+            // 登録成功
+            isRegistered = true;
+            console.log(`[UserDAO] 登録成功: UserID=${newUserId}`);
+
+        } catch (error) {
+            // 競合によるID重複エラー (ER_DUP_ENTRY=1062) を捕捉
+            if (error.code === 'ER_DUP_ENTRY') {
+                console.log(`[UserDAO] INSERT時のID重複エラー (競合): ${newUserId}. リトライ...`);
+                retryCount++;
+            } else {
+                // その他のエラー（例: 'profile_photo_id' のデフォルト値エラー）が発生した場合
+                console.error('[UserDAO] 登録クエリ実行エラー:', error);
+                // データベースエラーを上へ投げる（Expressのtry/catchで捕捉される）
+                throw new Error('データベース登録エラー');
+            }
+        }
+    }
+
+    if (!isRegistered) {
+        // 最大リトライ回数を超えてもユニークなIDが生成できなかった場合
+        console.error('[UserDAO] 登録クエリ実行エラー: ユニークなID生成に失敗。');
+        throw new Error('混雑のためユーザーIDの生成に失敗しました。再度お試しください。');
+    }
+
+    // 登録成功時の返り値
+    return {
+        success: true,
+        userId: newUserId, // 生成したIDを返す
+        message: 'ユーザー登録成功'
+    };
 };
 
 /**

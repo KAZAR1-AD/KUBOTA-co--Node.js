@@ -500,21 +500,82 @@ body {
 
 ---
 
-/******* FIN005 START ********/
+/* ==================================
+         * ページ個別スタイル FIN005 START
+         * ================================== */
 .fin005 .container {
+    /* 共通CSSのFIN005 STARTで定義されたmax-widthを使用 */
     max-width: 500px;
     text-align: center;
 }
 
 .fin005 h2 {
+    /* 共通CSSのFIN005 STARTのh2スタイルを適用 */
     background-color: #0b4c68;
     color: white;
     padding: 20px 0;
-    margin: -30px -40px 30px -40px;
+    margin: 0;
+    /* padding: 0 にしたため、marginは0 */
     border-radius: 10px 10px 0 0;
     font-size: 22px;
     font-weight: 600;
-    /* .container の padding: 30px を考慮して調整 */
+}
+
+/* 登録成功アイコンの位置調整 */
+.fin005-icon-wrapper {
+    padding: 30px 30px 10px;
+    /* タイトルバーの下にスペースを追加 */
+}
+
+.fin005-success-message {
+    font-size: 1.1rem;
+    color: #4a5568;
+    margin-bottom: 20px;
+}
+
+/* 情報ブロック (既存のモダンなスタイルをベースに、共通CSSに合うよう調整) */
+.info-block {
+    text-align: left;
+    margin: 0 30px 30px;
+    /* 左右30pxのpaddingを確保 */
+    padding: 15px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background-color: #f7fafc;
+}
+
+.info-block p {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px dashed #edf2f7;
+    font-size: 0.95rem;
+    color: #4a5568;
+}
+
+.info-block p:last-child {
+    border-bottom: none;
+}
+
+.info-block span:first-child {
+    font-weight: 600;
+    color: #2d3748;
+    flex-shrink: 0;
+    margin-right: 10px;
+}
+
+.info-block span:last-child {
+    /* EJSで埋め込まれる値 */
+    text-align: right;
+    overflow-wrap: break-word;
+    word-break: break-all;
+}
+
+
+/* ボタンのオーバーライド */
+.btn-danger.fin005-btn {
+    /* 共通の .btn-danger を使用しますが、微調整はなし */
 }
 
 /******* FIN005 END ********/
