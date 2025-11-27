@@ -6,7 +6,7 @@ const path = require('path');
 
 // ===================================
 // 0. DAOの読み込み（本番環境用）
-//    - ⚠️ 実際のファイルパスに合わせて調整してください。
+//    - ⚠️ 実際のファイルパスに合わせて調整してください。
 // ===================================
 // 実際には、プロジェクト構造に応じてパスを修正する必要があります
 const UserDAO = require('./dao/UserDAO');
@@ -50,6 +50,17 @@ app.use(session({
 // ===================================
 // 2. 共通処理とミドルウェア
 // ===================================
+
+/**
+ * ダミーのパスワードマスク関数
+ * @param {string} password 
+ * @returns {string} 
+ */
+function maskPassword(password) {
+    if (!password) return '';
+    // 画面表示用のマスク（文字数に合わせて調整可能）
+    return '*'.repeat(password.length > 8 ? 8 : password.length);
+}
 
 /**
  * ログインユーザーの共通データ (isLoggedIn, userName, userId, email, profilePhotoId, userIconUrl) を取得し、
@@ -169,6 +180,9 @@ app.post('/login', async (req, res) => {
 // ----------------------------------------------------
 app.get('/FIN003', async (req, res) => { // ★ async を追加
     const viewData = await getCommonViewData(req); // ★ await を追加
+    // 新しいフローでは、最初に戻る際にセッションに一時保存されたデータを削除します
+    delete req.session.registerData;
+
     res.render('FIN003', {
         pageTitle: '新規登録',
         ...viewData
@@ -176,10 +190,12 @@ app.get('/FIN003', async (req, res) => { // ★ async を追加
 });
 
 // ----------------------------------------------------
-// ⭐ /register-final: 新規登録処理 (POST) ⭐
+// ⭐ /register-confirm: 新規登録確認処理 (POST) ⭐
+// FIN003からデータを受け取り、セッションに保存し、FIN004（確認画面）へ遷移
 // ----------------------------------------------------
-app.post('/register-final', async (req, res) => {
+app.post('/register-confirm', async (req, res) => {
     const { username, email, password, confirm_password } = req.body;
+    const viewData = await getCommonViewData(req);
 
     // 簡易バリデーション
     if (!username || !email || !password || !confirm_password) {
@@ -193,42 +209,117 @@ app.post('/register-final', async (req, res) => {
     }
 
     try {
-        // UserDAO.registerUser は { success: true/false, userId: id, message: msg } を返すことを期待
-        const result = await UserDAO.registerUser(username, email, password);
-
-        if (result.success) {
-            // 認証成功時に取得したユーザー情報 (user_id, user_name, email, profile_photo_id) を使用
-            // 登録成功: ユーザーを即座にログイン状態にし、FIN004へリダイレクト
-            // 登録成功時に UserDAO が userId を返すことを前提としています
-            req.session.user = {
-                id: result.userId,
-                name: username,
-                email: email,
-                profilePhotoId: null // ★ 登録時は初期値としてnullを設定（DB側でデフォルト値があればそれに従う）
-            };
-            req.session.message = '新規登録が完了しました！早速始めましょう。';
-            return res.redirect('/FIN004');
-        } else {
-            // 登録失敗 (例: メールアドレス重複など)
-            req.session.error = result.message || '登録に失敗しました。';
+        // メールアドレスの重複チェック（FIN003側ではDBアクセスを行わない設計のため、このタイミングでチェック）
+        // UserDAOに isEmailTaken メソッドがあると仮定
+        const isEmailTaken = await UserDAO.isEmailTaken(email);
+        if (isEmailTaken) {
+            req.session.error = 'このメールアドレスは既に使用されています。';
             return res.redirect('/FIN003');
         }
-    } catch (error) {
-        console.error('新規登録処理エラー:', error);
-        req.session.error = 'システムエラーが発生しました。';
+
+        // 確認画面表示のためにデータをセッションに一時保存
+        // 生のパスワードを次のステップのために保持する
+        req.session.registerData = { username, email, password };
+
+        // FIN004 (確認画面) をレンダリング
+        res.render('FIN004', {
+            pageTitle: '登録内容確認',
+            ...viewData,
+            // 確認画面に必要なデータ
+            username: username,
+            useremail: email,
+            passwordMasked: maskPassword(password),
+            // FIN004テンプレートはセッションではなくEJSの変数を使って表示します
+        });
+
+    } catch (e) {
+        console.error('登録前チェックエラー:', e);
+        req.session.error = '登録処理中にエラーが発生しました。';
         return res.redirect('/FIN003');
     }
 });
 
 
 // ----------------------------------------------------
-// ⭐ FIN004: ホーム画面/登録完了確認画面 (GET) ⭐
+// ⭐ /register-final: 最終登録処理 (POST) ⭐
+// FIN004から最終承認を受け取り、DB登録を実行し、FIN005（完了画面）へ遷移
 // ----------------------------------------------------
+// 既存の旧登録ロジックを、セッションを利用した新しい最終登録ロジックに置き換えます
+app.post('/register-final', async (req, res) => {
+    // セッションから一時保存された登録データを取得
+    const registerData = req.session.registerData;
+
+    // セッションにデータがない場合は、不正なアクセスとしてFIN003に戻す
+    if (!registerData) {
+        req.session.error = '登録情報が見つかりませんでした。最初からやり直してください。';
+        return res.redirect('/FIN003');
+    }
+
+    const { username, email, password } = registerData;
+
+    try {
+        // UserDAO.registerUser は { success: true/false, userId: id, message: msg } を返すことを期待
+        const result = await UserDAO.registerUser(username, email, password);
+
+        if (result.success) {
+            // 登録成功: ユーザーを即座にログイン状態にし、FIN005へリダイレクト
+            req.session.user = {
+                id: result.userId,
+                name: username,
+                email: email,
+                profilePhotoId: null // 登録時は初期値としてnullを設定
+            };
+            req.session.message = '新規登録が完了しました！早速始めましょう。';
+
+            // 登録データはもう不要なのでセッションから削除
+            delete req.session.registerData;
+
+            // 新しい完了画面FIN005へリダイレクト
+            return res.redirect('/FIN005');
+        } else {
+            // 登録失敗 
+            req.session.error = result.message || '登録に失敗しました。';
+            delete req.session.registerData; // 失敗したので削除
+            return res.redirect('/FIN003');
+        }
+    } catch (error) {
+        console.error('新規登録処理エラー:', error);
+        req.session.error = 'システムエラーが発生しました。';
+        delete req.session.registerData; // 失敗したので削除
+        return res.redirect('/FIN003');
+    }
+});
+
+
+// ----------------------------------------------------
+// ⭐ FIN004: ホーム画面 (GET) - ログイン必須 ⭐
+// ----------------------------------------------------
+// 既存のログイン後ホーム画面ルートはそのまま残します。
 app.get('/FIN004', requireLogin, async (req, res) => { // ★ async を追加
     const viewData = await getCommonViewData(req); // ★ await を追加
     // FIN004はログイン後のトップ画面を想定
     res.render('FIN004', {
         pageTitle: 'ホーム',
+        ...viewData
+    });
+});
+
+
+// ----------------------------------------------------
+// ⭐ FIN005: 登録完了画面 (GET) ⭐
+// ----------------------------------------------------
+app.get('/FIN005', async (req, res) => {
+    // 登録完了後のリダイレクト先。セッションにユーザー情報があるかを確認
+    if (!req.session.user) {
+        // 不正なアクセスやセッション切れの場合、ログイン画面へ
+        req.session.error = '登録完了情報が確認できませんでした。ログインしてください。';
+        return res.redirect('/FIN002');
+    }
+
+    const viewData = await getCommonViewData(req);
+
+    res.render('FIN005', {
+        pageTitle: '登録完了',
         ...viewData
     });
 });
@@ -269,7 +360,7 @@ app.post('/search', async (req, res) => {
     try {
         const result = await ShopDAO.findByOptions(budget, distance, genre);
         // FIN007をレンダリングする際も共通データを渡す必要があるため、取得
-        const viewData = await getCommonViewData(req); 
+        const viewData = await getCommonViewData(req);
         return res.render('FIN007', { ...viewData, shop: result });
     } catch (error) {
         console.error('お店検索処理エラー:', error);

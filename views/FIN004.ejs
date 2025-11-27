@@ -3,48 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= typeof pageTitle !== 'undefined' ? pageTitle : '新規登録内容の確認（FIN004）' %></title>
-    <link rel="stylesheet" href="/css/style.css">
+    <title>登録情報確認 - FIN004 Confim</title>
+    <!-- Tailwind CSS CDNをロード -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
+        }
+    </style>
 </head>
-<body class="fin004">
-
-    <div class="container">
-        <h2 class="fin004-title"><%= typeof pageTitle !== 'undefined' ? pageTitle : '新規登録内容の確認' %></h2>
-        
-        <% if (error && error.length > 0) { %>
-            <p class="error-message" style="color: red; padding: 10px; margin-bottom: 15px;">
-                <%= error %>
+<body>
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="w-full max-w-md bg-white rounded-xl shadow-2xl p-8 space-y-8">
+            <h1 class="text-3xl font-bold text-center text-gray-800">
+                登録情報の確認
+            </h1>
+            <p class="text-center text-gray-500 mb-6">
+                以下の情報で登録を完了します。誤りがないかご確認ください。
             </p>
-        <% } %>
-        
-        <% if (typeof userId !== 'undefined' && userId !== '未登録') { %>
-            <h3>ようこそ、<%= userName %>さん！</h3>
-            <div class="info-block">
-                <p><span>ユーザーID：</span><%= userId %></p>
-                <p><span>メールアドレス：</span><%= email %></p>
-            </div>
-            <div class="button-area">
-                <form action="/logout" method="POST" style="display: inline;">
-                    <button type="submit" class="btn btn-default">ログアウト</button>
-                </form>
-            </div>
-        <% } else { %>
-            <div class="info-block">
-                <p><span>ユーザー名：</span><%= typeof username !== 'undefined' ? username : userName %></p>
-                <p><span>メールアドレス：</span><%= email %></p>
-                <p><span>パスワード：</span>********</p> 
+
+            <!-- 確認情報表示エリア -->
+            <div class="space-y-4 p-5 bg-indigo-50 rounded-lg border border-indigo-200">
+                
+                <!-- ユーザー名 -->
+                <div class="flex justify-between items-center py-2 border-b border-indigo-200">
+                    <span class="text-gray-600 font-medium">ユーザー名</span>
+                    <!-- 💡 Express (EJSなど)で動的に置き換える場所 -->
+                    <span id="display-username" class="text-lg font-semibold text-gray-800">
+                        <%= user.username %>
+                    </span>
+                </div>
+
+                <!-- メールアドレス -->
+                <div class="flex justify-between items-center py-2">
+                    <span class="text-gray-600 font-medium">メールアドレス</span>
+                    <!-- 💡 Express (EJSなど)で動的に置き換える場所 -->
+                    <span id="display-email" class="text-lg font-semibold text-gray-800">
+                        <%= user.email %>
+                    </span>
+                </div>
+                
+                <!-- パスワード (セキュリティのため表示しない) -->
+                <div class="flex justify-between items-center pt-2 border-t border-indigo-200">
+                    <span class="text-gray-600 font-medium">パスワード</span>
+                    <span class="text-lg font-semibold text-red-500">
+                        （セキュリティ保護のため非表示）
+                    </span>
+                </div>
             </div>
 
-            <div class="button-area">
-                <form action="/register-final" method="POST" style="display: inline;">
-                    <button type="submit" class="btn btn-danger">登録を完了する</button>
+            <!-- アクションボタン -->
+            <div class="flex flex-col space-y-4">
+                <!-- 最終登録実行フォーム: セッションデータを使って /register-final にPOST送信 -->
+                <form action="/register-final" method="POST" class="w-full">
+                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-md hover:shadow-lg">
+                        <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.01 12.01 0 002 15.466c0 5.564 3.84 10.763 9 11.835l1-.22c5.16 1.072 9-4.271 9-9.835a12.01 12.01 0 00-1.618-7.513z"></path></svg>
+                        この内容で登録する
+                    </button>
                 </form>
                 
-                <a href="/FIN003" class="btn btn-default" role="button">
-                    内容を編集
+                <!-- 修正ボタン: フォームに戻る -->
+                <a href="/FIN003" class="w-full text-center border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-bold py-3 px-4 rounded-lg transition duration-200">
+                    <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                    修正して戻る
                 </a>
             </div>
-        <% } %>
+
+        </div>
     </div>
 </body>
-</html>
+</html> 
