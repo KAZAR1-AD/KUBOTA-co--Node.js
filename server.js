@@ -350,8 +350,9 @@ app.get('/search', async (req, res) => { // ★ async を追加
 
 // ----------------------------------------------------
 // /search: お店検索処理 (POST)
+// フォームから送られてきた条件をセッションに保存し、結果ページへ転送
 // ----------------------------------------------------
-app.post('/search', async (req, res) => {
+app.post('/search', (req, res) => {
     const { budget, distance, genre } = req.body;
 
     console.log(budget); // デバッグ用

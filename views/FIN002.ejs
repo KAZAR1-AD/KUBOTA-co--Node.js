@@ -4,42 +4,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ログイン画面（FIN002）</title>
-    <link rel="stylesheet" href="/css/style.css"> 
+    <!-- サーバー上のパス -->
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body class="fin002">
-    <div class="container">
-        <h1>ログイン</h1>
+
+    <div class="container fin002-container">
         
-        <% if (error && error.length > 0) { %>
-            <p class="error-message" style="color: red; border: 1px solid red; padding: 10px; margin-bottom: 15px;">
+        <!-- エラーメッセージ -->
+        <% if (typeof error !== 'undefined' && error) { %>
+            <div style="color: #dc3545; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 10px; border-radius: 4px; margin-bottom: 20px;">
                 <%= error %>
-            </p>
+            </div>
         <% } %>
-        
+
+        <!-- 成功メッセージ -->
+        <% if (typeof message !== 'undefined' && message) { %>
+            <div style="color: #155724; background-color: #d4edda; border: 1px solid #c3e6cb; padding: 10px; border-radius: 4px; margin-bottom: 20px;">
+                <%= message %>
+            </div>
+        <% } %>
+
         <form action="/login" method="POST">
 
             <div class="fin002-register">
-                <a href="/FIN003" class="fin002-register-link" role="button">
-                    新規登録はこちら
-                </a>
+                <a href="/FIN003" class="fin002-register-link">新規登録はこちら</a>
             </div>
 
             <div class="form-group">
-                <label for="login_id" class="form-label">メールアドレス or ID</label>
-                <input type="text" id="login_id" name="login_id" class="form-input" required> 
+                <label for="email" class="form-label">メールアドレス or ID</label>
+                <input type="text" id="email" name="login_id" class="form-input" required>
             </div>
 
             <div class="form-group">
                 <label for="password" class="form-label">パスワード</label>
                 <input type="password" id="password" name="password" class="form-input" required>
             </div>
-
+            
+            <!-- ボタンエリア -->
             <div class="button-area">
-                <input type="submit" value="ログイン" class="btn btn-pink">
+                <!-- ログインボタン -->
+                <button type="submit" class="btn btn-primary" id="loginButton">ログイン</button>
                 
-                <a href="/" class="btn btn-pink" role="button">戻る</a>
+                <!-- 戻るボタン（スタイル崩れ防止のため、直接CSSを指定しています） -->
+                <a href="/" class="btn btn-secondary" role="button" 
+                   style="display: flex; align-items: center; justify-content: center; text-decoration: none; height: 48px; box-sizing: border-box;">
+                   戻る
+                </a>
             </div>
+
         </form>
     </div>
+
 </body>
 </html>

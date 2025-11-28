@@ -4,55 +4,62 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>新規登録（FIN003）</title>
-    <!-- 外部CSSファイル（style.css）を読み込み -->
+    <!-- サーバー上のパス -->
     <link rel="stylesheet" href="/css/style.css">
 </head>
-<body class="font-sans">
-    <div class="container">
+<body class="fin003">
+
+    <div class="container fin003-container">
+        <!-- タイトルエリア -->
         <h1 class="fin003-title">新規登録</h1>
         
-        <!-- EJSテンプレートによるサーバーサイドエラー表示エリア -->
-        <% if (typeof error !== 'undefined' && error && error.length > 0) { %>
-            <p class="error-message">
+        <!-- エラーメッセージ表示エリア -->
+        <% if (typeof error !== 'undefined' && error) { %>
+            <div style="color: #dc3545; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 10px; border-radius: 4px; margin: 0 30px 20px 30px;">
                 <%= error %>
-            </p>
+            </div>
         <% } %>
-
-        <form action="/register-confirm" method="POST">
+        
+        <!-- 登録フォーム -->
+        <!-- divではなくformタグにクラスを適用し、直接送信できるようにしています -->
+        <form action="/register-final" method="POST" class="fin003-form-wrapper">
             
             <div class="form-group">
                 <label for="username" class="form-label">ユーザー名</label>
+                <!-- name="username" を設定 -->
                 <input type="text" id="username" name="username" class="form-input" required>
             </div>
 
             <div class="form-group">
                 <label for="email" class="form-label">メールアドレス</label>
+                <!-- name="email" を設定 -->
                 <input type="email" id="email" name="email" class="form-input" required>
             </div>
 
             <div class="form-group">
                 <label for="password" class="form-label">パスワード</label>
-                <!-- 最小文字数 (8文字) を設定 -->
-                <input type="password" id="password" name="password" class="form-input" required minlength="8">
-                <p class="password-hint">※ 8文字以上で入力してください。</p>
+                <!-- name="password" を設定 -->
+                <input type="password" id="password" name="password" class="form-input" required>
             </div>
 
-            <div class="form-group" style="margin-bottom: 1.5rem;">
-                <label for="confirm_password_field" class="form-label">パスワード（確認用）</label>
-                <!-- 最小文字数 (8文字) を設定 -->
-                <input type="password" id="confirm_password_field" name="confirm_password" class="form-input" required minlength="8">
+            <div class="form-group">
+                <label for="confirm" class="form-label">パスワード（確認用）</label>
+                <!-- name="confirm_password" を設定 (server.jsの仕様に合わせる) -->
+                <input type="password" id="confirm" name="confirm_password" class="form-input" required>
             </div>
 
             <div class="button-area">
-                <button type="submit" class="btn btn-primary">
-                    登録する
-                </button>
+                <!-- 登録ボタン (submitに変更) -->
+                <button type="submit" class="btn btn-primary">登録する</button>
                 
-                <a href="/FIN002" class="btn btn-secondary" role="button">
-                    戻る
+                <!-- 戻るボタン (デザイン崩れ防止のためスタイルを直接指定) -->
+                <a href="/FIN002" class="btn btn-secondary" role="button"
+                   style="display: flex; align-items: center; justify-content: center; text-decoration: none; height: 48px; box-sizing: border-box;">
+                   戻る
                 </a>
             </div>
         </form>
     </div>
+
 </body>
 </html>
