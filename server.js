@@ -16,7 +16,7 @@ const ShopDAO = require('./dao/ShopDAO');
 const UserIconDAO = require('./dao/UserIconDAO');
 
 
-// 環境変数PORTがあればそれを使用し、なければ8080を使用
+// 環境変数PORTがあればそれを使用し、なければ"config/baseport.json"を使用
 const config = require('config');
 const port = config.get('port');
 
@@ -352,7 +352,7 @@ app.get('/search', async (req, res) => { // ★ async を追加
 // /search: お店検索処理 (POST)
 // フォームから送られてきた条件をセッションに保存し、結果ページへ転送
 // ----------------------------------------------------
-app.post('/search', (req, res) => {
+app.post('/search', async (req, res) => {
     const { budget, distance, genre } = req.body;
 
     console.log(budget); // デバッグ用
