@@ -2,6 +2,7 @@
   "dependencies": {
     "bcrypt": "^6.0.0",
     "body-parser": "^2.2.0",
+    "config": "^4.1.1",
     "ejs": "^3.1.10",
     "express": "^5.1.0",
     "express-session": "^1.18.2",
@@ -9,7 +10,10 @@
     "mysql2": "^3.15.3"
   },
   "scripts": {
-    "start": "node server.js"
+    "start": "NODE_ENV=baseport node server.js",
+    "kim": "NODE_ENV=kim node server.js",
+    "taiga": "NODE_ENV=taiga node server.js",
+    "zaki": "NODE_ENV=zaki node server.js"
   },
   "name": "kubota-nodejs",
   "version": "1.0.0",

@@ -11,6 +11,7 @@
   <li>Body-Parser</li>
   <li>bcrypt</li>
   <li>express-session</li>
+  <li>config<li>
 </ul>
 
 アイコン画像
