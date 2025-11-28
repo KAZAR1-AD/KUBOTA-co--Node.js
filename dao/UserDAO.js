@@ -302,3 +302,13 @@ exports.updatePassword = async (userId, currentPassword, newPassword) => {
         throw new Error(error.message || 'パスワードの更新中にエラーが発生しました。');
     }
 };
+
+// 試しに作りました。正しいかは分かりません。
+exports.isEmailTaken = async (email) => {
+    const [rows] = await db.query(`SELECT COUNT(*) AS cnt FROM table_user WHERE email = ?`,[email]);
+    if (rows[0].cnt > 0) {
+        return true;
+    } else {
+        return false;
+    }
+};
