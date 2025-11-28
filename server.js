@@ -16,7 +16,7 @@ const ShopDAO = require('./dao/ShopDAO');
 
 
 // 環境変数PORTがあればそれを使用し、なければ8080を使用
-const port = 8585;
+const port = 8080;
 
 
 // ===================================
@@ -239,17 +239,54 @@ app.get('/search', (req, res) => {
 
 // ----------------------------------------------------
 // /search: お店検索処理 (POST)
+// フォームから送られてきた条件をセッションに保存し、結果ページへ転送
 // ----------------------------------------------------
-app.post('/search', async (req, res) => {
+app.post('/search', (req, res) => {
     const { budget, distance, genre } = req.body;
 
-    console.log(budget); // デバッグ用
-    console.log(distance); // デバッグ用
-    console.log(genre); // デバッグ用
+    // 1. ページ移動しても忘れないように、検索条件をセッションに保存
+    req.session.searchCriteria = {
+        budget: budget,
+        distance: distance,
+        genre: genre
+    };
+
+    // 2. 結果表示専用のURLへリダイレクト (GETメソッドになります)
+    res.redirect('/search-result');
+});
+
+
+// ----------------------------------------------------
+// ★追加 /search-result: 検索結果表示 (GET)
+// ページネーション（2ページ目など）はここを通ります
+// ----------------------------------------------------
+app.get('/search-result', async (req, res) => {
+    
+    // セッションから保存しておいた検索条件を取り出す
+    const criteria = req.session.searchCriteria;
+
+    // もし検索条件がなければ（直接URLを叩いた場合など）、検索画面に戻す
+    if (!criteria) {
+        return res.redirect('/search');
+    }
+
+    // URLのクエリパラメータからページ番号を取得（なければ 1）
+    const page = req.query.page || 1;
 
     try {
-        const result = await ShopDAO.findByOptions(budget, distance, genre);
-        return res.render('FIN007', { shop: result });
+        // 保存しておいた条件で検索を実行
+        const result = await ShopDAO.findByOptions(
+            criteria.budget, 
+            criteria.distance, 
+            criteria.genre
+        );
+
+        // 画面表示 (ここで page も一緒に渡すのが重要！)
+        return res.render('FIN007', { 
+            shop: result, 
+            page: page 
+        });
+
     } catch (error) {
         console.error('お店検索処理エラー:', error);
         req.session.error = 'お店の検索中にエラーが発生しました。';

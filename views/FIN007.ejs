@@ -16,81 +16,73 @@
 
     <div class="fin007-results-container">
 
-        <%# EJSわかんね～～～～～ %>
-        
-        <!--
+        <% 
+            /* =========================================
+               ページネーション用 計算ロジック
+               ========================================= */
+            
+            // 1ページに表示する件数
+            const limit = 10; 
 
-        ループで取り出そうとして頑張ってた部分　後で消す
+            // 現在のページ番号 (サーバーから渡されない場合は 1 とする)
+            // URLに ?page=2 などがついていると、サーバー経由でここに入ってきます
+            const currentPage = (typeof page !== 'undefined' && page) ? parseInt(page) : 1;
 
-        <% if (Array.isArray(shop)) { %>
-            <% shop.forEach(item => { %>
-                <table>
-                    <tr>
-                        <th>shop_id</th>
-                        <th>shop_name</th>
-                        <th>budget</th>
-                        <th>distance</th>
-                        <th>genre</th>
-                        <th>photo_address</th>
-                        <th>address</th>
-                        <th>googlemap_link</th>
-                    </tr>
-                    <tr>
-                        <td><%= item.shop_id %></td>
-                        <td><%= item.shop_name %></td>
-                        <td><%= item.budget %></td>
-                        <td><%= item.distance %></td>
-                        <td><%= item.genre %></td>
-                        <td><%= item.photo_address %></td>
-                        <td><%= item.address %></td>
-                        <td><%= item.googlemap_link %></td>
-                    </tr>
-                </table>
-            <% }) %>
-        <% } else { %>
-            <p>データがありません。</p>
-        <% } %>
-        
-        -->
-        
-        <!-- 仮での表示部分 -->
-        <% if (shop === null) { %>
+            // 表示用リストとページ数の初期化
+            let currentShopList = [];
+            let totalPages = 0;
+
+            // データが正しく配列として存在するかチェック
+            if (shop && Array.isArray(shop) && shop.length > 0) {
+                // 全ページ数を計算 (例: 25件 ÷ 10 = 2.5 → 切り上げで 3ページ)
+                totalPages = Math.ceil(shop.length / limit);
+
+                // 配列の切り出し開始位置と終了位置を計算
+                const startIndex = (currentPage - 1) * limit;
+                const endIndex = startIndex + limit;
+
+                // 全データ(shop)から、今のページに必要な分だけ切り出す
+                currentShopList = shop.slice(startIndex, endIndex);
+            }
+        %>
+
+        <% if (currentShopList.length === 0) { %>
             <p>条件に合うお店が見つかりませんでした。</p>
         <% } else { %>
-            <% shop.forEach(item => { %>
+            
+            <% currentShopList.forEach(item => { %>
             <div class="fin007-result-item">
-                <span class="fin007-result-info"><%= item.shop_name %> 徒歩<%= item.distance %>分 予算：<%= item.budget %>円</span>
+                <span class="fin007-result-info">
+                    <%= item.shop_name %> 
+                    徒歩<%= item.distance %>分 
+                    予算：<%= item.budget %>円
+                </span>
                 <span class="fin007-result-star">★</span>
             </div>
             <% }); %>
+
         <% } %>
 
-        <div class="fin007-result-item">
-            <span class="fin007-result-info">店名 徒歩○分 1000円〜1400円</span>
-            <span class="fin007-result-star">★</span>
-        </div>
 
-        <div class="fin007-result-item">
-            <span class="fin007-result-info">店名 徒歩○分 1000円〜1400円</span>
-            <span class="fin007-result-star">★</span>
-        </div>
-
-        <div class="fin007-result-item">
-            <span class="fin007-result-info">店名 徒歩○分 1000円〜1400円</span>
-            <span class="fin007-result-star">★</span>
-        </div>
-
+        <% if (totalPages > 1) { %>
         <div class="fin007-pagination">
-            <span class="fin007-page-item active">1</span>
-            <a href="#" class="fin007-page-item">2</a>
-            <a href="#" class="fin007-page-item">3</a>
-            <span class="fin007-page-item dots">...</span>
+            
+            <% for(let i = 1; i <= totalPages; i++) { %>
+                <% if (i === currentPage) { %>
+                    <span class="fin007-page-item active"><%= i %></span>
+                <% } else { %>
+                    <a href="?page=<%= i %>" class="fin007-page-item"><%= i %></a>
+                <% } %>
+            <% } %>
+
         </div>
+        <% } %>
 
     </div>
 
     <a href="/search" class="fin007-change-criteria-btn">
         条件<br>を変える
     </a>
-    </body>
+    
+</body>
 </html>
