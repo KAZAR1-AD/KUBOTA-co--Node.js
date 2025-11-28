@@ -106,6 +106,44 @@ class ShopDAO {
             }
         }
     }
+
+
+    /**
+     * 予算とジャンルでお店を検索する
+     * @param {number} budget
+     * @param {*} genre
+     * @returns {Object|null} - 店舗情報オブジェクト、または見つからなかった場合はnull
+     */
+    async findbyGenre(budget, genre) {
+        let connection;
+        genre = this.commaToAnd(genre);
+        try {
+            connection = await db.getConnection();
+            const sql = `
+                SELECT * 
+                FROM ${STORE_TABLE} 
+                WHERE budget <= ${budget + 1000}
+                AND genre = "${genre}"
+            `;
+
+            console.log(sql);
+
+            const [rows] = await connection.execute(sql, [genre]);
+
+            if (rows.length === 0) {
+                console.log(`[ShopDAO.js] ❌ 予算${budget}円、ジャンル${genre}の店舗情報が見つかりません。`);
+                return null;
+            }
+
+            console.log(`[ShopDAO.js] ✅ 取得成功: 予算${budget}円、ジャンル${genre}の店舗情報を正常に取得しました。`);
+            return rows;
+        } catch (error) {
+            console.error('[ShopDAO.js] ジャンルによる店舗情報取得処理でデータベースエラーが発生:', error.message);
+            throw new Error('データベースジャンルによる店舗情報取得処理中に予期せぬエラーが発生しました。');
+        } finally {
+            if (connection) connection.release();
+        }
+    }
         
 
     /**
@@ -127,20 +165,21 @@ class ShopDAO {
         } else if (genre === "") {
             return this.findByDistance(budget, distance);
 
-        // すべて指定あり
-        } else if (distance !== 1) {
+        // 距離指定なし
+        } else if (distance === 1) {
+            return this.findbyGenre(budget, genre);
+        // 全指定
+        } else {
             distance = this.convertDistance(distance);
             try {
                 connection = await db.getConnection();
                 const sql = `
                     SELECT * 
                     FROM ${STORE_TABLE} 
-                    WHERE budget BETWEEN ${budget - 1000} AND ${budget + 1000}
+                    WHERE budget <= ${budget + 1000}
                     AND distance <= ${distance}
                     AND genre = "${genre}"
                 `;
-
-                console.log(sql);
 
                 const [rows] = await connection.execute(sql, [distance, genre]);
 
@@ -152,8 +191,8 @@ class ShopDAO {
                 console.log(`[ShopDAO.js] ✅ 取得成功: 予算${budget}円、距離${distance}m、ジャンル${genre}の店舗情報を正常に取得しました。`);
                 return rows;
             } catch (error) {
-                console.error('[ShopDAO.js] オプションによる店舗情報取得処理でデータベースエラーが発生:', error.message);
-                throw new Error('データベースオプションによる店舗情報取得処理中に予期せぬエラーが発生しました。');
+                console.error('[ShopDAO.js] 複数オプションによる店舗情報取得処理でデータベースエラーが発生:', error.message);
+                throw new Error('データベース複数オプションによる店舗情報取得処理中に予期せぬエラーが発生しました。');
             } finally {
                 if (connection) connection.release();
             }

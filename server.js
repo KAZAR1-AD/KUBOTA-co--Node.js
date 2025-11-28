@@ -17,7 +17,8 @@ const UserIconDAO = require('./dao/UserIconDAO');
 
 
 // 環境変数PORTがあればそれを使用し、なければ8080を使用
-const port = 8585;
+const config = require('config');
+const port = config.get('port');
 
 
 // ===================================
