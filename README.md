@@ -11,7 +11,11 @@
   <li>Body-Parser</li>
   <li>bcrypt</li>
   <li>express-session</li>
+  <li>config<li>
 </ul>
+
+アイコン画像
+http://flat-icon-design.com/?paged=22
 
 ---
 

@@ -3,7 +3,6 @@ const express = require('express');
 const app = express();
 const session = require('express-session');
 const path = require('path');
-// const crypto = require('crypto'); // ダミー用 - 削除
 
 // ===================================
 // 0. DAOの読み込み（本番環境用）
@@ -13,10 +12,13 @@ const path = require('path');
 const UserDAO = require('./dao/UserDAO');
 const ReportDAO = require('./dao/ReportDAO');
 const ShopDAO = require('./dao/ShopDAO');
+// ★ 新しく作成したUserIconDAOをインポート ★
+const UserIconDAO = require('./dao/UserIconDAO');
 
 
 // 環境変数PORTがあればそれを使用し、なければ8080を使用
-const port = 8080;
+const config = require('config');
+const port = config.get('port');
 
 
 // ===================================
@@ -51,10 +53,22 @@ app.use(session({
 // ===================================
 
 /**
- * ログインユーザーの共通データ (isLoggedIn, userName, userId, email) を取得し、
- * セッションのエラー/メッセージを削除する。
+ * ダミーのパスワードマスク関数
+ * @param {string} password 
+ * @returns {string} 
  */
-const getCommonViewData = (req) => {
+function maskPassword(password) {
+    if (!password) return '';
+    // 画面表示用のマスク（文字数に合わせて調整可能）
+    return '*'.repeat(password.length > 8 ? 8 : password.length);
+}
+
+/**
+ * ログインユーザーの共通データ (isLoggedIn, userName, userId, email, profilePhotoId, userIconUrl) を取得し、
+ * セッションのエラー/メッセージを削除する。
+ * ★ UserIconDAOからアイコンURLを取得する処理を追加 ★
+ */
+const getCommonViewData = async (req) => { // ★ async を追加
     const isLoggedIn = !!req.session.user;
 
     const errorMsg = req.session.error;
@@ -62,25 +76,31 @@ const getCommonViewData = (req) => {
     delete req.session.error;
     delete req.session.message;
 
-    if (!isLoggedIn) {
-        return {
-            isLoggedIn: false,
-            userName: null,
-            userId: null,
-            email: null,
-            error: errorMsg,
-            message: null
-        };
+    const baseData = {
+        isLoggedIn: isLoggedIn,
+        userName: isLoggedIn ? req.session.user.name : null,
+        userId: isLoggedIn ? req.session.user.id : null,
+        email: isLoggedIn ? req.session.user.email : null,
+        profilePhotoId: isLoggedIn ? req.session.user.profilePhotoId : null,
+        error: errorMsg,
+        message: successMsg,
+        userIconUrl: '/images/user_icon/default.png' // デフォルトアイコンURL
+    };
+
+    if (baseData.isLoggedIn && baseData.profilePhotoId) {
+        try {
+            // ★ UserIconDAOを使用してアイコンURLを取得 ★
+            const url = await UserIconDAO.getIconUrlByPhotoId(baseData.profilePhotoId);
+            if (url) {
+                baseData.userIconUrl = url;
+            }
+        } catch (e) {
+            console.error('ヘッダー用アイコンURL取得中にエラー:', e.message);
+            // エラーが発生してもデフォルトURLで処理を続行する
+        }
     }
 
-    return {
-        isLoggedIn: true,
-        userName: req.session.user.name,
-        userId: req.session.user.id,
-        email: req.session.user.email,
-        error: errorMsg,
-        message: successMsg
-    };
+    return baseData;
 };
 
 /**
@@ -100,16 +120,16 @@ const requireLogin = (req, res, next) => {
 // ===================================
 
 // --- FIN001: ルートパス ("/") へのGETリクエスト (Welcome画面) ---
-app.get('/', (req, res) => {
-    const viewData = getCommonViewData(req);
-    res.render('FIN001', { ...viewData, pageTitle: 'ウェルカム' });
+app.get('/', async (req, res) => { // ★ async を追加
+    const viewData = await getCommonViewData(req); // ★ await を追加
+    res.render('FIN001', { ...viewData, pageTitle: '船橋いまなにする？' });
 });
 
 // ----------------------------------------------------
 // FIN002: ログイン画面の表示 (GET)
 // ----------------------------------------------------
-app.get('/FIN002', (req, res) => {
-    const viewData = getCommonViewData(req);
+app.get('/FIN002', async (req, res) => { // ★ async を追加
+    const viewData = await getCommonViewData(req); // ★ await を追加
 
     res.render('FIN002', {
         pageTitle: 'ログイン',
@@ -131,14 +151,19 @@ app.post('/login', async (req, res) => {
     }
 
     try {
-        // UserDAO.authenticateUser は { user_id, user_name, email } または null を返すことを期待
+        // UserDAO.authenticateUser は { user_id, user_name, email, profile_photo_id } または null を返すことを期待
         const user = await UserDAO.authenticateUser(login_id, password);
 
         if (user) {
             // 認証成功: セッションにユーザー情報を保存し、FIN001（ルートパス）へリダイレクト
-            req.session.user = { id: user.user_id, name: user.user_name, email: user.email };
+            req.session.user = {
+                id: user.user_id,
+                name: user.user_name,
+                email: user.email,
+                profilePhotoId: user.profile_photo_id // ★ profile_photo_id をセッションに保存
+            };
             req.session.message = `おかえりなさい、${user.user_name}さん！`;
-            return res.redirect('/'); 
+            return res.redirect('/');
         } else {
             // 認証失敗
             req.session.error = 'ID/メールアドレスまたはパスワードが正しくありません。';
@@ -154,8 +179,11 @@ app.post('/login', async (req, res) => {
 // ----------------------------------------------------
 // ⭐ FIN003: 新規登録画面の表示 (GET) ⭐
 // ----------------------------------------------------
-app.get('/FIN003', (req, res) => {
-    const viewData = getCommonViewData(req);
+app.get('/FIN003', async (req, res) => { // ★ async を追加
+    const viewData = await getCommonViewData(req); // ★ await を追加
+    // 新しいフローでは、最初に戻る際にセッションに一時保存されたデータを削除します
+    delete req.session.registerData;
+
     res.render('FIN003', {
         pageTitle: '新規登録',
         ...viewData
@@ -163,10 +191,12 @@ app.get('/FIN003', (req, res) => {
 });
 
 // ----------------------------------------------------
-// ⭐ /register-final: 新規登録処理 (POST) ⭐
+// ⭐ /register-confirm: 新規登録確認処理 (POST) ⭐
+// FIN003からデータを受け取り、セッションに保存し、FIN004（確認画面）へ遷移
 // ----------------------------------------------------
-app.post('/register-final', async (req, res) => {
+app.post('/register-confirm', async (req, res) => {
     const { username, email, password, confirm_password } = req.body;
+    const viewData = await getCommonViewData(req);
 
     // 簡易バリデーション
     if (!username || !email || !password || !confirm_password) {
@@ -180,36 +210,117 @@ app.post('/register-final', async (req, res) => {
     }
 
     try {
-        // UserDAO.registerUser は { success: true/false, userId: id, message: msg } を返すことを期待
-        const result = await UserDAO.registerUser(username, email, password);
-
-        if (result.success) {
-            // 登録成功: ユーザーを即座にログイン状態にし、FIN004へリダイレクト
-            // 登録成功時に UserDAO が userId を返すことを前提としています
-            req.session.user = { id: result.userId, name: username, email: email };
-            req.session.message = '新規登録が完了しました！早速始めましょう。';
-            return res.redirect('/FIN004');
-        } else {
-            // 登録失敗 (例: メールアドレス重複など)
-            req.session.error = result.message || '登録に失敗しました。';
+        // メールアドレスの重複チェック（FIN003側ではDBアクセスを行わない設計のため、このタイミングでチェック）
+        // UserDAOに isEmailTaken メソッドがあると仮定
+        const isEmailTaken = await UserDAO.isEmailTaken(email);
+        if (isEmailTaken) {
+            req.session.error = 'このメールアドレスは既に使用されています。';
             return res.redirect('/FIN003');
         }
-    } catch (error) {
-        console.error('新規登録処理エラー:', error);
-        req.session.error = 'システムエラーが発生しました。';
+
+        // 確認画面表示のためにデータをセッションに一時保存
+        // 生のパスワードを次のステップのために保持する
+        req.session.registerData = { username, email, password };
+
+        // FIN004 (確認画面) をレンダリング
+        res.render('FIN004', {
+            pageTitle: '登録内容確認',
+            ...viewData,
+            // 確認画面に必要なデータ
+            username: username,
+            useremail: email,
+            passwordMasked: maskPassword(password),
+            // FIN004テンプレートはセッションではなくEJSの変数を使って表示します
+        });
+
+    } catch (e) {
+        console.error('登録前チェックエラー:', e);
+        req.session.error = '登録処理中にエラーが発生しました。';
         return res.redirect('/FIN003');
     }
 });
 
 
 // ----------------------------------------------------
-// ⭐ FIN004: ホーム画面/登録完了確認画面 (GET) ⭐
+// ⭐ /register-final: 最終登録処理 (POST) ⭐
+// FIN004から最終承認を受け取り、DB登録を実行し、FIN005（完了画面）へ遷移
 // ----------------------------------------------------
-app.get('/FIN004', requireLogin, (req, res) => {
-    const viewData = getCommonViewData(req);
+// 既存の旧登録ロジックを、セッションを利用した新しい最終登録ロジックに置き換えます
+app.post('/register-final', async (req, res) => {
+    // セッションから一時保存された登録データを取得
+    const registerData = req.session.registerData;
+
+    // セッションにデータがない場合は、不正なアクセスとしてFIN003に戻す
+    if (!registerData) {
+        req.session.error = '登録情報が見つかりませんでした。最初からやり直してください。';
+        return res.redirect('/FIN003');
+    }
+
+    const { username, email, password } = registerData;
+
+    try {
+        // UserDAO.registerUser は { success: true/false, userId: id, message: msg } を返すことを期待
+        const result = await UserDAO.registerUser(username, email, password);
+
+        if (result.success) {
+            // 登録成功: ユーザーを即座にログイン状態にし、FIN005へリダイレクト
+            req.session.user = {
+                id: result.userId,
+                name: username,
+                email: email,
+                profilePhotoId: null // 登録時は初期値としてnullを設定
+            };
+            req.session.message = '新規登録が完了しました！早速始めましょう。';
+
+            // 登録データはもう不要なのでセッションから削除
+            delete req.session.registerData;
+
+            // 新しい完了画面FIN005へリダイレクト
+            return res.redirect('/FIN005');
+        } else {
+            // 登録失敗 
+            req.session.error = result.message || '登録に失敗しました。';
+            delete req.session.registerData; // 失敗したので削除
+            return res.redirect('/FIN003');
+        }
+    } catch (error) {
+        console.error('新規登録処理エラー:', error);
+        req.session.error = 'システムエラーが発生しました。';
+        delete req.session.registerData; // 失敗したので削除
+        return res.redirect('/FIN003');
+    }
+});
+
+
+// ----------------------------------------------------
+// ⭐ FIN004: ホーム画面 (GET) - ログイン必須 ⭐
+// ----------------------------------------------------
+// 既存のログイン後ホーム画面ルートはそのまま残します。
+app.get('/FIN004', requireLogin, async (req, res) => { // ★ async を追加
+    const viewData = await getCommonViewData(req); // ★ await を追加
     // FIN004はログイン後のトップ画面を想定
     res.render('FIN004', {
         pageTitle: 'ホーム',
+        ...viewData
+    });
+});
+
+
+// ----------------------------------------------------
+// ⭐ FIN005: 登録完了画面 (GET) ⭐
+// ----------------------------------------------------
+app.get('/FIN005', async (req, res) => {
+    // 登録完了後のリダイレクト先。セッションにユーザー情報があるかを確認
+    if (!req.session.user) {
+        // 不正なアクセスやセッション切れの場合、ログイン画面へ
+        req.session.error = '登録完了情報が確認できませんでした。ログインしてください。';
+        return res.redirect('/FIN002');
+    }
+
+    const viewData = await getCommonViewData(req);
+
+    res.render('FIN005', {
+        pageTitle: '登録完了',
         ...viewData
     });
 });
@@ -231,10 +342,10 @@ app.post('/logout', (req, res) => {
 // ----------------------------------------------------
 // /search: お店検索ページの表示 (FIN006) (GET)
 // ----------------------------------------------------
-app.get('/search', (req, res) => {
-    const viewData = getCommonViewData(req);
+app.get('/search', async (req, res) => { // ★ async を追加
+    const viewData = await getCommonViewData(req); // ★ await を追加
     // FIN006 テンプレートをレンダリングすることを想定
-    res.render('FIN006', getCommonViewData(req));
+    res.render('FIN006', viewData);
 });
 
 // ----------------------------------------------------
@@ -244,49 +355,15 @@ app.get('/search', (req, res) => {
 app.post('/search', (req, res) => {
     const { budget, distance, genre } = req.body;
 
-    // 1. ページ移動しても忘れないように、検索条件をセッションに保存
-    req.session.searchCriteria = {
-        budget: budget,
-        distance: distance,
-        genre: genre
-    };
-
-    // 2. 結果表示専用のURLへリダイレクト (GETメソッドになります)
-    res.redirect('/search-result');
-});
-
-
-// ----------------------------------------------------
-// ★追加 /search-result: 検索結果表示 (GET)
-// ページネーション（2ページ目など）はここを通ります
-// ----------------------------------------------------
-app.get('/search-result', async (req, res) => {
-    
-    // セッションから保存しておいた検索条件を取り出す
-    const criteria = req.session.searchCriteria;
-
-    // もし検索条件がなければ（直接URLを叩いた場合など）、検索画面に戻す
-    if (!criteria) {
-        return res.redirect('/search');
-    }
-
-    // URLのクエリパラメータからページ番号を取得（なければ 1）
-    const page = req.query.page || 1;
+    console.log(budget); // デバッグ用
+    console.log(distance); // デバッグ用
+    console.log(genre); // デバッグ用
 
     try {
-        // 保存しておいた条件で検索を実行
-        const result = await ShopDAO.findByOptions(
-            criteria.budget, 
-            criteria.distance, 
-            criteria.genre
-        );
-
-        // 画面表示 (ここで page も一緒に渡すのが重要！)
-        return res.render('FIN007', { 
-            shop: result, 
-            page: page 
-        });
-
+        const result = await ShopDAO.findByOptions(budget, distance, genre);
+        // FIN007をレンダリングする際も共通データを渡す必要があるため、取得
+        const viewData = await getCommonViewData(req);
+        return res.render('FIN007', { ...viewData, shop: result });
     } catch (error) {
         console.error('お店検索処理エラー:', error);
         req.session.error = 'お店の検索中にエラーが発生しました。';
@@ -294,13 +371,24 @@ app.get('/search-result', async (req, res) => {
     }
 });
 
+// ----------------------------------------------------
+// FIN008: アイコン設定 (GET) - /mypage ルート
+// ----------------------------------------------------
 
+app.get('/mypage', requireLogin, async (req, res) => { // ★ async を追加
+
+    const viewData = await getCommonViewData(req); // ★ await を追加
+    res.render('FIN008', {
+        pageTitle: 'アイコン設定',
+        ...viewData
+    });
+});
 
 // ----------------------------------------------------
 // FIN009: マイページ表示 (GET)
 // ----------------------------------------------------
-app.get('/FIN009', requireLogin, (req, res) => {
-    const viewData = getCommonViewData(req);
+app.get('/FIN009', requireLogin, async (req, res) => { // ★ async を追加
+    const viewData = await getCommonViewData(req); // ★ await を追加
 
     res.render('FIN009', {
         pageTitle: 'マイページ',
@@ -311,19 +399,19 @@ app.get('/FIN009', requireLogin, (req, res) => {
 // ----------------------------------------------------
 // FIN_Profile_Edit: ユーザー名/メールアドレス変更画面 (GET) - 共通化
 // ----------------------------------------------------
-app.get('/FIN_Profile_Edit/:mode', requireLogin, (req, res) => {
+app.get('/FIN_Profile_Edit/:mode', requireLogin, async (req, res) => { // ★ async を追加
     const mode = req.params.mode;
-    const viewData = getCommonViewData(req);
+    const viewData = await getCommonViewData(req); // ★ await を追加
 
     let pageTitle, labelName, actionUrl;
 
     if (mode === 'username') {
         pageTitle = 'ユーザー名変更';
-        labelName = '新しいユーザー名';
+        labelName = 'ユーザー名';
         actionUrl = '/update-username';
     } else if (mode === 'email') {
         pageTitle = 'メールアドレス変更';
-        labelName = '新しいメールアドレス';
+        labelName = 'メールアドレス';
         actionUrl = '/update-email';
     } else {
         req.session.error = '不正な変更モードです。';
@@ -343,8 +431,8 @@ app.get('/FIN_Profile_Edit/:mode', requireLogin, (req, res) => {
 // ----------------------------------------------------
 // FIN014: パスワード変更画面 (GET)
 // ----------------------------------------------------
-app.get('/FIN014', requireLogin, (req, res) => {
-    const viewData = getCommonViewData(req);
+app.get('/FIN014', requireLogin, async (req, res) => { // ★ async を追加
+    const viewData = await getCommonViewData(req); // ★ await を追加
     res.render('FIN014', { pageTitle: 'パスワード変更', ...viewData });
 });
 
@@ -353,22 +441,23 @@ app.get('/FIN014', requireLogin, (req, res) => {
 // 更新処理 (POST) - 完了後FIN009へ共通リダイレクト
 // ----------------------------------------------------
 
+// ユーザー名更新処理
 app.post('/update-username', requireLogin, async (req, res) => {
-    const { newValue } = req.body; // フォームフィールド名を newValue に統一
+    // フォームからは 'newUsername' という名前でデータが送信されるため、それを取得する
+    const { newUsername } = req.body;
 
-    if (!newValue) {
+    if (!newUsername) {
         req.session.error = '新しいユーザー名を入力してください。';
         return res.redirect('/FIN_Profile_Edit/username');
     }
 
     try {
         // 1. DB更新
-        // UserDAO.updateUsername は 成功/失敗に応じて true/false または例外を返すことを期待
-        await UserDAO.updateUsername(req.session.user.id, newValue);
+        await UserDAO.updateUsername(req.session.user.id, newUsername);
         // 2. セッション更新
-        req.session.user.name = newValue;
+        req.session.user.name = newUsername;
 
-        req.session.message = `ユーザー名を「${newValue}」に変更しました。`;
+        req.session.message = `ユーザー名を「${newUsername}」に変更しました。`;
         return res.redirect('/FIN009');
     } catch (e) {
         console.error('ユーザー名更新エラー:', e);
@@ -377,22 +466,23 @@ app.post('/update-username', requireLogin, async (req, res) => {
     }
 });
 
+// メールアドレス更新処理
 app.post('/update-email', requireLogin, async (req, res) => {
-    const { newValue } = req.body; // フォームフィールド名を newValue に統一
+    // フォームからは 'newEmail' という名前でデータが送信されるため、それを取得する
+    const { newEmail } = req.body;
 
-    if (!newValue) {
+    if (!newEmail) {
         req.session.error = '新しいメールアドレスを入力してください。';
         return res.redirect('/FIN_Profile_Edit/email');
     }
 
     try {
         // 1. DB更新
-        // UserDAO.updateEmail は 成功/失敗に応じて true/false または例外を返すことを期待
-        await UserDAO.updateEmail(req.session.user.id, newValue);
+        await UserDAO.updateEmail(req.session.user.id, newEmail);
         // 2. セッション更新
-        req.session.user.email = newValue;
+        req.session.user.email = newEmail;
 
-        req.session.message = `メールアドレスを「${newValue}」に変更しました。`;
+        req.session.message = `メールアドレスを「${newEmail}」に変更しました。`;
         return res.redirect('/FIN009');
     } catch (e) {
         console.error('メールアドレス更新エラー:', e);
@@ -400,6 +490,40 @@ app.post('/update-email', requireLogin, async (req, res) => {
         return res.redirect('/FIN_Profile_Edit/email');
     }
 });
+
+// プロフィール画像ID更新処理 (★ 新規追加)
+app.post('/update-profile-photo', requireLogin, async (req, res) => {
+    // フォームから新しいprofile_photo_idを取得（ここでは 'newPhotoId' と仮定）
+    let { newPhotoId } = req.body;
+
+    // newPhotoId が 'null' 文字列、空文字列、または '0' の場合はDBのNULLとして処理
+    const photoId = (newPhotoId === null || newPhotoId === '' || newPhotoId === 'null' || newPhotoId === '0')
+        ? null
+        : parseInt(newPhotoId, 10);
+
+    // 数値でない、かつnullでもない場合はエラー
+    if (photoId !== null && (isNaN(photoId) || photoId <= 0)) {
+        req.session.error = '不正な画像IDが指定されました。';
+        return res.redirect('/mypage');
+    }
+
+    try {
+        // 1. DB更新 (UserDAOを使用)
+        await UserDAO.updateProfilePhotoId(req.session.user.id, photoId);
+
+        // 2. セッション更新
+        req.session.user.profilePhotoId = photoId;
+
+        req.session.message = photoId === null ? 'プロフィール画像をリセットしました。' : 'プロフィール画像を変更しました。';
+        return res.redirect('/FIN009'); // マイページへリダイレクト
+    } catch (e) {
+        console.error('プロフィール画像ID更新エラー:', e);
+        // UserDAOから投げられたデータベースエラーを捕捉
+        req.session.error = e.message || 'プロフィール画像の更新中にエラーが発生しました。';
+        return res.redirect('/mypage');
+    }
+});
+
 
 app.post('/update-password', requireLogin, async (req, res) => {
     const { currentPassword, newPassword, confirmPassword } = req.body;

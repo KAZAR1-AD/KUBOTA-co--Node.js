@@ -1,15 +1,18 @@
 <!DOCTYPE html>
-
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= pageTitle %>（FIN_Profile_Edit）</title>
-    <link rel="stylesheet" href="css/style.css"> 
+    <link rel="stylesheet" href="/css/style.css"> 
 </head>
 <body class="fin-profile-edit">
 
-    <%- include('header_common.ejs', { isLoggedIn: isLoggedIn, userName: userName, userId: userId }) %>
+    <%- include('header_common.ejs', { 
+        isLoggedIn: isLoggedIn, 
+        userName: userName, 
+        userId: userId 
+    }) %>
 
     <div class="container fin-profile-edit-container">
         
@@ -20,10 +23,12 @@
         <% } %>
 
         <form action="/update-<%= mode %>" method="POST">
+            
             <div class="form-group">
                 <label for="new-value" class="form-label">新しい<%= labelName %></label>
                 
                 <% 
+                    // mode に基づいて input の属性を決定
                     let inputType = (mode === 'email') ? 'email' : 'text';
                     let inputPlaceholder = (mode === 'email') ? 'example@mail.com' : '新しい名前を入力';
                     let inputName = (mode === 'email') ? 'newEmail' : 'newUsername';
@@ -44,7 +49,5 @@
             </div>
         </form>
 
-    </div>
-
-</body>
+    </div> </body>
 </html>

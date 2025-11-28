@@ -15,14 +15,14 @@ function execPost(action, data) {
     document.body.appendChild(form);
     // パラメタの設定
     if (data !== undefined) {
-     for (var paramName in data) {
-      var input = document.createElement('input');
-      input.setAttribute('type', 'hidden');
-      input.setAttribute('name', paramName);
-      input.setAttribute('value', data[paramName]);
-      form.appendChild(input);
-     }
+        for (var paramName in data) {
+            var input = document.createElement('input');
+            input.setAttribute('type', 'hidden');
+            input.setAttribute('name', paramName);
+            input.setAttribute('value', data[paramName]);
+            form.appendChild(input);
+        }
     }
     // submit
     form.submit();
-   }
+}
