@@ -27,6 +27,8 @@
 
         <form action="/login" method="POST">
 
+            <input type="hidden" name="returnUrl" value="<%= backUrl %>">
+            
             <div class="fin002-register">
                 <a href="/FIN003" class="fin002-register-link">新規登録はこちら</a>
             </div>
@@ -47,9 +49,9 @@
                 <button type="submit" class="btn btn-primary" id="loginButton">ログイン</button>
                 
                 <!-- 戻るボタン（スタイル崩れ防止のため、直接CSSを指定しています） -->
-                <a href="/" class="btn btn-secondary" role="button" 
-                   style="display: flex; align-items: center; justify-content: center; text-decoration: none; height: 48px; box-sizing: border-box;">
-                   戻る
+                <a href="<%= backUrl %>" class="btn btn-secondary" role="button"
+                    style="display: flex; align-items: center; justify-content: center; text-decoration: none; height: 48px; box-sizing: border-box;">
+                    戻る
                 </a>
             </div>
 
