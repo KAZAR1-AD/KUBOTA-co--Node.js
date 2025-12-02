@@ -372,18 +372,41 @@ app.post('/search', async (req, res) => {
 });
 
 // ----------------------------------------------------
-// FIN008: アイコン設定 (GET) - /mypage ルート
+// FIN008: メニュー画面 (GET) - /mypage ルート
 // ----------------------------------------------------
 
 app.get('/mypage', requireLogin, async (req, res) => { // ★ async を追加
 
     const viewData = await getCommonViewData(req); // ★ await を追加
     res.render('FIN008', {
-        pageTitle: 'アイコン設定',
+        pageTitle: 'メニュー', // 画面名がアイコン設定よりもメニューの方が適切かもしれないため調整
         ...viewData
     });
 });
 
+// ----------------------------------------------------
+// FIN019: プロフィール画像変更画面 (GET) - ログイン必須 ★ここから追加★
+// ----------------------------------------------------
+app.get('/changeIcon', requireLogin, async (req, res) => {
+    const viewData = await getCommonViewData(req);
+
+    try {
+        // UserIconDAO を使って、ユーザーが選択可能な全てのアイコンリストを取得する
+        // DAOは [{ id: 1, url: '...', name: '...' }, ...] のような配列を返すと仮定
+        const availableIcons = await UserIconDAO.getAllIcons();
+
+        res.render('FIN019_modal', {
+            pageTitle: 'プロフィール画像変更',
+            ...viewData,
+            availableIcons: availableIcons // 選択肢のアイコンリスト
+        });
+    } catch (e) {
+        console.error('FIN019 画面表示エラー（アイコンリスト取得失敗）:', e);
+        // エラーが発生した場合は、エラーメッセージをセッションに保存してメニュー画面に戻す
+        req.session.error = 'アイコンリストの取得中にエラーが発生しました。';
+        res.redirect('/mypage'); 
+    }
+});
 // ----------------------------------------------------
 // FIN009: マイページ表示 (GET)
 // ----------------------------------------------------
