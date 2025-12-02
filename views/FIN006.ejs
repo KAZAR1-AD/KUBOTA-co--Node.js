@@ -22,7 +22,7 @@
                         <!-- 修正箇所: サーバーから渡された userIconUrl を直接 src に設定 -->
                         <img id="headerProfileImage" src="<%= userIconUrl %>" alt="メニュー">
                     </a>    
-                    <form action="/logout" method="POST" style="display: inline;">
+                    <form action="/logout" method="POST" style="display: inline;" onsubmit="return confirm('ログアウトしますか？');">
                         <button type="submit" class="btn btn-default fin001-logout-btn">ログアウト</button>
                     </form>
                 </div>
@@ -126,7 +126,7 @@
             // ヘッダー関連のJavaScriptロジック
             // サーバーから渡された isLoggedIn 変数を使用
             // 修正: EJS変数が未定義の場合に備え、JavaScriptの構文エラーを防ぐために || false を追加
-            const isLoggedIn = <%= isLoggedIn || false %>;
+            // const isLoggedIn = <%= isLoggedIn || false %>; 
             const loginBtn = document.getElementById('headerLoginBtn');
 
             // ログインボタンのリダイレクト処理（非ログイン時のみ）
