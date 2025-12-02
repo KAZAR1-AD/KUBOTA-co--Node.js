@@ -15,26 +15,32 @@
 
     <div class="container fin008-container">
 
-        <a href="/changeIcon" class="fin008-photo-area">
-            <img src="<%= userIconUrl %>" alt="ユーザーアイコン" class="fin008-icon">
-            <span class="fin008-photo-caption">選択式の写真を<br>設定する画面へ遷移</span>
-        </a>
+        <% if (message) { %>
+            <p class="success-message"
+                style="color: green; padding: 10px; border: 1px solid green; background-color: #e9ffe9; margin-bottom: 20px;">
+                ✅ <%= message %>
+            </p>
+            <% } %>
 
-        <div class="fin008-username">
-            <%= userName %>
-        </div>
+                <a href="/changeIcon" class="fin008-photo-area">
+                    <img src="<%= userIconUrl %>" alt="ユーザーアイコン" class="fin008-icon">
+                </a>
 
-        <div class="fin008-menu-links">
-            <a href="/FIN009" class="btn fin008-btn">個人設定</a>
-            <a href="#" class="btn fin008-btn">フレンド</a>
-            <a href="#" class="btn fin008-btn">お気に入り</a>
-            <button class="btn fin008-btn" onclick="history.back()">戻る</button>
-        </div>
+                <div class="fin008-username">
+                    <%= userName %>
+                </div>
+
+                <div class="fin008-menu-links">
+                    <a href="/FIN009" class="btn fin008-btn">個人設定</a>
+                    <a href="#" class="btn fin008-btn">フレンド</a>
+                    <a href="#" class="btn fin008-btn">お気に入り</a>
+                    <button class="btn fin008-btn" onclick="history.back()">戻る</button>
+                </div>
 
 
     </div>
 
-        <script src="/js/fin008.js"></script>
+    <script src="/js/fin008.js"></script>
 </body>
 
 </html>
