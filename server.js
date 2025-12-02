@@ -538,7 +538,7 @@ app.post('/update-profile-photo', requireLogin, async (req, res) => {
         req.session.user.profilePhotoId = photoId;
 
         req.session.message = photoId === null ? 'プロフィール画像をリセットしました。' : 'プロフィール画像を変更しました。';
-        return res.redirect('/FIN009'); // マイページへリダイレクト
+        return res.redirect('/mypage'); // マイページへリダイレクト
     } catch (e) {
         console.error('プロフィール画像ID更新エラー:', e);
         // UserDAOから投げられたデータベースエラーを捕捉
