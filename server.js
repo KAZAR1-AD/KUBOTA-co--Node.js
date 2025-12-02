@@ -47,6 +47,21 @@ app.use(session({
     }
 }));
 
+// ブラウザに「画面を保存するな」と命令するミドルウェア
+app.use((req, res, next) => {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
+    res.set('Surrogate-Control', 'no-store');
+    next();
+});
+
+// ★追加：すべての画面で「今のURL」を使えるようにする
+app.use((req, res, next) => {
+    // res.locals に入れた変数は、すべてのEJSで <%= currentUrl %> として使えます
+    res.locals.currentUrl = req.originalUrl;
+    next();
+});
 
 // ===================================
 // 2. 共通処理とミドルウェア
@@ -131,10 +146,14 @@ app.get('/', async (req, res) => { // ★ async を追加
 app.get('/FIN002', async (req, res) => { // ★ async を追加
     const viewData = await getCommonViewData(req); // ★ await を追加
 
+    // クエリパラメータ(?returnUrl=...)があればそれを取得。なければトップページ(/)にする
+    const backUrl = req.query.returnUrl || '/';
+
     res.render('FIN002', {
         pageTitle: 'ログイン',
         error: viewData.error,
         message: viewData.message,
+        backUrl: backUrl // ★EJSに「戻る先」を渡す
     });
 });
 
@@ -142,7 +161,7 @@ app.get('/FIN002', async (req, res) => { // ★ async を追加
 // /login: ログイン認証処理 (POST)
 // ----------------------------------------------------
 app.post('/login', async (req, res) => {
-    const { login_id, password } = req.body;
+    const { login_id, password, returnUrl } = req.body;
 
     // 入力値の簡易バリデーション
     if (!login_id || !password) {
@@ -163,7 +182,10 @@ app.post('/login', async (req, res) => {
                 profilePhotoId: user.profile_photo_id // ★ profile_photo_id をセッションに保存
             };
             req.session.message = `おかえりなさい、${user.user_name}さん！`;
-            return res.redirect('/');
+            // returnUrl があればそこへ、なければトップページ('/')へリダイレクト
+            // 例：FIN006から来たなら '/search' に戻るようになります
+            const redirectDestination = returnUrl || '/';
+            return res.redirect(redirectDestination);
         } else {
             // 認証失敗
             req.session.error = 'ID/メールアドレスまたはパスワードが正しくありません。';
