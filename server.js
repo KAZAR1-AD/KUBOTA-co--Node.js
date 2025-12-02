@@ -109,7 +109,7 @@ const getCommonViewData = async (req) => { // ★ async を追加
 const requireLogin = (req, res, next) => {
     if (!req.session.user) {
         req.session.error = 'このページにアクセスするにはログインが必要です。';
-        return res.redirect('/FIN002');
+        return res.redirect('/welcome');
     }
     next();
 };
@@ -128,7 +128,7 @@ app.get('/', async (req, res) => { // ★ async を追加
 // ----------------------------------------------------
 // FIN002: ログイン画面の表示 (GET)
 // ----------------------------------------------------
-app.get('/FIN002', async (req, res) => { // ★ async を追加
+app.get('/welcome', async (req, res) => { // ★ async を追加
     const viewData = await getCommonViewData(req); // ★ await を追加
 
     res.render('FIN002', {
@@ -147,7 +147,7 @@ app.post('/login', async (req, res) => {
     // 入力値の簡易バリデーション
     if (!login_id || !password) {
         req.session.error = 'IDとパスワードを入力してください。';
-        return res.redirect('/FIN002');
+        return res.redirect('/welcome');
     }
 
     try {
@@ -167,12 +167,12 @@ app.post('/login', async (req, res) => {
         } else {
             // 認証失敗
             req.session.error = 'ID/メールアドレスまたはパスワードが正しくありません。';
-            return res.redirect('/FIN002');
+            return res.redirect('/welcome');
         }
     } catch (error) {
         console.error('ログイン処理エラー:', error);
         req.session.error = 'システムエラーが発生しました。';
-        return res.redirect('/FIN002');
+        return res.redirect('/welcome');
     }
 });
 
@@ -339,7 +339,7 @@ app.get('/FIN005', async (req, res) => {
     if (!req.session.user) {
         // 不正なアクセスやセッション切れの場合、ログイン画面へ
         req.session.error = '登録完了情報が確認できませんでした。ログインしてください。';
-        return res.redirect('/FIN002');
+        return res.redirect('/welcome');
     }
 
     const viewData = await getCommonViewData(req);
@@ -360,7 +360,7 @@ app.post('/logout', (req, res) => {
             console.error('ログアウト中にエラーが発生:', err);
             return res.status(500).send('ログアウトエラー');
         }
-        res.redirect('/FIN002');
+        res.redirect('/welcome');
     });
 });
 
@@ -580,7 +580,7 @@ app.post('/update-password', requireLogin, async (req, res) => {
                 console.error('パスワード変更後のセッション破棄エラー:', err);
                 return res.status(500).send('パスワード変更後の処理エラー');
             }
-            res.redirect('/FIN002');
+            res.redirect('/welcome');
         });
 
     } catch (e) {
