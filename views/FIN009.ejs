@@ -13,11 +13,33 @@
 
 <body class="fin009">
 
-    <%- include('header_common.ejs', { isLoggedIn: isLoggedIn, userName: userName, userId: userId }) %>
+    <header class="fixed-header">
+        <div class="fixed-header-left">
+            </div>
+        <div class="fixed-header-title"><h2>マイページ</h2></div>
+        <div class="fixed-header-icon-area">
 
-        <div class="fin009-title-bar page-title-bar">
-            <h2>マイページ</h2>
+            <% if (isLoggedIn) { %>
+                <div class="fin001-user-controls">
+                    <span class="fin001-welcome-msg"><%= userName %>さん</span>
+                    
+                    <a href="/mypage" class="header-profile-icon">
+                        <!-- 修正箇所: サーバーから渡された userIconUrl を直接 src に設定 -->
+                        <img id="headerProfileImage" src="<%= userIconUrl %>" alt="メニュー">
+                    </a>    
+                    <form action="/logout" method="POST" style="display: inline;">
+                        <button type="submit" class="btn btn-default fin001-logout-btn">ログアウト</button>
+                    </form>
+                </div>
+
+            <% } else { %>
+                <a href="/welcome" class="btn btn-primary header-login-btn">
+                    ログイン
+                </a>
+            <% } %>
         </div>
+    </header>
+    
 
         <div class="container fin009-container">
 
@@ -60,6 +82,8 @@
                                     <a href="/FIN014" class="btn fin009-edit-btn">変更</a>
                                 </div>
                             </div>
+
+                            <button class="btn fin008-btn" onclick="history.back()">戻る</button>
 
 
         </div>

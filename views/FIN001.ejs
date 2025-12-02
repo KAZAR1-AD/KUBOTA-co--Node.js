@@ -12,6 +12,25 @@
 
     <header class="fixed-header">
         <div class="fixed-header-left">
+        </div>
+
+        <!-- 2. 中央のタイトル -->
+        <div class="fixed-header-title"><h2>船橋今なにする？</h2></div>
+
+        <!-- 3. 右側のアイコンエリア（ここにEJSの分岐を入れます） -->
+        <div class="fixed-header-icon-area" id="headerIconArea">
+            <% if (typeof isLoggedIn !== 'undefined' && isLoggedIn) { %>
+                <div class="fin001-user-controls">
+                    <span class="fin001-welcome-msg"><%= userName %>さん</span>
+                    
+                    <a href="/mypage" class="header-profile-icon">
+                        <!-- 修正箇所: サーバーから渡された userIconUrl を直接 src に設定 -->
+                        <img id="headerProfileImage" src="<%= userIconUrl %>" alt="メニュー">
+                    </a>    
+                    <form action="/logout" method="POST" style="display: inline;">
+                        <button type="submit" class="btn btn-default fin001-logout-btn">ログアウト</button>
+                    </form>
+                </div>
             </div>
         <div class="fixed-header-title">船橋今なにする？</div>
         <div class="fixed-header-icon-area">
@@ -30,6 +49,8 @@
                 </div>
 
             <% } else { %>
+                
+                <a href="/welcome" class="btn btn-primary header-login-btn">
                 <a href="/FIN002?returnUrl=<%= currentUrl %>" class="btn btn-default header-login-btn" role="button" id="headerLoginBtn">      
                     ログイン
                 </a>

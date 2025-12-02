@@ -124,7 +124,7 @@ const getCommonViewData = async (req) => { // ★ async を追加
 const requireLogin = (req, res, next) => {
     if (!req.session.user) {
         req.session.error = 'このページにアクセスするにはログインが必要です。';
-        return res.redirect('/FIN002');
+        return res.redirect('/welcome');
     }
     next();
 };
@@ -143,7 +143,7 @@ app.get('/', async (req, res) => { // ★ async を追加
 // ----------------------------------------------------
 // FIN002: ログイン画面の表示 (GET)
 // ----------------------------------------------------
-app.get('/FIN002', async (req, res) => { // ★ async を追加
+app.get('/welcome', async (req, res) => { // ★ async を追加
     const viewData = await getCommonViewData(req); // ★ await を追加
 
     // クエリパラメータ(?returnUrl=...)があればそれを取得。なければトップページ(/)にする
@@ -166,7 +166,7 @@ app.post('/login', async (req, res) => {
     // 入力値の簡易バリデーション
     if (!login_id || !password) {
         req.session.error = 'IDとパスワードを入力してください。';
-        return res.redirect('/FIN002');
+        return res.redirect('/welcome');
     }
 
     try {
@@ -189,12 +189,12 @@ app.post('/login', async (req, res) => {
         } else {
             // 認証失敗
             req.session.error = 'ID/メールアドレスまたはパスワードが正しくありません。';
-            return res.redirect('/FIN002');
+            return res.redirect('/welcome');
         }
     } catch (error) {
         console.error('ログイン処理エラー:', error);
         req.session.error = 'システムエラーが発生しました。';
-        return res.redirect('/FIN002');
+        return res.redirect('/welcome');
     }
 });
 
@@ -336,7 +336,7 @@ app.get('/FIN005', async (req, res) => {
     if (!req.session.user) {
         // 不正なアクセスやセッション切れの場合、ログイン画面へ
         req.session.error = '登録完了情報が確認できませんでした。ログインしてください。';
-        return res.redirect('/FIN002');
+        return res.redirect('/welcome');
     }
 
     const viewData = await getCommonViewData(req);
@@ -357,7 +357,7 @@ app.post('/logout', (req, res) => {
             console.error('ログアウト中にエラーが発生:', err);
             return res.status(500).send('ログアウトエラー');
         }
-        res.redirect('/FIN002');
+        res.redirect('/welcome');
     });
 });
 
@@ -394,18 +394,41 @@ app.post('/search', async (req, res) => {
 });
 
 // ----------------------------------------------------
-// FIN008: アイコン設定 (GET) - /mypage ルート
+// FIN008: メニュー画面 (GET) - /mypage ルート
 // ----------------------------------------------------
 
 app.get('/mypage', requireLogin, async (req, res) => { // ★ async を追加
 
     const viewData = await getCommonViewData(req); // ★ await を追加
     res.render('FIN008', {
-        pageTitle: 'アイコン設定',
+        pageTitle: 'メニュー', // 画面名がアイコン設定よりもメニューの方が適切かもしれないため調整
         ...viewData
     });
 });
 
+// ----------------------------------------------------
+// FIN019: プロフィール画像変更画面 (GET) - ログイン必須 ★ここから追加★
+// ----------------------------------------------------
+app.get('/changeIcon', requireLogin, async (req, res) => {
+    const viewData = await getCommonViewData(req);
+
+    try {
+        // UserIconDAO を使って、ユーザーが選択可能な全てのアイコンリストを取得する
+        // DAOは [{ id: 1, url: '...', name: '...' }, ...] のような配列を返すと仮定
+        const availableIcons = await UserIconDAO.getAllIcons();
+
+        res.render('FIN019_modal', {
+            pageTitle: 'プロフィール画像変更',
+            ...viewData,
+            availableIcons: availableIcons // 選択肢のアイコンリスト
+        });
+    } catch (e) {
+        console.error('FIN019 画面表示エラー（アイコンリスト取得失敗）:', e);
+        // エラーが発生した場合は、エラーメッセージをセッションに保存してメニュー画面に戻す
+        req.session.error = 'アイコンリストの取得中にエラーが発生しました。';
+        res.redirect('/mypage'); 
+    }
+});
 // ----------------------------------------------------
 // FIN009: マイページ表示 (GET)
 // ----------------------------------------------------
@@ -576,7 +599,7 @@ app.post('/update-password', requireLogin, async (req, res) => {
                 console.error('パスワード変更後のセッション破棄エラー:', err);
                 return res.status(500).send('パスワード変更後の処理エラー');
             }
-            res.redirect('/FIN002');
+            res.redirect('/welcome');
         });
 
     } catch (e) {
