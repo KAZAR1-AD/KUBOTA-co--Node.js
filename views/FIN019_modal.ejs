@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>プロフィール画像変更（FIN019）</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body class="fin019">
+
+    <div class="container fin019-container">
+
+        <h2 class="fin019-title">プロフィール画像の変更</h2>
+
+        <div class="fin019-current-info">
+            <img src="<%= userIconUrl %>" alt="現在のアイコン" class="fin019-icon-current">
+            <p>
+                <%= userName %>
+            </p>
+        </div>
+
+        <div class="fin019-image-grid">
+            <div class="fin019-image-item">画像1</div>
+            <div class="fin019-image-item">画像2</div>
+            <div class="fin019-image-item">画像3</div>
+            <div class="fin019-image-item">画像4</div>
+            <div class="fin019-image-item">画像5</div>
+            <div class="fin019-image-item">画像6</div>
+            <div class="fin019-image-item">画像7</div>
+            <div class="fin019-image-item">画像8</div>
+            <div class="fin019-image-item">画像9</div>
+            <div class="fin019-image-item">画像10</div>
+        </div>
+
+        <div class="fin019-footer">
+            <input type="text" class="fin019-text-input" placeholder="（テキスト入力欄）">
+            <button class="btn fin019-close-btn" onclick="history.back()">メニューに戻る</button>
+            <button class="btn fin019-save-btn">保存</button>
+        </div>
+
+    </div>
+</body>
+
+</html>
