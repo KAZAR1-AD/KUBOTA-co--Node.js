@@ -31,7 +31,7 @@
                 <a href="/FIN002" class="btn btn-default header-login-btn" role="button" id="headerLoginBtn">      
                     ログイン
                 </a>
-                <a href="/FIN003" class="btn btn-default fin006-register-btn" role="button">
+                <a href="/register" class="btn btn-default fin006-register-btn" role="button">
                     新規登録
                 </a>
             <% } %>
@@ -40,6 +40,13 @@
     
     <div class="container fin006-container"> 
         <h2 class="fin006-title">どんなお店をお探しですか？</h2>
+
+        <!-- エラーメッセージ表示エリア -->
+        <% if (typeof error !== 'undefined' && error) { %>
+            <div style="color: #dc3545; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 10px; border-radius: 4px; margin: 0 30px 20px 30px;">
+                <%= error %>
+            </div>
+        <% } %>
 
         <div class="fin006-search-box">
 
@@ -122,7 +129,7 @@
             // ヘッダー関連のJavaScriptロジック
             // サーバーから渡された isLoggedIn 変数を使用
             // 修正: EJS変数が未定義の場合に備え、JavaScriptの構文エラーを防ぐために || false を追加
-            const isLoggedIn = <%= isLoggedIn || false %>; 
+            const isLoggedIn = <%= isLoggedIn || false %>;
             const loginBtn = document.getElementById('headerLoginBtn');
 
             // ログインボタンのリダイレクト処理（非ログイン時のみ）
