@@ -30,12 +30,14 @@
                     <%= userName %>
                 </div>
 
-                <div class="fin008-menu-links">
-                    <a href="/FIN009" class="btn fin008-btn">個人設定</a>
-                    <a href="#" class="btn fin008-btn">フレンド</a>
-                    <a href="#" class="btn fin008-btn">お気に入り</a>
-                    <button class="btn fin008-btn" onclick="history.back()">戻る</button>
-                </div>
+        <div class="fin008-menu-links">
+            <a href="/FIN009" class="btn fin008-btn">個人設定</a>
+            <a href="#" class="btn fin008-btn">フレンド</a>
+            <a href="#" class="btn fin008-btn">お気に入り</a>
+            <a href="<%= backUrl %>" class="btn fin008-btn" style="text-decoration: none; display: flex; justify-content: center; align-items: center;">
+                戻る
+            </a>
+        </div>
 
 
     </div>
