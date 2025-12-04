@@ -24,6 +24,8 @@
         <!-- divではなくformタグにクラスを適用し、直接送信できるようにしています -->
         <form action="/register-confirm" method="POST" class="fin003-form-wrapper">
             
+            <input type="hidden" name="returnUrl" value="<%= backUrl %>">
+
             <div class="form-group">
                 <label for="username" class="form-label">ユーザー名</label>
                 <!-- name="username" を設定 -->
@@ -53,9 +55,9 @@
                 <button type="submit" class="btn btn-primary">登録する</button>
                 
                 <!-- 戻るボタン (デザイン崩れ防止のためスタイルを直接指定) -->
-                <a href="/welcome" class="btn btn-secondary" role="button"
-                   style="display: flex; align-items: center; justify-content: center; text-decoration: none; height: 48px; box-sizing: border-box;">
-                   戻る
+                <a href="<%= backUrl %>" class="btn btn-secondary" role="button"
+                    style="display: flex; align-items: center; justify-content: center; text-decoration: none; height: 48px; box-sizing: border-box;">
+                    戻る
                 </a>
             </div>
         </form>

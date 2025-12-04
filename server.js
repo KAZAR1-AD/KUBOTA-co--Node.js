@@ -203,12 +203,17 @@ app.post('/login', async (req, res) => {
 // ----------------------------------------------------
 app.get('/FIN003', async (req, res) => { // ★ async を追加
     const viewData = await getCommonViewData(req); // ★ await を追加
+
+    // ★追加：戻り先URLを取得（なければ '/welcome' をデフォルトにする）
+    const backUrl = req.query.returnUrl || '/welcome';
+
     // 新しいフローでは、最初に戻る際にセッションに一時保存されたデータを削除します
     delete req.session.registerData;
 
     res.render('FIN003', {
         pageTitle: '新規登録',
-        ...viewData
+        ...viewData,
+        backUrl: backUrl // ★EJSに渡す
     });
 });
 
@@ -400,9 +405,14 @@ app.post('/search', async (req, res) => {
 app.get('/mypage', requireLogin, async (req, res) => { // ★ async を追加
 
     const viewData = await getCommonViewData(req); // ★ await を追加
+    
+    // ★追加：どこから来たかを受け取る（なければトップページ '/' にする）
+    const backUrl = req.query.returnUrl || '/';
+
     res.render('FIN008', {
         pageTitle: 'メニュー', // 画面名がアイコン設定よりもメニューの方が適切かもしれないため調整
-        ...viewData
+        ...viewData,
+        backUrl: backUrl // ★EJSに「戻り先」を渡す
     });
 });
 
