@@ -425,6 +425,23 @@ app.post('/search', async (req, res) => {
 });
 
 // ----------------------------------------------------
+// /search: お店検索処理 (POST)
+// フォームから送られてきた条件をセッションに保存し、結果ページへ転送
+// ----------------------------------------------------
+app.post('/api/favorites/sync', async (req, res) => {
+    const { userId, shopIds } = req.body;
+
+    try {
+        await FavShopDAO.syncFavorites(userId, shopIds);
+        res.status(200);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+
+
+// ----------------------------------------------------
 // FIN008: メニュー画面 (GET) - /mypage ルート
 // ----------------------------------------------------
 
