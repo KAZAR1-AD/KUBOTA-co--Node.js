@@ -4,53 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>検索結果（FIN007）</title>
-    <link rel="stylesheet" href="css/style.css"> 
+    <link rel="stylesheet" href="/css/style.css"> 
 </head>
 <body class="fin007">
 
-    <div class="fin007-title-bar">
+    <div class="fin007-title-bar" style="text-align: center; display: flex; justify-content: center; width: 100%;">
         <h2>検索結果</h2>
-        // これいる？
-        <a href="FIN008.html" class="page-menu-icon fin007-menu-icon">😊</a>
     </div>
 
     <div class="fin007-results-container">
 
-        <% 
-            /* =========================================
-               ページネーション用 計算ロジック
-               ========================================= */
-            
-            // 1ページに表示する件数
-            const limit = 10; 
-
-            // 現在のページ番号 (サーバーから渡されない場合は 1 とする)
-            // URLに ?page=2 などがついていると、サーバー経由でここに入ってきます
-            const currentPage = (typeof page !== 'undefined' && page) ? parseInt(page) : 1;
-
-            // 表示用リストとページ数の初期化
-            let currentShopList = [];
-            let totalPages = 0;
-
-            // データが正しく配列として存在するかチェック
-            if (shop && Array.isArray(shop) && shop.length > 0) {
-                // 全ページ数を計算 (例: 25件 ÷ 10 = 2.5 → 切り上げで 3ページ)
-                totalPages = Math.ceil(shop.length / limit);
-
-                // 配列の切り出し開始位置と終了位置を計算
-                const startIndex = (currentPage - 1) * limit;
-                const endIndex = startIndex + limit;
-
-                // 全データ(shop)から、今のページに必要な分だけ切り出す
-                currentShopList = shop.slice(startIndex, endIndex);
-            }
-        %>
-
-        <% if (currentShopList.length === 0) { %>
-            <p>条件に合うお店が見つかりませんでした。</p>
+        <% if (!shop || shop.length === 0) { %>
+            <div style="text-align: center; padding: 20px;">
+                <p>条件に合うお店が見つかりませんでした。</p>
+            </div>
         <% } else { %>
             
-            <% currentShopList.forEach(item => { %>
+            <% shop.forEach(item => { %>
             <div class="fin007-result-item">
                 <span class="fin007-result-info">
                     <%= item.shop_name %> 
@@ -64,17 +34,39 @@
         <% } %>
 
 
-        <% if (totalPages > 1) { %>
-        <div class="fin007-pagination">
-            
-            <% for(let i = 1; i <= totalPages; i++) { %>
-                <% if (i === currentPage) { %>
-                    <span class="fin007-page-item active"><%= i %></span>
+        <% if (typeof totalPages !== 'undefined' && totalPages > 1) { %>
+        <div class="pagination-container">
+            <nav class="pagination">
+                
+                <% if (currentPage > 1) { %>
+                    <a href="/search-results?page=<%= currentPage - 1 %>" class="pagination-link">
+                        &laquo; 前へ
+                    </a>
                 <% } else { %>
-                    <a href="?page=<%= i %>" class="fin007-page-item"><%= i %></a>
+                    <span class="pagination-link disabled">&laquo; 前へ</span>
                 <% } %>
-            <% } %>
 
+
+                <% for(let i = 1; i <= totalPages; i++) { %>
+                    <% if (i === currentPage) { %>
+                        <span class="pagination-link active"><%= i %></span>
+                    <% } else { %>
+                        <a href="/search-results?page=<%= i %>" class="pagination-link">
+                            <%= i %>
+                        </a>
+                    <% } %>
+                <% } %>
+
+
+                <% if (currentPage < totalPages) { %>
+                    <a href="/search-results?page=<%= currentPage + 1 %>" class="pagination-link">
+                        次へ &raquo;
+                    </a>
+                <% } else { %>
+                    <span class="pagination-link disabled">次へ &raquo;</span>
+                <% } %>
+
+            </nav>
         </div>
         <% } %>
 

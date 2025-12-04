@@ -413,15 +413,75 @@ app.post('/search', async (req, res) => {
 
     try {
         const result = await ShopDAO.findByOptions(budget, distance, genre);
-        // FIN007をレンダリングする際も共通データを渡す必要があるため、取得
         const viewData = await getCommonViewData(req);
+        
+        // ★重要：全結果をセッションに保存
         req.session.shop = result;
-        return res.render('FIN007', { ...viewData,  });
+
+        // --- ページネーション計算 ---
+        const page = 1; // 最初は必ず1ページ目
+        const PER_PAGE = 10; // 1ページあたりの表示件数
+        const totalItems = result.length; // 全件数
+        const totalPages = Math.ceil(totalItems / PER_PAGE); // ★全ページ数を計算
+
+        // 1ページ目のデータだけ切り出す
+        const pagedShops = result.slice(0, PER_PAGE);
+
+        return res.render('FIN007', { 
+            ...viewData, 
+            shop: pagedShops,         // 1ページ目のデータだけ渡す
+            currentPage: page,        // 現在のページ番号
+            totalItems: totalItems,   // 全件数
+            itemsPerPage: PER_PAGE,   // 1ページの件数
+            totalPages: totalPages    // ★全ページ数（これを渡さないとデザイン崩れます）
+        });
+
     } catch (error) {
         console.error('お店検索処理エラー:', error);
         req.session.error = 'お店の検索中にエラーが発生しました。';
         return res.redirect('/search');
     }
+});
+
+
+// ----------------------------------------------------
+// ★追加：検索結果のページネーション用 (GET)
+// ----------------------------------------------------
+app.get('/search-results', async (req, res) => {
+    // 1. セッションに保存された検索結果があるか確認
+    const allShops = req.session.shop;
+
+    if (!allShops) {
+        // 結果がなければ検索画面(FIN006)へ戻す
+        req.session.error = '検索結果の有効期限が切れました。もう一度検索してください。';
+        return res.redirect('/search');
+    }
+
+    // 2. ページ番号を取得（指定がなければ1ページ目）
+    const page = parseInt(req.query.page || 1);
+    const PER_PAGE = 10; // 1ページあたりの表示件数
+
+    // 3. ページネーション計算
+    const totalItems = allShops.length;
+    const totalPages = Math.ceil(totalItems / PER_PAGE); // ★全ページ数を計算
+
+    // 4. 配列から、そのページに必要な分だけ切り出す
+    const startIndex = (page - 1) * PER_PAGE;
+    const endIndex = startIndex + PER_PAGE;
+    const pagedShops = allShops.slice(startIndex, endIndex);
+
+    // 5. 画面表示用データ取得
+    const viewData = await getCommonViewData(req);
+
+    // 6. FIN007を表示
+    res.render('FIN007', {
+        ...viewData,
+        shop: pagedShops,         // 切り出したデータ
+        currentPage: page,        // 現在のページ番号
+        totalItems: totalItems,   // 全件数
+        itemsPerPage: PER_PAGE,   // 1ページの件数
+        totalPages: totalPages    // ★全ページ数
+    });
 });
 
 // ----------------------------------------------------
