@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>お気に入りページ</title>
+</head>
+<body>
+
+<!--
+    動的にお気に入り店舗を追加する処理を作るためのサンプル
+    これをFIN007に組み込んでいきます。
+-->
+<h1>お気に入り店舗</h1>
+
+<form id="favorite-form">
+  <label><input type="checkbox" name="shop" value="shopA"> Shop A</label><br>
+  <label><input type="checkbox" name="shop" value="shopB"> Shop B</label><br>
+  <label><input type="checkbox" name="shop" value="shopC"> Shop C</label><br>
+</form>
+
+<script>
+const userId = 123; // 固定ユーザーID
+
+let debounceTimer;
+
+// 共通送信関数
+function syncFavorites(shopIds) {
+    if (!shopIds) return;
+
+    const data = JSON.stringify({ userId, shopIds });
+    const blob = new Blob([data], { type: 'application/json' });
+    navigator.sendBeacon('/api/favorites/sync', blob);
+}
+
+// デバウンス付き送信
+function sendDebouncedFavorites(shopIds) {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+        syncFavorites(shopIds);
+    }, 500); // 500ms以内の連続操作はまとめて送信
+}
+
+// チェックボックス変更時
+document.querySelectorAll('#favorite-form input[name="shop"]').forEach(cb => {
+    cb.addEventListener('change', () => {
+        const selected = Array.from(document.querySelectorAll('#favorite-form input[name="shop"]:checked'))
+                              .map(el => el.value);
+        sendDebouncedFavorites(selected);
+    });
+});
+
+// ページ離脱時にも最後の状態を送信
+window.addEventListener('beforeunload', () => {
+    const selected = Array.from(document.querySelectorAll('#favorite-form input[name="shop"]:checked'))
+                          .map(el => el.value);
+    syncFavorites(selected); // デバウンスなしで確実に送信
+});
+</script>
+
+</body>
+</html>

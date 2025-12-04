@@ -425,6 +425,23 @@ app.post('/search', async (req, res) => {
 });
 
 // ----------------------------------------------------
+// /未定：お気に入り同期処理 (POST)
+// 動的にお気に入りの店を追加・削除する処理
+// ----------------------------------------------------
+app.post('/api/favorites/sync', async (req, res) => {
+    const { userId, shopIds } = req.body;
+
+    try {
+        await FavShopDAO.syncFavorites(userId, shopIds);
+        res.status(200);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+
+
+// ----------------------------------------------------
 // FIN008: メニュー画面 (GET) - /mypage ルート
 // ----------------------------------------------------
 
