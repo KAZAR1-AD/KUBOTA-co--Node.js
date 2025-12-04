@@ -15,80 +15,83 @@
 
     <header class="fixed-header">
         <div class="fixed-header-left">
-            </div>
-        <div class="fixed-header-title"><h2>マイページ</h2></div>
+        </div>
+        <div class="fixed-header-title">
+            <h2>マイページ</h2>
+        </div>
         <div class="fixed-header-icon-area">
 
             <% if (isLoggedIn) { %>
                 <div class="fin001-user-controls">
-                    <span class="fin001-welcome-msg"><%= userName %>さん</span>
-                    
+                    <span class="fin001-welcome-msg">
+                        <%= userName %>さん
+                    </span>
+
                     <a href="/mypage" class="header-profile-icon">
                         <!-- 修正箇所: サーバーから渡された userIconUrl を直接 src に設定 -->
                         <img id="headerProfileImage" src="<%= userIconUrl %>" alt="メニュー">
-                    </a>    
+                    </a>
                     <form action="/logout" method="POST" style="display: inline;">
                         <button type="submit" class="btn btn-default fin001-logout-btn">ログアウト</button>
                     </form>
                 </div>
 
-            <% } else { %>
-                <a href="/welcome" class="btn btn-primary header-login-btn">
-                    ログイン
-                </a>
-            <% } %>
+                <% } else { %>
+                    <a href="/welcome" class="btn btn-primary header-login-btn">
+                        ログイン
+                    </a>
+                    <% } %>
         </div>
     </header>
-    
 
-        <div class="container fin009-container">
 
-            <% if (error) { %>
-                <p class="error-message" style="color: red; padding: 10px;">エラー: <%= error %>
-                </p>
-                <% } %>
-                    <% if (message) { %>
-                        <p class="success-message"
-                            style="color: green; padding: 10px; border: 1px solid green; background-color: #e9ffe9; margin-bottom: 20px;">
-                            ✅ <%= message %>
-                        </p>
-                        <% } %>
-                            <div class="form-group">
-                                <label for="user-id" class="form-label">ID</label>
-                                <input type="text" id="user-id" class="form-input" value="<%= userId %>" readonly>
-                            </div>
-                            <div class="form-group">
-                                <label for="username" class="form-label">ユーザーネーム</label>
-                                <div class="fin009-input-wrapper">
-                                    <input type="text" id="username" class="form-input" value="<%= userName %>"
-                                        readonly>
-                                    <a href="/FIN_Profile_Edit/username" class="btn fin009-edit-btn">変更</a>
-                                </div>
-                            </div>
+    <div class="container fin009-container">
 
-                            <div class="form-group">
-                                <label for="email" class="form-label">メールアドレス</label>
-                                <div class="fin009-input-wrapper">
-                                    <input type="email" id="email" class="form-input" value="<%= email %>" readonly>
-                                    <a href="/FIN_Profile_Edit/email" class="btn fin009-edit-btn">変更</a>
-                                </div>
+        <% if (error) { %>
+            <p class="error-message" style="color: red; padding: 10px;">エラー: <%= error %>
+            </p>
+            <% } %>
+                <% if (message) { %>
+                    <p class="success-message"
+                        style="color: green; padding: 10px; border: 1px solid green; background-color: #e9ffe9; margin-bottom: 20px;">
+                        ✅ <%= message %>
+                    </p>
+                    <% } %>
+                        <div class="form-group">
+                            <label for="user-id" class="form-label">ID</label>
+                            <input type="text" id="user-id" class="form-input" value="<%= userId %>" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="username" class="form-label">ユーザーネーム</label>
+                            <div class="fin009-input-wrapper">
+                                <input type="text" id="username" class="form-input" value="<%= userName %>" readonly>
+                                <a href="/FIN_Profile_Edit/username" class="btn fin009-edit-btn">変更</a>
                             </div>
+                        </div>
 
-                            <div class="form-group">
-                                <label for="password" class="form-label">パスワード</label>
-                                <div class="fin009-input-wrapper">
-                                    <input type="password" id="password" class="form-input" value=""
-                                        placeholder="********" readonly>
-                                    <a href="/FIN014" class="btn fin009-edit-btn">変更</a>
-                                </div>
+                        <div class="form-group">
+                            <label for="email" class="form-label">メールアドレス</label>
+                            <div class="fin009-input-wrapper">
+                                <input type="email" id="email" class="form-input" value="<%= email %>" readonly>
+                                <a href="/FIN_Profile_Edit/email" class="btn fin009-edit-btn">変更</a>
                             </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password" class="form-label">パスワード</label>
+                            <div class="fin009-input-wrapper">
+                                <input type="password" id="password" class="form-input" value="" placeholder="********"
+                                    readonly>
+                                <a href="/FIN014" class="btn fin009-edit-btn">変更</a>
+                            </div>
+                        </div>
 
                             <a href="/mypage" class="btn fin008-btn" role="button" style="text-decoration: none; display: inline-flex; justify-content: center; align-items: center;">
                                 戻る
                             </a>
 
 
-        </div>
+    </div>
 
 </body>
 

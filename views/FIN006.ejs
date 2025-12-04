@@ -44,6 +44,13 @@
     <div class="container fin006-container"> 
         <h2 class="fin006-title">どんなお店をお探しですか？</h2>
 
+        <!-- エラーメッセージ表示エリア -->
+        <% if (typeof error !== 'undefined' && error) { %>
+            <div style="color: #dc3545; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 10px; border-radius: 4px; margin: 0 30px 20px 30px;">
+                <%= error %>
+            </div>
+        <% } %>
+
         <div class="fin006-search-box">
 
             <div class="fin006-criteria-row">

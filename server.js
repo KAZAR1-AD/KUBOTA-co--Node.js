@@ -201,18 +201,20 @@ app.post('/login', async (req, res) => {
 // ----------------------------------------------------
 // ⭐ FIN003: 新規登録画面の表示 (GET) ⭐
 // ----------------------------------------------------
-app.get('/FIN003', async (req, res) => { // ★ async を追加
+app.get('/register', async (req, res) => { // ★ async を追加
     const viewData = await getCommonViewData(req); // ★ await を追加
 
     // ★追加：戻り先URLを取得（なければ '/welcome' をデフォルトにする）
     const backUrl = req.query.returnUrl || '/welcome';
 
     // 新しいフローでは、最初に戻る際にセッションに一時保存されたデータを削除します
-    delete req.session.registerData;
+    const formData = req.session.formData || {};
+    req.session.formData = null;
 
     res.render('FIN003', {
         pageTitle: '新規登録',
         ...viewData,
+        formData: formData,
         backUrl: backUrl // ★EJSに渡す
     });
 });
@@ -224,16 +226,22 @@ app.get('/FIN003', async (req, res) => { // ★ async を追加
 app.post('/register-confirm', async (req, res) => {
     const { username, email, password, confirm_password } = req.body;
     const viewData = await getCommonViewData(req);
+    req.session.formData = { username, email }; // 入力値をセッションに保存
 
     // 簡易バリデーション
     if (!username || !email || !password || !confirm_password) {
         req.session.error = 'すべてのフィールドを入力してください。';
-        return res.redirect('/FIN003');
+        return res.redirect('/register');
+    }
+
+    if (checkPasswordStrings(password) === false) {
+        req.session.error = 'パスワードは英数字8文字以上で設定してください。';
+        return res.redirect('/register');
     }
 
     if (password !== confirm_password) {
         req.session.error = 'パスワードと確認用パスワードが一致しません。';
-        return res.redirect('/FIN003');
+        return res.redirect('/register');
     }
 
     try {
@@ -242,8 +250,10 @@ app.post('/register-confirm', async (req, res) => {
         const isEmailTaken = await UserDAO.isEmailTaken(email);
         if (isEmailTaken) {
             req.session.error = 'このメールアドレスは既に使用されています。';
-            return res.redirect('/FIN003');
+            return res.redirect('/register');
         }
+
+        delete req.session.formData; // 重複チェック成功後、フォームデータをセッションから削除
 
         // 確認画面表示のためにデータをセッションに一時保存
         // 生のパスワードを次のステップのために保持する
@@ -263,9 +273,24 @@ app.post('/register-confirm', async (req, res) => {
     } catch (e) {
         console.error('登録前チェックエラー:', e);
         req.session.error = '登録処理中にエラーが発生しました。';
-        return res.redirect('/FIN003');
+        return res.redirect('/register');
     }
 });
+
+/**
+ * パスワード文字列のチェック関数
+ * パスワードが英数字８文字以上であればtrueを返す、それ以外はfalseを返す
+ * @param {string} password
+ * @returns {boolean}
+ */
+function checkPasswordStrings(password) {
+    const regex = new RegExp(/^([a-zA-Z0-9]{8,})$/);
+    password = String(password);
+    if (regex.test(password)) {
+        return true;
+    }
+    return false;
+}
 
 
 // ----------------------------------------------------
@@ -280,7 +305,7 @@ app.post('/register-final', async (req, res) => {
     // セッションにデータがない場合は、不正なアクセスとしてFIN003に戻す
     if (!registerData) {
         req.session.error = '登録情報が見つかりませんでした。最初からやり直してください。';
-        return res.redirect('/FIN003');
+        return res.redirect('/register');
     }
 
     const { username, email, password } = registerData;
@@ -308,13 +333,13 @@ app.post('/register-final', async (req, res) => {
             // 登録失敗 
             req.session.error = result.message || '登録に失敗しました。';
             delete req.session.registerData; // 失敗したので削除
-            return res.redirect('/FIN003');
+            return res.redirect('/register');
         }
     } catch (error) {
         console.error('新規登録処理エラー:', error);
         req.session.error = 'システムエラーが発生しました。';
         delete req.session.registerData; // 失敗したので削除
-        return res.redirect('/FIN003');
+        return res.redirect('/register');
     }
 });
 
@@ -390,7 +415,8 @@ app.post('/search', async (req, res) => {
         const result = await ShopDAO.findByOptions(budget, distance, genre);
         // FIN007をレンダリングする際も共通データを渡す必要があるため、取得
         const viewData = await getCommonViewData(req);
-        return res.render('FIN007', { ...viewData, shop: result });
+        req.session.shop = result;
+        return res.render('FIN007', { ...viewData,  });
     } catch (error) {
         console.error('お店検索処理エラー:', error);
         req.session.error = 'お店の検索中にエラーが発生しました。';
@@ -570,7 +596,7 @@ app.post('/update-profile-photo', requireLogin, async (req, res) => {
         req.session.user.profilePhotoId = photoId;
 
         req.session.message = photoId === null ? 'プロフィール画像をリセットしました。' : 'プロフィール画像を変更しました。';
-        return res.redirect('/FIN009'); // マイページへリダイレクト
+        return res.redirect('/mypage'); // マイページへリダイレクト
     } catch (e) {
         console.error('プロフィール画像ID更新エラー:', e);
         // UserDAOから投げられたデータベースエラーを捕捉
