@@ -734,6 +734,34 @@ app.post('/update-password', requireLogin, async (req, res) => {
     }
 });
 
+// FIN017: フレンド画面への遷移
+app.get('/FIN017', (req, res) => {
+    
+    // セッションからユーザー情報を取得（※ログイン機能の実装状況に合わせて調整してください）
+    const userName = req.session.userName; 
+    
+    // データベースからフレンドリストを取得する処理がここに入りますが、
+    // まずは画面を表示させるために空のデータなどを渡しておきます
+    const friendList = []; // 仮のデータ
+
+    res.render('FIN017.ejs', {
+        userName: userName,
+        friendList: friendList, // fin017側で使う変数があればここで渡す
+        // その他、共通で使っている変数（backUrlなど）があれば追加
+    });
+});
+
+// FIN018: フレンド追加画面への遷移
+app.get('/FIN018', (req, res) => {
+    
+    // ログイン中のユーザー名などを取得（必要に応じて）
+    const userName = req.session.userName; 
+
+    res.render('FIN018.ejs', {
+        userName: userName,
+        // その他、FIN018で使いたい変数があればここに記述
+    });
+});
 
 // --- 404 Not Found エラーハンドリング ---
 app.use((req, res, next) => {
