@@ -412,20 +412,31 @@ app.post('/search', async (req, res) => {
     console.log(genre); // デバッグ用
 
     try {
-        const result = await ShopDAO.findByOptions(budget, distance, genre);
+        // ★ここを修正しました
+        // 以前の findByOptions ではなく、新しい searchShops を呼び出します
+        // 引数は { budget, distance, genre } というオブジェクト形式で渡します
+        const result = await ShopDAO.searchShops({ 
+            budget: budget, 
+            distance: distance, 
+            genre: genre 
+        });
+
+        // 結果が0件の場合の安全対策（空配列ならそのまま動きますが、null対策として）
+        const shopList = result || [];
+
         const viewData = await getCommonViewData(req);
         
-        // ★重要：全結果をセッションに保存
-        req.session.shop = result;
+        // ★重要：全結果をセッションに保存（あなたのコードそのまま）
+        req.session.shop = shopList;
 
-        // --- ページネーション計算 ---
-        const page = 1; // 最初は必ず1ページ目
-        const PER_PAGE = 10; // 1ページあたりの表示件数
-        const totalItems = result.length; // 全件数
-        const totalPages = Math.ceil(totalItems / PER_PAGE); // ★全ページ数を計算
+        // --- ページネーション計算（あなたのコードそのまま） ---
+        const page = 1; 
+        const PER_PAGE = 10; 
+        const totalItems = shopList.length; // resultではなくshopListを使用
+        const totalPages = Math.ceil(totalItems / PER_PAGE); 
 
         // 1ページ目のデータだけ切り出す
-        const pagedShops = result.slice(0, PER_PAGE);
+        const pagedShops = shopList.slice(0, PER_PAGE);
 
         return res.render('FIN007', { 
             ...viewData, 
@@ -433,13 +444,13 @@ app.post('/search', async (req, res) => {
             currentPage: page,        // 現在のページ番号
             totalItems: totalItems,   // 全件数
             itemsPerPage: PER_PAGE,   // 1ページの件数
-            totalPages: totalPages    // ★全ページ数（これを渡さないとデザイン崩れます）
+            totalPages: totalPages    // 全ページ数
         });
 
     } catch (error) {
         console.error('お店検索処理エラー:', error);
         req.session.error = 'お店の検索中にエラーが発生しました。';
-        return res.redirect('/search');
+        return res.redirect('/search'); // エラー時は検索画面に戻す（元コードのfin006に戻る想定）
     }
 });
 
