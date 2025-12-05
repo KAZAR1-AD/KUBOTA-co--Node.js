@@ -18,13 +18,24 @@ class ShopDAO {
 
     /**
      * 検索条件（予算、距離、ジャンル）に基づいて店舗を検索する
-     * @param {Object} criteria - { budget, distance, genre }
+     * @param {Object} criteria - { userId, budget, distance, genre }
      */
     async searchShops(criteria) {
         try {
             // 1. ベースとなるSQL
-            let sql = `SELECT * FROM ${STORE_TABLE} WHERE 1=1`;
+            let sql = `SELECT * FROM ${STORE_TABLE}`;
             const params = [];
+
+            // ログインしている場合にユーザーのお気に入りテーブルを外部結合する
+            // ログインしてない場合はベースのSQLに WHERE 1=1 を追加するだけ
+            if (criteria.userId !== null) {
+                sql += ` LEFT OUTER JOIN (SELECT * FROM table_favorite WHERE user_id = ?) AS fav 
+                        ON ${STORE_TABLE}.shop_id = fav.shop_id 
+                        WHERE 1=1`;
+                params.push(criteria.userId);
+            } else {
+                sql += ` WHERE 1=1`;
+            }
 
             // 2. 予算の条件追加 (budget以下)
             if (criteria.budget) {
