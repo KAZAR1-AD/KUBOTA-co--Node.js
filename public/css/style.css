@@ -713,11 +713,12 @@ body {
     margin-right: 15px;
 }
 
-.fin007-result-star {
-    font-size: 30px;
-    color: #e60000;
+.fin007-result-star img {
+    width: 40px;
+    height: 40px;
     flex-shrink: 0;
 }
+
 
 /* ページネーション */
 .fin007-pagination {

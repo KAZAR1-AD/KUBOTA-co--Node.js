@@ -27,7 +27,15 @@
                     徒歩<%= item.distance %>分 
                     予算：<%= item.budget %>円
                 </span>
-                <span class="fin007-result-star">★</span>
+                <% if (isLoggedIn) { %>
+                    <span class="fin007-result-star">
+                        <img class="toggle-star"
+                            src="<%= item.user_id !== null ? '/images/star.png' : '/images/star-bw.png' %>"
+                            data-on="/images/star.png"
+                            data-off="/images/star-bw.png"
+                            alt="<%= item.user_id !== null ? 'お気に入りから削除' : 'お気に入りに追加' %>">
+                    </span>
+                <% } %>
             </div>
             <% }); %>
 
@@ -75,6 +83,26 @@
     <a href="/search" class="fin007-change-criteria-btn">
         条件<br>を変える
     </a>
+
+    <script>
+        document.querySelectorAll(".toggle-star").forEach(img => {
+            img.addEventListener("click", () => {
+                const onImg  = img.dataset.on;
+                const offImg = img.dataset.off;
+
+                const altOn  = "お気に入りから削除";
+                const altOff = "お気に入りに追加";
+
+                if (img.src.includes(offImg)) {
+                    img.src = onImg;
+                    img.alt = altOn;
+                } else {
+                    img.src = offImg;
+                    img.alt = altOff;
+                }
+            });
+         });
+    </script>
     
 </body>
 </html>

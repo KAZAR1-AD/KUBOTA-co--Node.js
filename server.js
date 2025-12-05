@@ -406,7 +406,9 @@ app.get('/search', async (req, res) => { // ★ async を追加
 // ----------------------------------------------------
 app.post('/search', async (req, res) => {
     const { budget, distance, genre } = req.body;
+    const userId = req.session.user ? req.session.user.id : null;
 
+    console.log(userId); // デバッグ用
     console.log(budget); // デバッグ用
     console.log(distance); // デバッグ用
     console.log(genre); // デバッグ用
@@ -416,6 +418,7 @@ app.post('/search', async (req, res) => {
         // 以前の findByOptions ではなく、新しい searchShops を呼び出します
         // 引数は { budget, distance, genre } というオブジェクト形式で渡します
         const result = await ShopDAO.searchShops({ 
+            userId: userId,
             budget: budget, 
             distance: distance, 
             genre: genre 
