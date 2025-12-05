@@ -24,7 +24,7 @@
             <div class="fin007-result-item">
                 <span class="fin007-result-info">
                     <%= item.shop_name %> 
-                    徒歩<%= item.distance %>分 
+                    徒歩<%= Math.ceil(item.distance / 80) %>分<%= item.distance < 80 ? '以内' : '' %> 
                     予算：<%= item.budget %>円
                 </span>
                 <% if (isLoggedIn) { %>
