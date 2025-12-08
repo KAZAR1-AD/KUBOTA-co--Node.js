@@ -1107,7 +1107,6 @@ body {
 /******* FIN016 END ********/
 
 ---
-
 /******* FIN017 START ********/
 
 /* ページ全体の背景（カードを目立たせるため薄いグレーに） */
@@ -1118,16 +1117,19 @@ body.fin017 {
 
 /* --- ヘッダー（タイトルバー） --- */
 .fin017-title-bar {
-    display: flex;             /* noneからflexに変更して表示 */
+    display: flex;
+    /* noneからflexに変更して表示 */
     justify-content: space-between;
     align-items: center;
     background-color: #ffffff;
     height: 60px;
     padding: 0 16px;
-    position: sticky;          /* スクロール追従 */
+    position: sticky;
+    /* スクロール追従 */
     top: 0;
     z-index: 100;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* うっすら影 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    /* うっすら影 */
 }
 
 .fin017-title-bar h2 {
@@ -1139,18 +1141,22 @@ body.fin017 {
 
 /* --- 下部配置の戻るボタン（FIN008と統一感を持たせる） --- */
 .fin017-bottom-back-btn {
-    display: block;             /* 横幅いっぱいに広げるため */
+    display: block;
+    /* 横幅いっぱいに広げるため */
     width: 100%;
-    max-width: 300px;           /* PCで広がりすぎないように制限 */
-    margin: 30px auto 0;        /* 上に余白、左右中央寄せ */
+    max-width: 300px;
+    /* PCで広がりすぎないように制限 */
+    margin: 30px auto 0;
+    /* 上に余白、左右中央寄せ */
     padding: 12px 0;
-    background-color: #6c757d;  /* グレー（キャンセル・戻る系の色） */
+    background-color: #6c757d;
+    /* グレー（キャンセル・戻る系の色） */
     color: white;
     text-align: center;
     text-decoration: none;
     font-weight: bold;
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     transition: opacity 0.2s;
 }
 
@@ -1160,7 +1166,8 @@ body.fin017 {
 
 /* ヘッダーの微調整（戻るボタンがなくなった分、タイトルを左に寄せる場合） */
 .fin017-title-bar h2 {
-    text-align: left; /* 左寄せにする場合。中央が良いなら center のままで */
+    text-align: left;
+    /* 左寄せにする場合。中央が良いなら center のままで */
     padding-left: 10px;
 }
 
@@ -1184,7 +1191,8 @@ body.fin017 {
 .fin017-list-container {
     width: 90%;
     max-width: 700px;
-    margin: 20px auto 100px; /* 上に少し余白を追加 */
+    margin: 20px auto 100px;
+    /* 上に少し余白を追加 */
 }
 
 /* --- 各フレンドのカード --- */
@@ -1194,10 +1202,14 @@ body.fin017 {
     background-color: #fff;
     color: #333;
     padding: 15px;
-    margin-bottom: 15px;     /* カードごとの間隔 */
-    border-radius: 12px;     /* 角を少し丸く */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* 立体感を出す影 */
-    /* border: 1px solid #e0e0e0; */ /* 影をつけるので線はあってもなくてもOK */
+    margin-bottom: 15px;
+    /* カードごとの間隔 */
+    border-radius: 12px;
+    /* 角を少し丸く */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    /* 立体感を出す影 */
+    /* border: 1px solid #e0e0e0; */
+    /* 影をつけるので線はあってもなくてもOK */
 }
 
 .fin017-icon {
@@ -1211,7 +1223,8 @@ body.fin017 {
     align-items: center;
     flex-shrink: 0;
     border-radius: 50%;
-    overflow: hidden; /* 画像がはみ出ないように */
+    overflow: hidden;
+    /* 画像がはみ出ないように */
 }
 
 .fin017-icon img {
@@ -1249,28 +1262,75 @@ body.fin017 {
 }
 
 .fin017-heart:active {
-    transform: scale(1.2); /* 押したときにピクッとさせる */
+    transform: scale(1.2);
+    /* 押したときにピクッとさせる */
+}
+
+/* タブの基本的なスタイル */
+.tab-header {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    /* 横並びにする */
+    border-bottom: 1px solid #ccc;
+}
+
+.tab-link {
+    padding: 10px 20px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    border-bottom: none;
+    background-color: #f4f4f4;
+    margin-right: 5px;
+    border-radius: 5px 5px 0 0;
+}
+
+/* アクティブな (選択されている) タブのスタイル */
+.tab-link.active {
+    background-color: #fff;
+    border-top: 2px solid #007bff;
+    /* 青い線で強調 */
+    font-weight: bold;
+    margin-bottom: -1px;
+}
+
+/* コンテンツパネルのスタイル */
+.tab-content {
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-top: none;
+    display: none;
+    /* デフォルトで非表示 */
+}
+
+/* アクティブなコンテンツパネルの表示 */
+.tab-content.active {
+    display: block;
+    /* アクティブなものだけ表示 */
 }
 
 /******* FIN017 END ********/
 
 ---
-
 /******* FIN018 START ********/
 
 body.fin018 {
-    background-color: #f5f5f5; /* 背景を薄いグレーに */
+    background-color: #f5f5f5;
+    /* 背景を薄いグレーに */
     margin: 0;
 }
 
 /* --- ヘッダー --- */
 .fin018-title-bar {
-    display: flex;             /* 表示させる */
-    justify-content: center;   /* タイトルを中央寄せ */
+    display: flex;
+    /* 表示させる */
+    justify-content: center;
+    /* タイトルを中央寄せ */
     align-items: center;
     background-color: #ffffff;
     height: 60px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     position: sticky;
     top: 0;
     z-index: 100;
@@ -1286,7 +1346,8 @@ body.fin018 {
 /* --- メインコンテンツエリア --- */
 .fin018-container {
     max-width: 600px;
-    margin: 30px auto 0; /* 上に余白 */
+    margin: 30px auto 0;
+    /* 上に余白 */
     padding: 0 20px;
 }
 
@@ -1296,15 +1357,21 @@ body.fin018 {
 }
 
 .fin018-input {
-    width: 100%;           /* 幅いっぱい */
-    box-sizing: border-box; /* paddingを含めた幅計算 */
+    width: 100%;
+    /* 幅いっぱい */
+    box-sizing: border-box;
+    /* paddingを含めた幅計算 */
     background-color: #fff;
-    border: 2px solid #ddd; /* 枠線を少し太く */
-    border-radius: 8px;     /* 角丸 */
+    border: 2px solid #ddd;
+    /* 枠線を少し太く */
+    border-radius: 8px;
+    /* 角丸 */
     text-align: center;
-    font-size: 20px;        /* 文字を大きく見やすく */
+    font-size: 20px;
+    /* 文字を大きく見やすく */
     font-weight: bold;
-    height: 54px;           /* 高さを出してタップしやすく */
+    height: 54px;
+    /* 高さを出してタップしやすく */
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
@@ -1317,15 +1384,18 @@ body.fin018 {
 
 /* 検索ボタン */
 .fin018-search-btn {
-    width: 100%;           /* スマホで押しやすく幅広に */
-    max-width: 200px;      /* PCでは広がりすぎないように */
+    width: 100%;
+    /* スマホで押しやすく幅広に */
+    max-width: 200px;
+    /* PCでは広がりすぎないように */
     background-color: #007bff;
     color: white;
     font-size: 16px;
     font-weight: bold;
     padding: 12px 0;
     border: none;
-    border-radius: 30px;   /* 丸みのあるボタン */
+    border-radius: 30px;
+    /* 丸みのあるボタン */
     cursor: pointer;
     transition: opacity 0.2s;
     box-shadow: 0 4px 6px rgba(0, 123, 255, 0.2);
@@ -1352,7 +1422,8 @@ body.fin018 {
 
 /* --- 下部の戻るボタンエリア --- */
 .fin018-back-btn-area {
-    margin: 40px auto 60px; /* 下に余裕を持たせる */
+    margin: 40px auto 60px;
+    /* 下に余裕を持たせる */
     padding: 0 20px;
     text-align: center;
 }
@@ -1370,7 +1441,7 @@ body.fin018 {
     text-decoration: none;
     font-weight: bold;
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     transition: opacity 0.2s;
 }
 
@@ -1486,7 +1557,8 @@ body.fin018 {
     margin-top: 40px;
     margin-bottom: 40px;
     display: flex;
-    justify-content: center; /* 中央揃え */
+    justify-content: center;
+    /* 中央揃え */
 }
 
 .pagination {
@@ -1495,24 +1567,28 @@ body.fin018 {
     padding: 0;
     margin: 0;
     border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .pagination-link {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 40px; /* ボタンの幅 */
-    height: 40px;    /* ボタンの高さ */
+    min-width: 40px;
+    /* ボタンの幅 */
+    height: 40px;
+    /* ボタンの高さ */
     padding: 0 10px;
     background-color: #fff;
     border: 1px solid #dee2e6;
-    color: #007bff;  /* 文字色（青） */
+    color: #007bff;
+    /* 文字色（青） */
     text-decoration: none;
     font-weight: bold;
     font-size: 14px;
     transition: all 0.2s ease;
-    margin-right: -1px; /* ボーダーを重ねる */
+    margin-right: -1px;
+    /* ボーダーを重ねる */
 }
 
 /* 最初の要素の左角を丸く */
@@ -1539,9 +1615,11 @@ body.fin018 {
 .pagination-link.active {
     z-index: 3;
     color: #fff;
-    background-color: #007bff; /* 背景色（青） */
+    background-color: #007bff;
+    /* 背景色（青） */
     border-color: #007bff;
-    pointer-events: none; /* クリック不可にする */
+    pointer-events: none;
+    /* クリック不可にする */
 }
 
 /* 無効化（最初のページの前へ、など） */
