@@ -12,6 +12,7 @@ const path = require('path');
 const UserDAO = require('./dao/UserDAO');
 const ReportDAO = require('./dao/ReportDAO');
 const ShopDAO = require('./dao/ShopDAO');
+const FavShopDAO = require('./dao/FavShopDAO');
 // ★ 新しく作成したUserIconDAOをインポート ★
 const UserIconDAO = require('./dao/UserIconDAO');
 
@@ -503,13 +504,26 @@ app.get('/search-results', async (req, res) => {
 // 動的にお気に入りの店を追加・削除する処理
 // ----------------------------------------------------
 app.post('/api/favorites/sync', async (req, res) => {
-    const { userId, shopIds } = req.body;
-
     try {
+        const { userId, shopIds } = req.body;
+
+        // バリデーション
+        if (!userId) {
+            return res.status(400).json({ error: 'userId が必要です' });
+        }
+
+        if (!Array.isArray(shopIds)) {
+            return res.status(400).json({ error: 'shopIds は配列である必要があります' });
+        }
+
+        // 空配列でも問題なし
         await FavShopDAO.syncFavorites(userId, shopIds);
-        res.status(200);
+
+        console.log(`[API] ユーザー ${userId} のお気に入りを更新しました: ${shopIds}`);
+        res.status(200).json({ message: 'お気に入りを同期しました' });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error('[API] /api/favorites/sync エラー:', err);
+        res.status(500).json({ error: 'サーバーエラー: ' + err.message });
     }
 });
 

@@ -23,18 +23,29 @@ class ShopDAO {
     async searchShops(criteria) {
         try {
             // 1. ベースとなるSQL
-            let sql = `SELECT * FROM ${STORE_TABLE}`;
+            let sql = ``;
             const params = [];
 
             // ログインしている場合にユーザーのお気に入りテーブルを外部結合する
             // ログインしてない場合はベースのSQLに WHERE 1=1 を追加するだけ
             if (criteria.userId !== null) {
-                sql += ` LEFT OUTER JOIN (SELECT * FROM table_favorite WHERE user_id = ?) AS fav 
-                        ON ${STORE_TABLE}.shop_id = fav.shop_id 
+                sql += `SELECT 
+                            s.shop_id,
+                            s.shop_name,
+                            s.budget,
+                            s.distance,
+                            s.genre,
+                            s.photo_address,
+                            s.address,
+                            s.google_map_link,
+                            CASE WHEN fav.user_id IS NULL THEN false ELSE true END AS is_favorite
+                        FROM ${STORE_TABLE} s
+                        LEFT OUTER JOIN (SELECT * FROM table_favorite WHERE user_id = ?) AS fav 
+                        ON s.shop_id = fav.shop_id 
                         WHERE 1=1`;
                 params.push(criteria.userId);
             } else {
-                sql += ` WHERE 1=1`;
+                sql += `SELECT * FROM ${STORE_TABLE} WHERE 1=1`;
             }
 
             // 2. 予算の条件追加 (budget以下)
