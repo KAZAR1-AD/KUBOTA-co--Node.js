@@ -737,6 +737,19 @@ app.post('/update-password', requireLogin, async (req, res) => {
     }
 });
 
+
+// FIN016: おきにいいり画面への遷移
+app.get('/FIN016', (req, res) => {
+    
+    // ログイン中のユーザー名などを取得（必要に応じて）
+    const userName = req.session.userName; 
+
+    res.render('FIN016.ejs', {
+        userName: userName,
+        // その他、FIN016で使いたい変数があればここに記述
+    });
+});
+
 // FIN017: フレンド画面への遷移
 app.get('/FIN017', (req, res) => {
     
@@ -754,17 +767,7 @@ app.get('/FIN017', (req, res) => {
     });
 });
 
-// FIN018: フレンド追加画面への遷移
-app.get('/FIN018', (req, res) => {
-    
-    // ログイン中のユーザー名などを取得（必要に応じて）
-    const userName = req.session.userName; 
 
-    res.render('FIN018.ejs', {
-        userName: userName,
-        // その他、FIN018で使いたい変数があればここに記述
-    });
-});
 
 // --- 404 Not Found エラーハンドリング ---
 app.use((req, res, next) => {
