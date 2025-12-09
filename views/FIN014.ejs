@@ -8,7 +8,43 @@
 </head>
 <body class="fin014">
 
-    <%- include('header_common.ejs', { isLoggedIn: isLoggedIn, userName: userName, userId: userId }) %>
+    <header class="fixed-header">
+        <div class="fixed-header-left">
+        </div>
+
+        <div class="fixed-header-title">船橋今なにする？</div>
+
+        <div class="fixed-header-icon-area">
+
+            <% if (typeof isLoggedIn !=='undefined' && isLoggedIn) { %>
+                <div class="fin001-user-controls">
+                    <span class="fin001-welcome-msg">
+                        <%= userName %>さん
+                    </span>
+
+                    <a href="/mypage" class="header-profile-icon">
+                        <img id="headerProfileImage" src="<%= userIconUrl %>" alt="メニュー">
+                    </a>
+
+                    <form action="/logout" method="POST" style="display: inline;"
+                        onsubmit="return confirm('ログアウトしますか？');">
+                        <button type="submit" class="btn btn-default fin001-logout-btn">ログアウト</button>
+                    </form>
+                </div>
+
+                <% } else { %>
+                    <a href="/welcome?returnUrl=<%= currentUrl %>" class="btn btn-default fin006-register-btn"
+                        role="button">
+                        ログイン
+                    </a>
+
+                    <a href="/FIN003?returnUrl=<%= currentUrl %>" class="btn btn-default fin006-register-btn"
+                        role="button">
+                        新規登録
+                    </a>
+                    <% } %>
+        </div>
+    </header>
 
     <div class="container fin014-container">
         
