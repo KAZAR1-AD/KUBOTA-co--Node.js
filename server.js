@@ -6,14 +6,13 @@ const path = require('path');
 
 // ===================================
 // 0. DAOの読み込み（本番環境用）
-//    - ⚠️ 実際のファイルパスに合わせて調整してください。
+//  - ⚠️ 実際のファイルパスに合わせて調整してください。
 // ===================================
-// 実際には、プロジェクト構造に応じてパスを修正する必要があります
+//DAO群のインポート以下に実施
 const UserDAO = require('./dao/UserDAO');
 const ReportDAO = require('./dao/ReportDAO');
 const ShopDAO = require('./dao/ShopDAO');
 const FavShopDAO = require('./dao/FavShopDAO');
-// ★ 新しく作成したUserIconDAOをインポート ★
 const UserIconDAO = require('./dao/UserIconDAO');
 
 
@@ -137,7 +136,7 @@ const requireLogin = (req, res, next) => {
 
 // --- FIN001: ルートパス ("/") へのGETリクエスト (Welcome画面) ---
 app.get('/', async (req, res) => { // ★ async を追加
-    const viewData = await getCommonViewData(req); // ★ await を追加
+    const viewData = await getCommonViewData(req);
     res.render('FIN001', { ...viewData, pageTitle: '船橋いまなにする？' });
 });
 
@@ -145,7 +144,7 @@ app.get('/', async (req, res) => { // ★ async を追加
 // FIN002: ログイン画面の表示 (GET)
 // ----------------------------------------------------
 app.get('/welcome', async (req, res) => { // ★ async を追加
-    const viewData = await getCommonViewData(req); // ★ await を追加
+    const viewData = await getCommonViewData(req);
 
     // クエリパラメータ(?returnUrl=...)があればそれを取得。なければトップページ(/)にする
     const backUrl = req.query.returnUrl || '/';
@@ -203,7 +202,7 @@ app.post('/login', async (req, res) => {
 // ⭐ FIN003: 新規登録画面の表示 (GET) ⭐
 // ----------------------------------------------------
 app.get('/register', async (req, res) => { // ★ async を追加
-    const viewData = await getCommonViewData(req); // ★ await を追加
+    const viewData = await getCommonViewData(req);
 
     // ★追加：戻り先URLを取得（なければ '/welcome' をデフォルトにする）
     const backUrl = req.query.returnUrl || '/welcome';
@@ -349,15 +348,17 @@ app.post('/register-final', async (req, res) => {
 // ⭐ FIN004: ホーム画面 (GET) - ログイン必須 ⭐
 // ----------------------------------------------------
 // 既存のログイン後ホーム画面ルートはそのまま残します。
+//不要箇所のためコメントアウトしています。
+/*
 app.get('/FIN004', requireLogin, async (req, res) => { // ★ async を追加
-    const viewData = await getCommonViewData(req); // ★ await を追加
+    const viewData = await getCommonViewData(req); 
     // FIN004はログイン後のトップ画面を想定
     res.render('FIN004', {
         pageTitle: 'ホーム',
         ...viewData
     });
 });
-
+*/
 
 // ----------------------------------------------------
 // ⭐ FIN005: 登録完了画面 (GET) ⭐
@@ -396,7 +397,7 @@ app.post('/logout', (req, res) => {
 // /search: お店検索ページの表示 (FIN006) (GET)
 // ----------------------------------------------------
 app.get('/search', async (req, res) => { // ★ async を追加
-    const viewData = await getCommonViewData(req); // ★ await を追加
+    const viewData = await getCommonViewData(req);
     // FIN006 テンプレートをレンダリングすることを想定
     res.render('FIN006', viewData);
 });
@@ -418,32 +419,32 @@ app.post('/search', async (req, res) => {
         // ★ここを修正しました
         // 以前の findByOptions ではなく、新しい searchShops を呼び出します
         // 引数は { budget, distance, genre } というオブジェクト形式で渡します
-        const result = await ShopDAO.searchShops({ 
+        const result = await ShopDAO.searchShops({
             userId: userId,
-            budget: budget, 
-            distance: distance, 
-            genre: genre 
+            budget: budget,
+            distance: distance,
+            genre: genre
         });
 
         // 結果が0件の場合の安全対策（空配列ならそのまま動きますが、null対策として）
         const shopList = result || [];
 
         const viewData = await getCommonViewData(req);
-        
+
         // ★重要：全結果をセッションに保存（あなたのコードそのまま）
         req.session.shop = shopList;
 
         // --- ページネーション計算（あなたのコードそのまま） ---
-        const page = 1; 
-        const PER_PAGE = 10; 
+        const page = 1;
+        const PER_PAGE = 10;
         const totalItems = shopList.length; // resultではなくshopListを使用
-        const totalPages = Math.ceil(totalItems / PER_PAGE); 
+        const totalPages = Math.ceil(totalItems / PER_PAGE);
 
         // 1ページ目のデータだけ切り出す
         const pagedShops = shopList.slice(0, PER_PAGE);
 
-        return res.render('FIN007', { 
-            ...viewData, 
+        return res.render('FIN007', {
+            ...viewData,
             shop: pagedShops,         // 1ページ目のデータだけ渡す
             currentPage: page,        // 現在のページ番号
             totalItems: totalItems,   // 全件数
@@ -535,8 +536,8 @@ app.post('/api/favorites/sync', async (req, res) => {
 
 app.get('/mypage', requireLogin, async (req, res) => { // ★ async を追加
 
-    const viewData = await getCommonViewData(req); // ★ await を追加
-    
+    const viewData = await getCommonViewData(req);
+
     // ★追加：どこから来たかを受け取る（なければトップページ '/' にする）
     const backUrl = req.query.returnUrl || '/';
 
@@ -567,14 +568,14 @@ app.get('/changeIcon', requireLogin, async (req, res) => {
         console.error('FIN019 画面表示エラー（アイコンリスト取得失敗）:', e);
         // エラーが発生した場合は、エラーメッセージをセッションに保存してメニュー画面に戻す
         req.session.error = 'アイコンリストの取得中にエラーが発生しました。';
-        res.redirect('/mypage'); 
+        res.redirect('/mypage');
     }
 });
 // ----------------------------------------------------
 // FIN009: マイページ表示 (GET)
 // ----------------------------------------------------
 app.get('/FIN009', requireLogin, async (req, res) => { // ★ async を追加
-    const viewData = await getCommonViewData(req); // ★ await を追加
+    const viewData = await getCommonViewData(req);
 
     res.render('FIN009', {
         pageTitle: 'マイページ',
@@ -587,7 +588,7 @@ app.get('/FIN009', requireLogin, async (req, res) => { // ★ async を追加
 // ----------------------------------------------------
 app.get('/FIN_Profile_Edit/:mode', requireLogin, async (req, res) => { // ★ async を追加
     const mode = req.params.mode;
-    const viewData = await getCommonViewData(req); // ★ await を追加
+    const viewData = await getCommonViewData(req);
 
     let pageTitle, labelName, actionUrl;
 
@@ -618,7 +619,7 @@ app.get('/FIN_Profile_Edit/:mode', requireLogin, async (req, res) => { // ★ as
 // FIN014: パスワード変更画面 (GET)
 // ----------------------------------------------------
 app.get('/FIN014', requireLogin, async (req, res) => { // ★ async を追加
-    const viewData = await getCommonViewData(req); // ★ await を追加
+    const viewData = await getCommonViewData(req);
     res.render('FIN014', { pageTitle: 'パスワード変更', ...viewData });
 });
 
@@ -753,29 +754,30 @@ app.post('/update-password', requireLogin, async (req, res) => {
 
 
 // FIN016: おきにいいり画面への遷移
-app.get('/FIN016', (req, res) => {
-    
-    // ログイン中のユーザー名などを取得（必要に応じて）
-    const userName = req.session.userName; 
+app.get('/FIN016', async (req, res) => {
+    const viewData = await getCommonViewData(req);
+
+    // データベースからお気に入りリストを取得する処理がここに入ります
 
     res.render('FIN016.ejs', {
-        userName: userName,
-        // その他、FIN016で使いたい変数があればここに記述
+        pageTitle: 'お気に入り',
+        ...viewData, // ⚠️ 共通ビューデータ
     });
 });
 
 // FIN017: フレンド画面への遷移
-app.get('/FIN017', (req, res) => {
-    
+app.get('/FIN017', async (req, res) => {
+    const viewData = await getCommonViewData(req); // ⚠️ 共通ビューデータを取得
     // セッションからユーザー情報を取得（※ログイン機能の実装状況に合わせて調整してください）
-    const userName = req.session.userName; 
-    
+    const userName = req.session.userName;
+
     // データベースからフレンドリストを取得する処理がここに入りますが、
     // まずは画面を表示させるために空のデータなどを渡しておきます
     const friendList = []; // 仮のデータ
 
     res.render('FIN017.ejs', {
         userName: userName,
+        ...viewData, // ⚠️ 共通ビューデータを渡す
         friendList: friendList, // fin017側で使う変数があればここで渡す
         // その他、共通で使っている変数（backUrlなど）があれば追加
     });
