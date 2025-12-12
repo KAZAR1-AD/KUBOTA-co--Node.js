@@ -5,15 +5,20 @@ const session = require('express-session');
 const path = require('path');
 
 // ===================================
-// 0. DAOの読み込み（本番環境用）
-//  - ⚠️ 実際のファイルパスに合わせて調整してください。
+// 0. DAOの読み込みs
 // ===================================
 //DAO群のインポート以下に実施
-const UserDAO = require('./dao/UserDAO');
+const UserDAO = require('./dao/UserDAO'); // ★★★ 修正後のUserDAOを使用
 const ReportDAO = require('./dao/ReportDAO');
 const ShopDAO = require('./dao/ShopDAO');
 const FavShopDAO = require('./dao/FavShopDAO');
 const UserIconDAO = require('./dao/UserIconDAO');
+const database = require('./database'); 
+const FriendshipDAO = require('./dao/FriendshipDAO'); 
+const FriendDAO = require('./dao/FriendDAO'); 
+
+// DAOインスタンスの初期化
+const friendshipDAO = new FriendshipDAO(database);
 
 
 // 環境変数PORTがあればそれを使用し、なければ"config/baseport.json"を使用
@@ -765,21 +770,40 @@ app.get('/FIN016', async (req, res) => {
     });
 });
 
-// FIN017: フレンド画面への遷移
-app.get('/FIN017', async (req, res) => {
-    const viewData = await getCommonViewData(req); // ⚠️ 共通ビューデータを取得
-    // セッションからユーザー情報を取得（※ログイン機能の実装状況に合わせて調整してください）
-    const userName = req.session.userName;
+// ----------------------------------------------------
+// ⭐ FIN017: フレンド画面への遷移 (フレンドリスト表示ロジックを更新) ⭐
+// ----------------------------------------------------
+app.get('/FIN017', requireLogin, async (req, res) => {
+    const viewData = await getCommonViewData(req);
+    const currentUserId = req.session.user.id;
+    let friendList = [];
 
-    // データベースからフレンドリストを取得する処理がここに入りますが、
-    // まずは画面を表示させるために空のデータなどを渡しておきます
-    const friendList = []; // 仮のデータ
+    try {
+        // 1. FriendshipDAOを使って、ログインユーザーのフレンドのIDリストを取得
+        const friendIds = await friendshipDAO.findFriendsByUserId(currentUserId);
+
+        // 2. UserDAOを使って、IDリストに基づいてフレンドの詳細情報を一括取得する
+        //    新しい UserDAO.findUsersByIds メソッドを利用
+        if (friendIds.length > 0) {
+            // 
+            friendList = await UserDAO.findUsersByIds(friendIds); 
+        }
+
+        // 3. ユーザーアイコンURLを付与（任意：UserDAO側で結合されていない場合）
+        // (UserDAO.findUsersByIdsが profile_photo_id を返しているため、
+        //  ここで別途 UserIconDAO を使って URL に変換するロジックが必要になる場合がある)
+        // 今回は、UserDAOが返す `iconId` を利用し、FIN017のEJS側で処理するものと仮定。
+
+    } catch (error) {
+        console.error('FIN017 フレンドリスト取得エラー:', error);
+        req.session.error = 'フレンドリストの取得中にエラーが発生しました。';
+        // エラー時も空のリストで画面を表示
+    }
 
     res.render('FIN017.ejs', {
-        userName: userName,
-        ...viewData, // ⚠️ 共通ビューデータを渡す
-        friendList: friendList, // fin017側で使う変数があればここで渡す
-        // その他、共通で使っている変数（backUrlなど）があれば追加
+        pageTitle: 'フレンド',
+        ...viewData,
+        friendList: friendList, // 取得したフレンドリスト (user_id, user_name, login_id, profile_photo_id を含む)
     });
 });
 

@@ -29,7 +29,7 @@ exports.authenticateUser = async (login_id, password) => {
 
     // 修正: SELECT文に profile_photo_id を追加
     const query = `
-SELECT user_id, user_name, email, password, profile_photo_id 
+SELECT user_id, user_name, email, password, profil  e_photo_id 
 FROM table_user 
 WHERE email = ? OR user_id = ?
 `;
