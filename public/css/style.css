@@ -720,60 +720,6 @@ body {
     cursor: pointer;
 }
 
-
-/* ページネーション */
-.fin007-pagination {
-    text-align: center;
-    margin: 30px 0;
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-
-.fin007-page-item {
-    display: inline-block;
-    min-width: 35px;
-    height: 35px;
-    line-height: 35px;
-    text-align: center;
-    border: 1px solid #ccc;
-    background-color: #fff;
-    color: #333;
-    text-decoration: none;
-    font-weight: bold;
-    border-radius: 4px;
-    cursor: pointer;
-    user-select: none;
-    padding: 0 8px;
-}
-
-.fin007-page-item:hover:not(.active):not(.disabled):not(.dots) {
-    background-color: #e6f0f5;
-}
-
-.fin007-page-item.active {
-    background-color: #0b4c68;
-    color: white;
-    border-color: #0b4c68;
-    pointer-events: none;
-}
-
-.fin007-page-item.disabled {
-    color: #aaa;
-    border-color: #ddd;
-    background-color: #f9f9f9;
-    pointer-events: none;
-}
-
-.fin007-page-item.dots {
-    border: none;
-    background: none;
-    color: #999;
-    cursor: default;
-    pointer-events: none;
-}
-
 /* 条件変更ボタン */
 .fin007-change-criteria-btn {
     position: fixed;
@@ -840,7 +786,7 @@ body {
 }
 
 .fin008-photo-area {
-    display: block;
+    display: inline-block;
     width: 150px;
     height: 150px;
     background-color: #e9ecef;
@@ -919,6 +865,15 @@ body {
 .fin008-btn:hover {
     background-color: #f8f9fa;
 }
+
+.fin008-icon {
+    width: 150px; /* 必要に応じて調整 */
+    height: 150px; /* アスペクト比を保ちたい場合は auto にする */
+    object-fit: cover; /* はみ出し防止に有効 */
+    border-radius: 50%; /* 丸くしたい場合 */
+    display: block;
+}
+
 
 /******* FIN008 END ********/
 
@@ -1554,21 +1509,29 @@ body.fin018 {
 ---
 
 /* --- ページネーションのデザイン --- */
+nav.pagination {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+}
+
 .pagination-container {
+    width: 100%;            /* 横幅いっぱいに広げて中央寄せを確実にする */
     margin-top: 40px;
     margin-bottom: 40px;
-    display: flex;
-    justify-content: center;
-    /* 中央揃え */
+    display: flex;          /* Flexboxを使用 */
+    justify-content: center; /* 中身を水平方向の中央に配置 */
 }
 
 .pagination {
-    display: inline-flex;
+    display: flex;          /* inline-flexからflexに変更して制御しやすく */
     list-style: none;
     padding: 0;
     margin: 0;
     border-radius: 4px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;       /* 角の丸みを子要素にも適用させる */
 }
 
 .pagination-link {
@@ -1576,36 +1539,19 @@ body.fin018 {
     align-items: center;
     justify-content: center;
     min-width: 40px;
-    /* ボタンの幅 */
     height: 40px;
-    /* ボタンの高さ */
-    padding: 0 10px;
+    padding: 0 15px;        /* 左右に少し余裕を持たせる */
     background-color: #fff;
     border: 1px solid #dee2e6;
-    color: #007bff;
-    /* 文字色（青） */
+    color: #007bff;         /* 文字色（青） */
     text-decoration: none;
     font-weight: bold;
     font-size: 14px;
     transition: all 0.2s ease;
-    margin-right: -1px;
-    /* ボーダーを重ねる */
+    margin-right: -1px;     /* 隣り合うボーダーの重なりを調整 */
 }
 
-/* 最初の要素の左角を丸く */
-.pagination-link:first-child {
-    border-top-left-radius: 4px;
-    border-bottom-left-radius: 4px;
-}
-
-/* 最後の要素の右角を丸く */
-.pagination-link:last-child {
-    border-top-right-radius: 4px;
-    border-bottom-right-radius: 4px;
-    margin-right: 0;
-}
-
-/* ホバー時（マウスを乗せたとき） */
+/* ホバー時 */
 .pagination-link:hover:not(.active):not(.disabled) {
     background-color: #e9ecef;
     color: #0056b3;
@@ -1617,18 +1563,16 @@ body.fin018 {
     z-index: 3;
     color: #fff;
     background-color: #007bff;
-    /* 背景色（青） */
     border-color: #007bff;
     pointer-events: none;
-    /* クリック不可にする */
 }
 
-/* 無効化（最初のページの前へ、など） */
+/* 無効化（前へ・次へ が押せない時） */
 .pagination-link.disabled {
     color: #6c757d;
-    pointer-events: none;
     background-color: #fff;
     border-color: #dee2e6;
+    pointer-events: none;
 }
 
 ---
