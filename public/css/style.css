@@ -576,6 +576,7 @@ body {
 /* ボタンのオーバーライド */
 .btn-danger.fin005-btn {
     /* 共通の .btn-danger を使用しますが、微調整はなし */
+    all: initial;
 }
 
 /******* FIN005 END ********/
@@ -786,7 +787,7 @@ body {
 }
 
 .fin008-photo-area {
-    display: inline-block;
+    display: block;
     width: 150px;
     height: 150px;
     background-color: #e9ecef;
@@ -873,8 +874,6 @@ body {
     border-radius: 50%; /* 丸くしたい場合 */
     display: block;
 }
-
-
 /******* FIN008 END ********/
 
 ---
