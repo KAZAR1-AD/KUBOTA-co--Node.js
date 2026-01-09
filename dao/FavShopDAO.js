@@ -6,6 +6,55 @@ const db = require('../database');
  * これから検証します
  */
 class FavShopDAO {
+    // お気に入り店舗一覧取得
+    // 指定されたユーザーIDのお気に入り店舗IDリストを取得
+    async getFavoritesByUserId(userId) {
+        const sql = `SELECT shop_id FROM table_favorite WHERE user_id = ?`;
+        const [rows] = await db.pool.query(sql, [userId]);
+        return rows.map(row => row.shop_id);
+    }
+
+    // 差分更新
+    async updateDiff(userId, added = [], removed = []) {
+        let connection;
+
+        try {
+            connection = await db.pool.getConnection();
+
+            await connection.beginTransaction();
+
+            // ---- 追加処理 ----
+            if (added.length > 0) {
+                const addValues = added.map(shopId => [userId, shopId]);
+
+                // INSERT IGNORE により重複エラーを回避
+                await connection.query(
+                    'INSERT IGNORE INTO table_favorite (user_id, shop_id) VALUES ?',
+                    [addValues]
+                );
+            }
+
+            // ---- 削除処理 ----
+            if (removed.length > 0) {
+                await connection.query(
+                    'DELETE FROM table_favorite WHERE user_id = ? AND shop_id IN (?)',
+                    [userId, removed]
+                );
+            }
+
+            await connection.commit();
+            console.log(`[FavShopDAO] 🔄 Updated diff for user=${userId} (added=${added}, removed=${removed})`);
+
+        } catch (err) {
+            if (connection) await connection.rollback();
+            console.error('[FavShopDAO] ❌ updateDiff error:', err);
+            throw err;
+        } finally {
+            if (connection) connection.release();
+        }
+    }
+
+    // 全件更新
     async syncFavorites(userId, shopIds) {
         let connection;
         try {
