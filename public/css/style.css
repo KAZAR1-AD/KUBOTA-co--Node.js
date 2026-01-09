@@ -576,6 +576,7 @@ body {
 /* ボタンのオーバーライド */
 .btn-danger.fin005-btn {
     /* 共通の .btn-danger を使用しますが、微調整はなし */
+    all: initial;
 }
 
 /******* FIN005 END ********/
