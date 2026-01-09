@@ -31,6 +31,25 @@ const query = async (sql, params) => {
     }
 };
 
+// 🔥🔥🔥 追加するメソッド（INSERT/UPDATE/DELETE用） 🔥🔥🔥
+/**
+ * 接続プールを使用してクエリを実行し、影響を受けた情報を返す関数
+ * @param {string} sql - 実行するSQLクエリ (INSERT/UPDATE/DELETE)
+ * @param {Array<any>} params - クエリパラメータ
+ * @returns {Promise<mysql.ResultSetHeader>} 影響を受けた行数や挿入IDなどのメタデータ
+ */
+const execute = async (sql, params) => {
+    try {
+        // pool.execute を使用し、影響行数などを含む ResultSetHeader を返す
+        const [result] = await pool.execute(sql, params); 
+        return result;
+    } catch (error) {
+        console.error('MySQL Execute Error:', error);
+        throw error;
+    }
+};
+// 🔥🔥🔥 追加ここまで 🔥🔥🔥
+
 // 接続テスト
 pool.getConnection()
     .then(connection => {
