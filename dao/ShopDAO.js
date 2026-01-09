@@ -101,6 +101,18 @@ class ShopDAO {
         }
     }
 
+    // お気に入りだけを取得する
+    async findFavoriteShops(userId) {
+        const sql = `SELECT * FROM ${STORE_TABLE} s
+                     WHERE EXISTS (
+                        SELECT shop_id FROM table_favorite f 
+                        WHERE f.shop_id = f.shop_id 
+                        AND f.user_id = ?
+                     )`;
+        const [rows] = await db.query(sql, [userId]);
+        return rows;
+    }
+
     // 全件取得用（必要であれば残す）
     async findAll() {
         return this.searchShops({});

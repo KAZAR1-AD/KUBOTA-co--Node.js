@@ -8,24 +8,40 @@
 <body class="fin016">
 
     <div class="fin016-title-bar">
-        <a href="FIN008.html" class="fin016-back-btn">＜</a>
+        <a href="/mypage" class="fin016-back-btn">＜</a>
         
         <h2>お気に入り</h2>
 
-        <a href="FIN008.html" class="page-menu-icon fin016-menu-icon">😊</a>
+        <a href="/mypage" class="page-menu-icon fin016-menu-icon">😊</a>
     </div>
 
     <div class="fin016-results-container">
 
-        <div class="fin016-result-item">
+        <% if (!shop || shop.length === 0) { %>
+            <div style="text-align: center; padding: 20px;">
+                <p>お気に入りのお店はありません。</p>
+            </div>
+        <% } else { %>
+            <% shop.forEach(item => { %>
+                <div class="fin016-result-item">
+                    <span class="fin016-result-info">
+                    <%= item.shop_name %> 
+                    徒歩<%= Math.ceil(item.distance / 80) %>分<%= item.distance < 80 ? '以内' : '' %> 
+                    予算：<%= item.budget %>円
+                    </span>
+                </div>
+            <% }) %>
+        <% } %>
+
+        <!-- <div class="fin016-result-item">
             <span class="fin016-result-info">店名 徒歩○分 1000円〜1400円</span>
         </div>
 
         <div class="fin016-result-item">
             <span class="fin016-result-info">店名 徒歩○分 1000円〜1400円</span>
-        </div>
+        </div> -->
         
-        </div>
+    </div>
 
 </body>
 </html>

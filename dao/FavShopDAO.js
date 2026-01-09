@@ -6,14 +6,6 @@ const db = require('../database');
  * これから検証します
  */
 class FavShopDAO {
-    // お気に入り店舗一覧取得
-    // 指定されたユーザーIDのお気に入り店舗IDリストを取得
-    async getFavoritesByUserId(userId) {
-        const sql = `SELECT shop_id FROM table_favorite WHERE user_id = ?`;
-        const [rows] = await db.pool.query(sql, [userId]);
-        return rows.map(row => row.shop_id);
-    }
-
     // 差分更新
     async updateDiff(userId, added = [], removed = []) {
         let connection;
