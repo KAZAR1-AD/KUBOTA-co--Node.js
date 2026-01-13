@@ -54,6 +54,41 @@ class FavShopDAO {
             throw err;
         }
     }
+
+    async updateDiff(userId, added, removed) {
+        let connection;
+        try {
+            connection = await db.pool.getConnection();
+            await connection.beginTransaction();
+    
+            // 1. 削除処理
+            if (removed && removed.length > 0) {
+                await connection.query(
+                    'DELETE FROM table_favorite WHERE user_id = ? AND shop_id IN (?)',
+                    [userId, removed]
+                );
+            }
+    
+            // 2. 追加処理 (重複を防ぐため INSERT IGNORE)
+            if (added && added.length > 0) {
+                const values = added.map(shopId => [userId, shopId]);
+                await connection.query(
+                    'INSERT IGNORE INTO table_favorite (user_id, shop_id) VALUES ?',
+                    [values]
+                );
+            }
+    
+            await connection.commit();
+            console.log(`[FavShopDAO] ✅ 同期成功: User=${userId}, 追加=${added.length}, 削除=${removed.length}`);
+        } catch (err) {
+            if (connection) await connection.rollback();
+            console.error('[FavShopDAO] updateDiff Error:', err);
+            throw err;
+        } finally {
+            if (connection) connection.release();
+        }
+    }
+    
 }
 
 module.exports = new FavShopDAO();

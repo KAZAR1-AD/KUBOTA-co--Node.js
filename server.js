@@ -532,7 +532,19 @@ app.post('/api/favorites/sync', async (req, res) => {
     }
 });
 
+app.post('/api/favorites/sync', requireLogin, async (req, res) => {
+    // fav.js は userId, added, removed を送ってくる仕様です
+    const { userId, added, removed } = req.body;
 
+    try {
+        // メソッド名を updateDiff に合わせる
+        await FavShopDAO.updateDiff(userId, added, removed);
+        res.json({ success: true });
+    } catch (err) {
+        console.error('API Sync Error:', err);
+        res.status(500).json({ error: 'server error: ' + err.message });
+    }
+});
 
 // ----------------------------------------------------
 // FIN008: メニュー画面 (GET) - /mypage ルート

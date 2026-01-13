@@ -15,7 +15,6 @@
         <div class="fixed-header-title">検索結果</div>
 
         <div class="fixed-header-icon-area">
-
             <% if (typeof isLoggedIn !=='undefined' && isLoggedIn) { %>
                 <div class="fin001-user-controls">
                     <span class="fin001-welcome-msg">
@@ -31,18 +30,17 @@
                         <button type="submit" class="btn btn-default fin001-logout-btn">ログアウト</button>
                     </form>
                 </div>
+            <% } else { %>
+                <a href="/welcome?returnUrl=<%= currentUrl %>" class="btn btn-default fin006-register-btn"
+                    role="button">
+                    ログイン
+                </a>
 
-                <% } else { %>
-                    <a href="/welcome?returnUrl=<%= currentUrl %>" class="btn btn-default fin006-register-btn"
-                        role="button">
-                        ログイン
-                    </a>
-
-                    <a href="/register?returnUrl=<%= currentUrl %>" class="btn btn-default fin006-register-btn"
-                        role="button">
-                        新規登録
-                    </a>
-                    <% } %>
+                <a href="/register?returnUrl=<%= currentUrl %>" class="btn btn-default fin006-register-btn"
+                    role="button">
+                    新規登録
+                </a>
+            <% } %>
         </div>
     </header>
 
@@ -66,7 +64,7 @@
                         <img class="toggle-star"
                             src="<%= item.is_favorite !== 0 ? '/images/star.png' : '/images/star-bw.png' %>"
                             data-shop-id="<%= item.shop_id %>"
-                            data-is-fav="<%= item.is_favorite %>"
+                            data-is-fav="<%= item.is_favorite !== 0 ? '1' : '0' %>"
                             data-on="/images/star.png"
                             data-off="/images/star-bw.png">
                     </span>
@@ -119,14 +117,11 @@
         条件<br>を変える
     </a>
 
-    <script>const USER_ID = "<%- JSON.stringify(userId) %>"</script>
-    <script src="js/fav.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            restoreFavoritesForPage();
-        })
+        const USER_ID = "<%= userId %>";
     </script>
     
+    <script src="/js/fav.js"></script>
     
 </body>
 </html>
