@@ -4,28 +4,62 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>お気に入り（FIN016）</title>
-    <link rel="stylesheet" href="css/style.css"> </head>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
 <body class="fin016">
 
-    <div class="fin016-title-bar">
-        <a href="FIN008.html" class="fin016-back-btn">＜</a>
-        
-        <h2>お気に入り</h2>
-
-        <a href="FIN008.html" class="page-menu-icon fin016-menu-icon">😊</a>
-    </div>
+    <header class="fixed-header">
+        <div class="fixed-header-left">
+        </div>
+    
+        <div class="fixed-header-title">お気に入り</div>
+    
+        <div class="fixed-header-icon-area">
+    
+            <div class="fin001-user-controls">
+                <span class="fin001-welcome-msg"><%= userName %>さん</span>
+                
+                <a href="/mypage?returnUrl=<%= currentUrl %>" class="header-profile-icon">
+                    <img id="headerProfileImage" src="<%= userIconUrl %>" alt="メニュー">
+                </a>    
+                
+                <form action="/logout" method="POST" style="display: inline;" onsubmit="return confirm('ログアウトしますか？');">
+                    <button type="submit" class="btn btn-default fin001-logout-btn">ログアウト</button>
+                </form>
+            </div>
+    
+        </div>
+    
+    </header> 
 
     <div class="fin016-results-container">
 
-        <div class="fin016-result-item">
+        <% if (!shop || shop.length === 0) { %>
+            <div style="text-align: center; padding: 20px;">
+                <p>お気に入りのお店はありません。</p>
+            </div>
+        <% } else { %>
+            <% shop.forEach(item => { %>
+                <div class="fin016-result-item">
+                    <span class="fin016-result-info">
+                    <%= item.shop_name %> 
+                    徒歩<%= Math.ceil(item.distance / 80) %>分<%= item.distance < 80 ? '以内' : '' %> 
+                    予算：<%= item.budget %>円
+                    </span>
+                </div>
+            <% }) %>
+        <% } %>
+
+        <!-- <div class="fin016-result-item">
             <span class="fin016-result-info">店名 徒歩○分 1000円〜1400円</span>
         </div>
 
         <div class="fin016-result-item">
             <span class="fin016-result-info">店名 徒歩○分 1000円〜1400円</span>
-        </div>
+        </div> -->
         
-        </div>
+    </div>
 
 </body>
 </html>

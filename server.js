@@ -510,26 +510,25 @@ app.get('/search-results', async (req, res) => {
 // 動的にお気に入りの店を追加・削除する処理
 // ----------------------------------------------------
 app.post('/api/favorites/sync', async (req, res) => {
+    // new
     try {
-        const { userId, shopIds } = req.body;
+        const { userId, added = [], removed = [] } = req.body;
 
-        // バリデーション
-        if (!userId) {
-            return res.status(400).json({ error: 'userId が必要です' });
+        if (!userId) return res.status(400).json({ error: 'userId が必要です' });
+        if (!Array.isArray(added) || !Array.isArray(removed)) {
+            return res.status(400).json({ error: 'added / removed は配列が必要です' });
         }
 
-        if (!Array.isArray(shopIds)) {
-            return res.status(400).json({ error: 'shopIds は配列である必要があります' });
-        }
+        await FavShopDAO.updateDiff(userId, added, removed);
 
-        // 空配列でも問題なし
-        await FavShopDAO.syncFavorites(userId, shopIds);
+        res.status(200).json({
+            message: "差分同期しました",
+            added,
+            removed
+        });
 
-        console.log(`[API] ユーザー ${userId} のお気に入りを更新しました: ${shopIds}`);
-        res.status(200).json({ message: 'お気に入りを同期しました' });
     } catch (err) {
-        console.error('[API] /api/favorites/sync エラー:', err);
-        res.status(500).json({ error: 'サーバーエラー: ' + err.message });
+        res.status(500).json({ error: 'server error: ' + err.message });
     }
 });
 
@@ -758,15 +757,17 @@ app.post('/update-password', requireLogin, async (req, res) => {
 });
 
 
-// FIN016: おきにいいり画面への遷移
+// FIN016: お気に入り画面への遷移
 app.get('/FIN016', async (req, res) => {
     const viewData = await getCommonViewData(req);
+    const userId = req.session.user ? req.session.user.id : null;
+    
+    const favShops = await ShopDAO.findFavoriteShops(userId);
 
-    // データベースからお気に入りリストを取得する処理がここに入ります
-
-    res.render('FIN016.ejs', {
+    res.render('FIN016', {
         pageTitle: 'お気に入り',
         ...viewData, // ⚠️ 共通ビューデータ
+        shop: favShops // お気に入り店舗リスト
     });
 });
 

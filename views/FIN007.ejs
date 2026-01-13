@@ -8,9 +8,43 @@
 </head>
 <body class="fin007">
 
-    <div class="fin007-title-bar" style="text-align: center; display: flex; justify-content: center; width: 100%;">
-        <h2>検索結果</h2>
-    </div>
+    <header class="fixed-header">
+        <div class="fixed-header-left">
+        </div>
+
+        <div class="fixed-header-title">検索結果</div>
+
+        <div class="fixed-header-icon-area">
+
+            <% if (typeof isLoggedIn !=='undefined' && isLoggedIn) { %>
+                <div class="fin001-user-controls">
+                    <span class="fin001-welcome-msg">
+                        <%= userName %>さん
+                    </span>
+
+                    <a href="/mypage" class="header-profile-icon">
+                        <img id="headerProfileImage" src="<%= userIconUrl %>" alt="メニュー">
+                    </a>
+
+                    <form action="/logout" method="POST" style="display: inline;"
+                        onsubmit="return confirm('ログアウトしますか？');">
+                        <button type="submit" class="btn btn-default fin001-logout-btn">ログアウト</button>
+                    </form>
+                </div>
+
+                <% } else { %>
+                    <a href="/welcome?returnUrl=<%= currentUrl %>" class="btn btn-default fin006-register-btn"
+                        role="button">
+                        ログイン
+                    </a>
+
+                    <a href="/register?returnUrl=<%= currentUrl %>" class="btn btn-default fin006-register-btn"
+                        role="button">
+                        新規登録
+                    </a>
+                    <% } %>
+        </div>
+    </header>
 
     <div class="fin007-results-container">
 
@@ -85,58 +119,12 @@
         条件<br>を変える
     </a>
 
+    <script>const USER_ID = "<%- JSON.stringify(userId) %>"</script>
+    <script src="js/fav.js"></script>
     <script>
-        const user_id = "<%= userId || '' %>";
-    
-        let debounceTimer;
-    
-        // お気に入り同期用関数（fetch）
-        async function syncFavorites(shopIds) {
-            if (!shopIds || shopIds.length === 0) return;
-
-            try {
-                const response = await fetch('/api/favorites/sync', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId: user_id, shopIds })
-                });
-
-                if (!response.ok) {
-                    console.error('syncFavorites failed:', await response.text());
-                } else {
-                    console.log('syncFavorites success');
-                }
-            } catch (err) {
-                console.error('fetch error:', err);
-            }
-        }
-
-        // デバウンス付き送信
-        function sendDebouncedFavorites(shopIds) {
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => {
-                syncFavorites(shopIds);
-            }, 500);
-        }
-
-        // 星アイコンのクリックイベント
-        document.querySelectorAll(".toggle-star").forEach(img => {
-            img.addEventListener("click", () => {
-                // 現在の状態を反転
-                const isFav = img.dataset.isFav === "1";
-                img.dataset.isFav = isFav ? "0" : "1";
-                img.src = isFav ? img.dataset.off : img.dataset.on;
-
-                // 選択中のお気に入り shopId を取得
-                const selected = Array.from(document.querySelectorAll(".toggle-star"))
-                                    .filter(el => el.dataset.isFav === "1")
-                                    .map(el => el.dataset.shopId);
-                
-                // デバウンス付きでサーバーに送信
-                sendDebouncedFavorites(selected);
-            });
-        });
-
+        document.addEventListener("DOMContentLoaded", () => {
+            restoreFavoritesForPage();
+        })
     </script>
     
     
