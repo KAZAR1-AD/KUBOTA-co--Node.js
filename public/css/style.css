@@ -37,6 +37,11 @@ body {
     z-index: 1000;
 }
 
+/* ヘッダー内部のタイトル位置調整用 */
+.fixed-header-left {
+    width: 232.8px;
+}
+
 /* ヘッダー内部のナビゲーションエリア */
 .fixed-header-icon-area {
     display: flex;
