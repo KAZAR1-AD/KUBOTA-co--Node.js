@@ -3,29 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>お気に入り（FIN016）</title>
-    <link rel="stylesheet" href="css/style.css"> </head>
-<body class="fin016">
+    <title>お気に入り一覧</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/fin016.css">
+</head>
+<body class="fin016-body">
 
-    <div class="fin016-title-bar">
-        <a href="FIN008.html" class="fin016-back-btn">＜</a>
-        
-        <h2>お気に入り</h2>
+    <div class="fin016-container">
+        <header class="fin016-header">
+            <a href="/mypage" class="back-link">×</a>
+            <h1 class="header-title">お気に入り</h1>
+        </header>
 
-        <a href="FIN008.html" class="page-menu-icon fin016-menu-icon">😊</a>
+        <% if (message) { %>
+            <div class="success-banner">✅ <%= message %></div>
+        <% } %>
+
+        <div class="shop-list">
+            <% if (favorites && favorites.length > 0) { %>
+                <% favorites.forEach(shop => { %>
+                    <div class="shop-card">
+                        <div class="shop-main-info">
+                            <span class="shop-genre"><%= shop.genre %></span>
+                            <h3 class="shop-name"><%= shop.shop_name %></h3>
+                            <div class="shop-sub-info">
+                                <span>予算: <%= shop.budget %>円</span>
+                                <span>距離: <%= shop.distance %>m</span>
+                            </div>
+                        </div>
+                        
+                        <div class="shop-actions">
+                            <form action="/favorites/remove" method="POST">
+                                <input type="hidden" name="shop_id" value="<%= shop.shop_id %>">
+                                <button type="submit" class="btn-remove">解除</button>
+                            </form>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <div class="no-data">
+                    <p>お気に入りのお店はまだありません。</p>
+                    <a href="/search" class="search-link">お店を探す</a>
+                </div>
+            <% } %>
+        </div>
+
+        <div class="footer-actions">
+            <a href="/mypage" class="btn-back">マイページに戻る</a>
+        </div>
     </div>
-
-    <div class="fin016-results-container">
-
-        <div class="fin016-result-item">
-            <span class="fin016-result-info">店名 徒歩○分 1000円〜1400円</span>
-        </div>
-
-        <div class="fin016-result-item">
-            <span class="fin016-result-info">店名 徒歩○分 1000円〜1400円</span>
-        </div>
-        
-        </div>
 
 </body>
 </html>

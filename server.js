@@ -758,16 +758,41 @@ app.post('/update-password', requireLogin, async (req, res) => {
 });
 
 
-// FIN016: おきにいいり画面への遷移
-app.get('/FIN016', async (req, res) => {
+// FIN016: お気に入り画面
+app.get('/FIN016', requireLogin, async (req, res) => {
     const viewData = await getCommonViewData(req);
+    const userId = req.session.user.id;
 
-    // データベースからお気に入りリストを取得する処理がここに入ります
+    try {
+        // DAOからお気に入りリストを取得
+        const favorites = await FavShopDAO.getFavoritesByUserId(userId);
 
-    res.render('FIN016.ejs', {
-        pageTitle: 'お気に入り',
-        ...viewData, // ⚠️ 共通ビューデータ
-    });
+        res.render('FIN016', {
+            pageTitle: 'お気に入り',
+            ...viewData,
+            favorites: favorites // EJSへ渡す
+        });
+    } catch (error) {
+        console.error('FIN016 Error:', error);
+        req.session.error = 'データの取得に失敗しました。';
+        res.redirect('/mypage');
+    }
+});
+
+// お気に入り削除の実行
+app.post('/favorites/remove', requireLogin, async (req, res) => {
+    const userId = req.session.user.id;
+    const { shop_id } = req.body;
+
+    try {
+        await FavShopDAO.removeFavorite(userId, shop_id);
+        req.session.message = 'お気に入りを解除しました。';
+        res.redirect('/FIN016');
+    } catch (error) {
+        console.error('Remove Favorite Error:', error);
+        req.session.error = '解除に失敗しました。';
+        res.redirect('/FIN016');
+    }
 });
 
 // ----------------------------------------------------
