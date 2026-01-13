@@ -3,62 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>お気に入り（FIN016）</title>
+    <title>お気に入り一覧</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/fin016.css">
 </head>
+<body class="fin016-body">
 
-<body class="fin016">
+    <div class="fin016-container">
+        <header class="fin016-header">
+            <a href="/mypage" class="back-link">×</a>
+            <h1 class="header-title">お気に入り</h1>
+        </header>
 
-    <header class="fixed-header">
-        <div class="fixed-header-left">
-        </div>
-    
-        <div class="fixed-header-title">お気に入り</div>
-    
-        <div class="fixed-header-icon-area">
-    
-            <div class="fin001-user-controls">
-                <span class="fin001-welcome-msg"><%= userName %>さん</span>
-                
-                <a href="/mypage?returnUrl=<%= currentUrl %>" class="header-profile-icon">
-                    <img id="headerProfileImage" src="<%= userIconUrl %>" alt="メニュー">
-                </a>    
-                
-                <form action="/logout" method="POST" style="display: inline;" onsubmit="return confirm('ログアウトしますか？');">
-                    <button type="submit" class="btn btn-default fin001-logout-btn">ログアウト</button>
-                </form>
-            </div>
-    
-        </div>
-    
-    </header> 
-
-    <div class="fin016-results-container">
-
-        <% if (!shop || shop.length === 0) { %>
-            <div style="text-align: center; padding: 20px;">
-                <p>お気に入りのお店はありません。</p>
-            </div>
-        <% } else { %>
-            <% shop.forEach(item => { %>
-                <div class="fin016-result-item">
-                    <span class="fin016-result-info">
-                    <%= item.shop_name %> 
-                    徒歩<%= Math.ceil(item.distance / 80) %>分<%= item.distance < 80 ? '以内' : '' %> 
-                    予算：<%= item.budget %>円
-                    </span>
-                </div>
-            <% }) %>
+        <% if (message) { %>
+            <div class="success-banner">✅ <%= message %></div>
         <% } %>
 
-        <!-- <div class="fin016-result-item">
-            <span class="fin016-result-info">店名 徒歩○分 1000円〜1400円</span>
+        <div class="shop-list">
+            <% if (favorites && favorites.length > 0) { %>
+                <% favorites.forEach(shop => { %>
+                    <div class="shop-card">
+                        <div class="shop-main-info">
+                            <span class="shop-genre"><%= shop.genre %></span>
+                            <h3 class="shop-name"><%= shop.shop_name %></h3>
+                            <div class="shop-sub-info">
+                                <span>予算: <%= shop.budget %>円</span>
+                                <span>距離: <%= shop.distance %>m</span>
+                            </div>
+                        </div>
+                        
+                        <div class="shop-actions">
+                            <form action="/favorites/remove" method="POST">
+                                <input type="hidden" name="shop_id" value="<%= shop.shop_id %>">
+                                <button type="submit" class="btn-remove">解除</button>
+                            </form>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <div class="no-data">
+                    <p>お気に入りのお店はまだありません。</p>
+                    <a href="/search" class="search-link">お店を探す</a>
+                </div>
+            <% } %>
         </div>
 
-        <div class="fin016-result-item">
-            <span class="fin016-result-info">店名 徒歩○分 1000円〜1400円</span>
-        </div> -->
-        
+        <div class="footer-actions">
+            <a href="/mypage" class="btn-back">マイページに戻る</a>
+        </div>
     </div>
 
 </body>
