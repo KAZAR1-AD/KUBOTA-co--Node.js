@@ -105,7 +105,7 @@ const getCommonViewData = async (req) => { // ★ async を追加
         profilePhotoId: isLoggedIn ? req.session.user.profilePhotoId : null,
         error: errorMsg,
         message: successMsg,
-        userIconUrl: '/images/user_icon/default.png' // デフォルトアイコンURL
+        userIconUrl: '/images/user_icon/sample.png' // デフォルトアイコンURL
     };
 
     if (baseData.isLoggedIn && baseData.profilePhotoId) {
@@ -451,6 +451,7 @@ app.post('/search', async (req, res) => {
 
         return res.render('FIN007', {
             ...viewData,
+            currentUrl: '/search-results?page=1',
             shop: pagedShops,         // 1ページ目のデータだけ渡す
             currentPage: page,        // 現在のページ番号
             totalItems: totalItems,   // 全件数
@@ -498,6 +499,7 @@ app.get('/search-results', async (req, res) => {
     // 6. FIN007を表示
     res.render('FIN007', {
         ...viewData,
+        currentUrl: req.originalUrl,
         shop: pagedShops,         // 切り出したデータ
         currentPage: page,        // 現在のページ番号
         totalItems: totalItems,   // 全件数
@@ -593,10 +595,12 @@ app.get('/changeIcon', requireLogin, async (req, res) => {
 // ----------------------------------------------------
 app.get('/FIN009', requireLogin, async (req, res) => { // ★ async を追加
     const viewData = await getCommonViewData(req);
+    const backUrl = req.query.returnUrl || '/mypage';
 
     res.render('FIN009', {
         pageTitle: 'マイページ',
-        ...viewData
+        ...viewData,
+        backUrl: backUrl
     });
 });
 
@@ -774,6 +778,7 @@ app.post('/update-password', requireLogin, async (req, res) => {
 app.get('/FIN016', requireLogin, async (req, res) => {
     const viewData = await getCommonViewData(req);
     const userId = req.session.user.id;
+    const backUrl = req.query.returnUrl || '/mypage';
 
     try {
         // DAOからお気に入りリストを取得
@@ -782,7 +787,8 @@ app.get('/FIN016', requireLogin, async (req, res) => {
         res.render('FIN016', {
             pageTitle: 'お気に入り',
             ...viewData,
-            favorites: favorites // EJSへ渡す
+            favorites: favorites, // EJSへ渡す
+            backUrl: backUrl
         });
     } catch (error) {
         console.error('FIN016 Error:', error);
@@ -813,6 +819,8 @@ app.post('/favorites/remove', requireLogin, async (req, res) => {
 app.get('/FIN017', requireLogin, async (req, res) => {
     const viewData = await getCommonViewData(req);
     const currentUserId = req.session.user.id;
+    const backUrl = req.query.returnUrl || '/mypage';
+
     // let friendList = [];
     let followingList = [];
     let followerList = [];
@@ -832,6 +840,9 @@ app.get('/FIN017', requireLogin, async (req, res) => {
     res.render('FIN017.ejs', {
         pageTitle: 'フレンド',
         ...viewData,
+        friendList: friendList, // 取得したフレンドリスト (user_id, user_name, login_id, profile_photo_id を含む)
+        backUrl: backUrl
+    });
         followingList: followingList, // フォローしているユーザーリスト
         followerList: followerList      // フォロワーリスト
     });
