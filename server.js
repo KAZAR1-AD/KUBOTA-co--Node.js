@@ -16,6 +16,7 @@ const UserIconDAO = require('./dao/UserIconDAO');
 const database = require('./database'); 
 const FriendshipDAO = require('./dao/FriendshipDAO'); 
 const FriendDAO = require('./dao/FriendDAO'); 
+const RelationshipDAO = require('./dao/RelationshipDAO');
 
 // DAOインスタンスの初期化
 const friendshipDAO = new FriendshipDAO(database);
@@ -812,24 +813,16 @@ app.post('/favorites/remove', requireLogin, async (req, res) => {
 app.get('/FIN017', requireLogin, async (req, res) => {
     const viewData = await getCommonViewData(req);
     const currentUserId = req.session.user.id;
-    let friendList = [];
+    // let friendList = [];
+    let followingList = [];
+    let followerList = [];
 
     try {
-        // 1. FriendshipDAOを使って、ログインユーザーのフレンドのIDリストを取得
-        const friendIds = await friendshipDAO.findFriendsByUserId(currentUserId);
+        // ログインユーザーのフォローしているユーザーのIDリストを取得
+        followingList = await RelationshipDAO.getFollowedUsers(currentUserId);
 
-        // 2. UserDAOを使って、IDリストに基づいてフレンドの詳細情報を一括取得する
-        //    新しい UserDAO.findUsersByIds メソッドを利用
-        if (friendIds.length > 0) {
-            // 
-            friendList = await UserDAO.findUsersByIds(friendIds); 
-        }
-
-        // 3. ユーザーアイコンURLを付与（任意：UserDAO側で結合されていない場合）
-        // (UserDAO.findUsersByIdsが profile_photo_id を返しているため、
-        //  ここで別途 UserIconDAO を使って URL に変換するロジックが必要になる場合がある)
-        // 今回は、UserDAOが返す `iconId` を利用し、FIN017のEJS側で処理するものと仮定。
-
+        // ログインユーザーをフォローしているユーザーのIDリストを取得
+        followerList = await RelationshipDAO.getFollowers(currentUserId);
     } catch (error) {
         console.error('FIN017 フレンドリスト取得エラー:', error);
         req.session.error = 'フレンドリストの取得中にエラーが発生しました。';
@@ -839,8 +832,37 @@ app.get('/FIN017', requireLogin, async (req, res) => {
     res.render('FIN017.ejs', {
         pageTitle: 'フレンド',
         ...viewData,
-        friendList: friendList, // 取得したフレンドリスト (user_id, user_name, login_id, profile_photo_id を含む)
+        followingList: followingList, // フォローしているユーザーリスト
+        followerList: followerList      // フォロワーリスト
     });
+
+    // try {
+    //     // 1. FriendshipDAOを使って、ログインユーザーのフレンドのIDリストを取得
+    //     const friendIds = await friendshipDAO.findFriendsByUserId(currentUserId);
+
+    //     // 2. UserDAOを使って、IDリストに基づいてフレンドの詳細情報を一括取得する
+    //     //    新しい UserDAO.findUsersByIds メソッドを利用
+    //     if (friendIds.length > 0) {
+    //         // 
+    //         friendList = await UserDAO.findUsersByIds(friendIds); 
+    //     }
+
+    //     // 3. ユーザーアイコンURLを付与（任意：UserDAO側で結合されていない場合）
+    //     // (UserDAO.findUsersByIdsが profile_photo_id を返しているため、
+    //     //  ここで別途 UserIconDAO を使って URL に変換するロジックが必要になる場合がある)
+    //     // 今回は、UserDAOが返す `iconId` を利用し、FIN017のEJS側で処理するものと仮定。
+
+    // } catch (error) {
+    //     console.error('FIN017 フレンドリスト取得エラー:', error);
+    //     req.session.error = 'フレンドリストの取得中にエラーが発生しました。';
+    //     // エラー時も空のリストで画面を表示
+    // }
+
+    // res.render('FIN017.ejs', {
+    //     pageTitle: 'フレンド',
+    //     ...viewData,
+    //     friendList: friendList, // 取得したフレンドリスト (user_id, user_name, login_id, profile_photo_id を含む)
+    // });
 });
 
 

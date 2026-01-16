@@ -11,13 +11,37 @@
     <div class="tabs-container">
         <h2>ページ内タブのデモンストレーション</h2>
         <ul class="tab-header">
-            <li class="tab-link active" data-tab="tab1">フレンド一覧</li>
+            <!-- <li class="tab-link active" data-tab="tab1">フレンド一覧</li>
             <li class="tab-link" data-tab="tab2">フレンド検索</li>
-            <li class="tab-link" data-tab="tab3">タブ C</li>
+            <li class="tab-link" data-tab="tab3">タブ C</li> -->
+            <li class="tab-link active" data-tab="tab1">フォロー中</li>
+            <li class="tab-link" data-tab="tab2">フレンド検索</li>
+            <li class="tab-link" data-tab="tab3">フォロワー</li>
         </ul>
 
         <div id="tab1" class="tab-content active">
             <div class="fin017-list-container">
+
+                <!-- ここから追記 -->
+                 <% if (followingList.length > 0) { %>
+                    <% followingList.forEach(item => { %>
+                        <div class="fin017-friend-item">
+                    <div class="fin017-icon">
+                        <span>icon</span>
+                    </div>
+                    <div class="fin017-info">
+                        <span class="fin017-username"><%- item.user_name %></span>
+                        <span class="fin017-userid"><%- item.user_id %></span>
+                    </div>
+                    <div class="fin017-heart">❤️</div>
+                </div>
+                    <% }); %>
+                 <% } else { %>
+                    <p style="text-align: center; color: #888; font-size: 14px;">
+                        フォロー中のユーザーはいません。
+                    </p>
+                <% } %>
+                <!-- ここまで -->
 
                 <div class="fin017-friend-item">
                     <div class="fin017-icon">
