@@ -34,6 +34,13 @@ body {
     box-sizing: border-box;
     z-index: 1000;
     margin: 0;       /* ★余計な隙間を削除 */
+    transition: transform 0.4s ease, opacity 0.4s ease; /* 滑らかに動かす設定 */
+}
+
+.header-hidden {
+    transform: translateY(-100%); /* 上方向にヘッダーの高さ分隠す */
+    opacity: 0;                   /* 徐々に透明にする */
+    pointer-events: none;         /* 消えている間はクリックできないようにする */
 }
 
 .fixed-header-title {
@@ -45,6 +52,7 @@ body {
     font-size: 18px;
     font-weight: bold;
     white-space: nowrap; /* 改行防止 */
+    color: white;
 }
 
 /* ヘッダー内部のタイトル位置調整用 */
@@ -256,6 +264,12 @@ body {
     text-decoration: none;
     width: 100%;
     box-sizing: border-box;
+    color: white;
+}
+
+.btn:hover {
+    opacity: 0.7; /* 70%の濃さにする */
+    transition: 0.2s;
 }
 
 .btn-primary {
@@ -374,6 +388,7 @@ body {
     padding: 0 15px;
     min-width: 0;
     width: auto;
+    background-color: cadetblue;
     /* 共通ボタンの width: 100% をリセット */
 }
 

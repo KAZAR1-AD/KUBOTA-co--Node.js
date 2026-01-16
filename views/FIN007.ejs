@@ -3,14 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
     <title>検索結果（FIN007）</title>
-    <link rel="stylesheet" href="/css/style.css"> 
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        /* --- 追加：ヘッダーの文字色とアニメーション --- */
+        .fixed-header {
+            transition: transform 0.4s ease, opacity 0.4s ease; /* 滑らかに消える設定 */
+        }
+
+        /* 文字色を白に強制し、紫にならないようにする */
+        .fixed-header-title, 
+        .fin001-welcome-msg,
+        .fixed-header a {
+            color: #FFFFFF !important;
+            text-decoration: none;
+        }
+
+        /* ホバー時の効果（上品に透けるスタイル） */
+        .fixed-header a:hover {
+            opacity: 0.7;
+            transition: 0.2s;
+        }
+
+        /* スクロール時に付与されるクラス */
+        .header-hidden {
+            transform: translateY(-100%); /* 上に隠す */
+            opacity: 0;
+        }
+    </style>
 </head>
 <body class="fin007">
 
     <header class="fixed-header">
-        <div class="fixed-header-left">
-        </div>
+        <div class="fixed-header-left"></div>
 
         <div class="fixed-header-title">検索結果</div>
 
@@ -21,37 +47,28 @@
                         <%= userName %>さん
                     </span>
 
-                    <a href="/mypage" class="header-profile-icon">
+                    <a href="/mypage?returnUrl=<%= encodeURIComponent(currentUrl) %>" class="header-profile-icon">
                         <img id="headerProfileImage" src="<%= userIconUrl %>" alt="メニュー">
                     </a>
 
-                    <form action="/logout" method="POST" style="display: inline;"
+                    <form action="/logout?returnUrl=<%= encodeURIComponent(currentUrl) %>" method="POST" style="display: inline;"
                         onsubmit="return confirm('ログアウトしますか？');">
                         <button type="submit" class="btn btn-default fin001-logout-btn">ログアウト</button>
                     </form>
                 </div>
             <% } else { %>
-                <a href="/welcome?returnUrl=<%= currentUrl %>" class="btn btn-default fin006-register-btn"
-                    role="button">
-                    ログイン
-                </a>
-
-                <a href="/register?returnUrl=<%= currentUrl %>" class="btn btn-default fin006-register-btn"
-                    role="button">
-                    新規登録
-                </a>
+                <a href="/welcome?returnUrl=<%= encodeURIComponent(currentUrl) %>" class="btn btn-default fin006-register-btn" role="button">ログイン</a>
+                <a href="/register?returnUrl=<%= encodeURIComponent(currentUrl) %>" class="btn btn-default fin006-register-btn" role="button">新規登録</a>
             <% } %>
         </div>
     </header>
 
     <div class="fin007-results-container">
-
         <% if (!shop || shop.length === 0) { %>
             <div style="text-align: center; padding: 20px;">
                 <p>条件に合うお店が見つかりませんでした。</p>
             </div>
         <% } else { %>
-            
             <% shop.forEach(item => { %>
             <div class="fin007-result-item">
                 <span class="fin007-result-info">
@@ -62,66 +79,56 @@
                 <% if (isLoggedIn) { %>
                     <span class="fin007-result-star">
                         <img class="toggle-star"
-                            src="<%= item.is_favorite !== 0 ? '/images/star.png' : '/images/star-bw.png' %>"
+                            src="<%= Number(item.is_favorite) === 1 ? '/images/star.png' : '/images/star-bw.png' %>"
                             data-shop-id="<%= item.shop_id %>"
-                            data-is-fav="<%= item.is_favorite !== 0 ? '1' : '0' %>"
+                            data-is-fav="<%= Number(item.is_favorite) === 1 ? '1' : '0' %>"
                             data-on="/images/star.png"
                             data-off="/images/star-bw.png">
                     </span>
                 <% } %>
             </div>
             <% }); %>
-
         <% } %>
-
 
         <% if (typeof totalPages !== 'undefined' && totalPages > 1) { %>
         <div class="pagination-container">
             <nav class="pagination">
-                
                 <% if (currentPage > 1) { %>
-                    <a href="/search-results?page=<%= currentPage - 1 %>" class="pagination-link">
-                        &laquo; 前へ
-                    </a>
-                <% } else { %>
-                    <span class="pagination-link disabled">&laquo; 前へ</span>
+                    <a href="/search-results?page=<%= currentPage - 1 %>" class="pagination-link">&laquo; 前へ</a>
                 <% } %>
-
 
                 <% for(let i = 1; i <= totalPages; i++) { %>
-                    <% if (i === currentPage) { %>
-                        <span class="pagination-link active"><%= i %></span>
-                    <% } else { %>
-                        <a href="/search-results?page=<%= i %>" class="pagination-link">
-                            <%= i %>
-                        </a>
-                    <% } %>
+                    <a href="/search-results?page=<%= i %>" class="pagination-link <%= i === currentPage ? 'active' : '' %>">
+                        <%= i %>
+                    </a>
                 <% } %>
-
 
                 <% if (currentPage < totalPages) { %>
-                    <a href="/search-results?page=<%= currentPage + 1 %>" class="pagination-link">
-                        次へ &raquo;
-                    </a>
-                <% } else { %>
-                    <span class="pagination-link disabled">次へ &raquo;</span>
+                    <a href="/search-results?page=<%= currentPage + 1 %>" class="pagination-link">次へ &raquo;</a>
                 <% } %>
-
             </nav>
         </div>
         <% } %>
-
     </div>
 
-    <a href="/search" class="fin007-change-criteria-btn">
-        条件<br>を変える
-    </a>
+    <a href="/search" class="fin007-change-criteria-btn">条件<br>を変える</a>
 
     <script>
         const USER_ID = "<%= userId %>";
+
+        // --- スクロールでヘッダーを隠す処理 ---
+        let lastScrollY = window.scrollY;
+        const header = document.querySelector('.fixed-header');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > lastScrollY && window.scrollY > 50) {
+                header.classList.add('header-hidden');
+            } else {
+                header.classList.remove('header-hidden');
+            }
+            lastScrollY = window.scrollY;
+        });
     </script>
-    
     <script src="/js/fav.js"></script>
-    
 </body>
 </html>
