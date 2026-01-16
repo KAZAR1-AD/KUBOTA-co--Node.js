@@ -31,9 +31,9 @@
                 </div>
 
                 <div class="fin008-menu-links">
-                    <a href="/FIN009" class="btn fin008-btn">個人設定</a>
-                    <a href="/FIN016" class="btn fin008-btn">お気に入り</a>
-                    <a href="/FIN017" class="btn fin008-btn">フレンド</a>
+                    <a href="/FIN009?returnUrl=<%= encodeURIComponent('/mypage?returnUrl=' + encodeURIComponent(backUrl)) %>" class="btn fin008-btn">個人設定</a>
+                    <a href="/FIN016?returnUrl=<%= encodeURIComponent('/mypage?returnUrl=' + encodeURIComponent(backUrl)) %>" class="btn fin008-btn">お気に入り</a>
+                    <a href="/FIN017?returnUrl=<%= encodeURIComponent('/mypage?returnUrl=' + encodeURIComponent(backUrl)) %>" class="btn fin008-btn">フレンド</a>
                     <a href="<%= backUrl %>" class="btn fin008-btn">
                         戻る
                     </a>
