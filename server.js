@@ -821,10 +821,8 @@ app.get('/FIN017', requireLogin, async (req, res) => {
     const currentUserId = req.session.user.id;
     const backUrl = req.query.returnUrl || '/mypage';
 
-    // let friendList = [];
     let followingList = [];
     let followerList = [];
-
     try {
         // ログインユーザーのフォローしているユーザーのIDリストを取得
         followingList = await RelationshipDAO.getFollowedUsers(currentUserId);
@@ -840,12 +838,39 @@ app.get('/FIN017', requireLogin, async (req, res) => {
     res.render('FIN017.ejs', {
         pageTitle: 'フレンド',
         ...viewData,
-        friendList: friendList, // 取得したフレンドリスト (user_id, user_name, login_id, profile_photo_id を含む)
+        followingList: followingList, // フォローしているユーザーリスト
+        followerList: followerList,      // フォロワーリスト
         backUrl: backUrl
     });
-        followingList: followingList, // フォローしているユーザーリスト
-        followerList: followerList      // フォロワーリスト
-    });
+
+});
+
+// ----------------------------------------------------
+// FIN017: フレンド検索
+// ----------------------------------------------------
+app.post('/api/search-user', requireLogin, async (req, res) => {
+    let { keyword } = req.body;
+    console.log(keyword); // デバッグ用
+    
+    keyword = String(keyword).trim();
+    
+    // 8桁の数字の場合、user_idで検索
+    if (/^\d{8}$/.test(keyword)) {
+        try {
+            const user = UserDAO.getUserById(keyword);
+            if (user !== null) {
+                return res.json({ result: true, user: user });
+            } else {
+                return res.status(404).json({ result: false, message: 'ユーザーが見つかりません。' });
+            }
+        } catch (error) {
+            console.error('ユーザーID検索エラー:', error);
+            return res.status(500).json({ result: false, message: 'サーバーエラーが発生しました。' });
+        }
+    } else {
+        return res.status(400).json({ result: false, message: '無効なユーザーID形式です。8桁の数字を入力してください。' });
+    }
+});
 
     // try {
     //     // 1. FriendshipDAOを使って、ログインユーザーのフレンドのIDリストを取得
@@ -874,7 +899,7 @@ app.get('/FIN017', requireLogin, async (req, res) => {
     //     ...viewData,
     //     friendList: friendList, // 取得したフレンドリスト (user_id, user_name, login_id, profile_photo_id を含む)
     // });
-});
+
 
 
 
