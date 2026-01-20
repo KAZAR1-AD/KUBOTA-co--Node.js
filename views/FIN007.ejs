@@ -9,27 +9,51 @@
     <style>
         /* --- 追加：ヘッダーの文字色とアニメーション --- */
         .fixed-header {
-            transition: transform 0.4s ease, opacity 0.4s ease; /* 滑らかに消える設定 */
+            transition: transform 0.4s ease, opacity 0.4s ease;
         }
-
-        /* 文字色を白に強制し、紫にならないようにする */
         .fixed-header-title, 
         .fin001-welcome-msg,
         .fixed-header a {
             color: #FFFFFF !important;
             text-decoration: none;
         }
-
-        /* ホバー時の効果（上品に透けるスタイル） */
         .fixed-header a:hover {
             opacity: 0.7;
             transition: 0.2s;
         }
-
-        /* スクロール時に付与されるクラス */
         .header-hidden {
-            transform: translateY(-100%); /* 上に隠す */
+            transform: translateY(-100%);
             opacity: 0;
+        }
+
+        /* --- 今回のポイント：クリック範囲の分離 --- */
+        .fin007-result-item {
+            display: flex; /* 横並びにする */
+            align-items: center;
+            padding: 0; /* 内側の余白は子要素で持たせる */
+            overflow: hidden;
+        }
+
+        /* 左側：お店の情報（クリックでマップへ） */
+        .fin007-result-info-link {
+            flex-grow: 1; /* 残りの幅をすべて使う */
+            padding: 15px; /* ここがクリックできる範囲 */
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .fin007-result-info-link:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        /* 右側：お気に入り星マーク（ここは独立した範囲） */
+        .fin007-result-star-box {
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .toggle-star {
+            cursor: pointer;
         }
     </style>
 </head>
@@ -37,20 +61,14 @@
 
     <header class="fixed-header">
         <div class="fixed-header-left"></div>
-
         <div class="fixed-header-title">検索結果</div>
-
         <div class="fixed-header-icon-area">
             <% if (typeof isLoggedIn !=='undefined' && isLoggedIn) { %>
                 <div class="fin001-user-controls">
-                    <span class="fin001-welcome-msg">
-                        <%= userName %>さん
-                    </span>
-
+                    <span class="fin001-welcome-msg"><%= userName %>さん</span>
                     <a href="/mypage?returnUrl=<%= encodeURIComponent(currentUrl) %>" class="header-profile-icon">
                         <img id="headerProfileImage" src="<%= userIconUrl %>" alt="メニュー">
                     </a>
-
                     <form action="/logout?returnUrl=<%= encodeURIComponent(currentUrl) %>" method="POST" style="display: inline;"
                         onsubmit="return confirm('ログアウトしますか？');">
                         <button type="submit" class="btn btn-default fin001-logout-btn">ログアウト</button>
@@ -71,20 +89,25 @@
         <% } else { %>
             <% shop.forEach(item => { %>
             <div class="fin007-result-item">
-                <span class="fin007-result-info">
-                    <%= item.shop_name %> 
-                    徒歩<%= Math.ceil(item.distance / 80) %>分<%= item.distance < 80 ? '以内' : '' %> 
-                    予算：<%= item.budget %>円
-                </span>
-                <% if (isLoggedIn) { %>
-                    <span class="fin007-result-star">
-                        <img class="toggle-star"
-                            src="<%= Number(item.is_favorite) === 1 ? '/images/star.png' : '/images/star-bw.png' %>"
-                            data-shop-id="<%= item.shop_id %>"
-                            data-is-fav="<%= Number(item.is_favorite) === 1 ? '1' : '0' %>"
-                            data-on="/images/star.png"
-                            data-off="/images/star-bw.png">
+                <div class="fin007-result-info-link" onclick="handleMapClick('<%= item.shop_name %>', '<%= item.google_map_link %>')">
+                    <span class="fin007-result-info">
+                        <%= item.shop_name %> 
+                        徒歩<%= Math.ceil(item.distance / 80) %>分<%= item.distance < 80 ? '以内' : '' %> 
+                        予算：<%= item.budget %>円
                     </span>
+                </div>
+
+                <% if (isLoggedIn) { %>
+                    <div class="fin007-result-star-box">
+                        <span class="fin007-result-star">
+                            <img class="toggle-star"
+                                src="<%= Number(item.is_favorite) === 1 ? '/images/star.png' : '/images/star-bw.png' %>"
+                                data-shop-id="<%= item.shop_id %>"
+                                data-is-fav="<%= Number(item.is_favorite) === 1 ? '1' : '0' %>"
+                                data-on="/images/star.png"
+                                data-off="/images/star-bw.png">
+                        </span>
+                    </div>
                 <% } %>
             </div>
             <% }); %>
@@ -96,13 +119,11 @@
                 <% if (currentPage > 1) { %>
                     <a href="/search-results?page=<%= currentPage - 1 %>" class="pagination-link">&laquo; 前へ</a>
                 <% } %>
-
                 <% for(let i = 1; i <= totalPages; i++) { %>
                     <a href="/search-results?page=<%= i %>" class="pagination-link <%= i === currentPage ? 'active' : '' %>">
                         <%= i %>
                     </a>
                 <% } %>
-
                 <% if (currentPage < totalPages) { %>
                     <a href="/search-results?page=<%= currentPage + 1 %>" class="pagination-link">次へ &raquo;</a>
                 <% } %>
@@ -116,10 +137,21 @@
     <script>
         const USER_ID = "<%= userId %>";
 
+        // --- マップ遷移の処理 ---
+        function handleMapClick(shopName, mapUrl) {
+            if (!mapUrl || mapUrl === 'undefined' || mapUrl === 'null' || mapUrl === '') {
+                alert('このお店の地図リンクは登録されていません。');
+                return;
+            }
+
+            if (confirm(shopName + ' の場所をGoogleマップで確認しますか？')) {
+                window.open(mapUrl, '_blank');
+            }
+        }
+
         // --- スクロールでヘッダーを隠す処理 ---
         let lastScrollY = window.scrollY;
         const header = document.querySelector('.fixed-header');
-
         window.addEventListener('scroll', () => {
             if (window.scrollY > lastScrollY && window.scrollY > 50) {
                 header.classList.add('header-hidden');
