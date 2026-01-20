@@ -592,7 +592,7 @@ app.get('/changeIcon', requireLogin, async (req, res) => {
 // ----------------------------------------------------
 // FIN009: マイページ表示 (GET)
 // ----------------------------------------------------
-app.get('/FIN009', requireLogin, async (req, res) => { // ★ async を追加
+app.get('/preference', requireLogin, async (req, res) => { // ★ async を追加
     const viewData = await getCommonViewData(req);
     const backUrl = req.query.returnUrl || '/mypage';
 
@@ -622,7 +622,7 @@ app.get('/FIN_Profile_Edit/:mode', requireLogin, async (req, res) => { // ★ as
         actionUrl = '/update-email';
     } else {
         req.session.error = '不正な変更モードです。';
-        return res.redirect('/FIN009');
+        return res.redirect('/preference');
     }
 
     res.render('FIN_Profile_Edit', {
@@ -665,7 +665,7 @@ app.post('/update-username', requireLogin, async (req, res) => {
         req.session.user.name = newUsername;
 
         req.session.message = `ユーザー名を「${newUsername}」に変更しました。`;
-        return res.redirect('/FIN009');
+        return res.redirect('/preference');
     } catch (e) {
         console.error('ユーザー名更新エラー:', e);
         req.session.error = 'ユーザー名の更新中にエラーが発生しました。';
@@ -690,7 +690,7 @@ app.post('/update-email', requireLogin, async (req, res) => {
         req.session.user.email = newEmail;
 
         req.session.message = `メールアドレスを「${newEmail}」に変更しました。`;
-        return res.redirect('/FIN009');
+        return res.redirect('/preference');
     } catch (e) {
         console.error('メールアドレス更新エラー:', e);
         req.session.error = 'メールアドレスの更新中にエラーが発生しました。';
@@ -774,7 +774,7 @@ app.post('/update-password', requireLogin, async (req, res) => {
 
 
 // FIN016: お気に入り画面
-app.get('/FIN016', requireLogin, async (req, res) => {
+app.get('/favorite', requireLogin, async (req, res) => {
     const viewData = await getCommonViewData(req);
     const userId = req.session.user.id;
     const backUrl = req.query.returnUrl || '/mypage';
@@ -804,11 +804,11 @@ app.post('/favorites/remove', requireLogin, async (req, res) => {
     try {
         await FavShopDAO.removeFavorite(userId, shop_id);
         req.session.message = 'お気に入りを解除しました。';
-        res.redirect('/FIN016');
+        res.redirect('/favorite');
     } catch (error) {
         console.error('Remove Favorite Error:', error);
         req.session.error = '解除に失敗しました。';
-        res.redirect('/FIN016');
+        res.redirect('/favorite');
     }
 });
 
