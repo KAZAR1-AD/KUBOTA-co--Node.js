@@ -638,7 +638,7 @@ app.get('/FIN_Profile_Edit/:mode', requireLogin, async (req, res) => { // ★ as
 // ----------------------------------------------------
 // FIN014: パスワード変更画面 (GET)
 // ----------------------------------------------------
-app.get('/FIN014', requireLogin, async (req, res) => { // ★ async を追加
+app.get('/PW_preference', requireLogin, async (req, res) => { // ★ async を追加
     const viewData = await getCommonViewData(req);
     res.render('FIN014', { pageTitle: 'パスワード変更', ...viewData });
 });
@@ -737,12 +737,12 @@ app.post('/update-password', requireLogin, async (req, res) => {
 
     if (!currentPassword || !newPassword || !confirmPassword) {
         req.session.error = 'すべてのパスワードフィールドを入力してください。';
-        return res.redirect('/FIN014');
+        return res.redirect('/PW_preference');
     }
 
     if (newPassword !== confirmPassword) {
         req.session.error = '新しいパスワードと確認用パスワードが一致しません。';
-        return res.redirect('/FIN014');
+        return res.redirect('/PW_preference');
     }
 
     try {
@@ -751,7 +751,7 @@ app.post('/update-password', requireLogin, async (req, res) => {
 
         if (!success) {
             req.session.error = '現在のパスワードが正しくありません。';
-            return res.redirect('/FIN014');
+            return res.redirect('/PW_preference');
         }
 
         req.session.message = 'パスワードの変更が完了しました。再度ログインしてください。';
@@ -768,7 +768,7 @@ app.post('/update-password', requireLogin, async (req, res) => {
         console.error('パスワード更新エラー:', e);
         // UserDAOから投げられたデータベースエラーを捕捉
         req.session.error = e.message || 'パスワードの更新中にエラーが発生しました。';
-        return res.redirect('/FIN014');
+        return res.redirect('/PW_preference');
     }
 });
 
