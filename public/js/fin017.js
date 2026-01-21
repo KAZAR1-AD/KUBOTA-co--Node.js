@@ -1,8 +1,22 @@
-const btn = document.getElementById('searchBtn');
-const url = '/api/search-user';
+//  ---------------------------------------------------------------------
+//  フレンド機能の画面（FIN017）にてフロントエンドの処理を実装
+//  ---------------------------------------------------------------------
+
+document.addEventListener('DOMContentLoaded', () => {
+  let tabA = document.getElementsByClassName('fin017-list-container');
+  
+  let elm = document.createElement('div');
+  elm.className = 'fin017-friend-item';
+
+});
+
+
+// 検索
+const searchBtn = document.getElementById('searchBtn');
 const resArea = document.getElementById('res-area');
 
-const postFetch = async () => {
+const searchUser = async () => {
+  const url = '/api/search-user';
   const keyword = document.getElementById('search-id').value;
 
   if (!keyword.trim()) {
@@ -24,12 +38,12 @@ const postFetch = async () => {
     }
 
     const result = await res.json();
-    console.log(result.user);
+
 
     // 🔽 ここで画面を書き換える
     resArea.style.display = 'block';
-    document.getElementById('res-userId').textContent = result.user.user_id;
-    document.getElementById('res-userName').textContent = result.user.user_name;
+    document.getElementById('res-userId').textContent = result.user_id;
+    document.getElementById('res-userName').textContent = result.user_name;
 
   } catch (error) {
     console.error(error);
@@ -37,4 +51,4 @@ const postFetch = async () => {
   }
 };
 
-btn.addEventListener('click', postFetch);
+searchBtn.addEventListener('click', searchUser);

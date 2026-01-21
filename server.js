@@ -823,17 +823,17 @@ app.get('/FIN017', requireLogin, async (req, res) => {
 
     let followingList = [];
     let followerList = [];
-    try {
-        // ログインユーザーのフォローしているユーザーのIDリストを取得
-        followingList = await RelationshipDAO.getFollowedUsers(currentUserId);
+    // try {
+    //     // ログインユーザーのフォローしているユーザーのIDリストを取得
+    //     followingList = await RelationshipDAO.getFollowedUsers(currentUserId);
 
-        // ログインユーザーをフォローしているユーザーのIDリストを取得
-        followerList = await RelationshipDAO.getFollowers(currentUserId);
-    } catch (error) {
-        console.error('FIN017 フレンドリスト取得エラー:', error);
-        req.session.error = 'フレンドリストの取得中にエラーが発生しました。';
-        // エラー時も空のリストで画面を表示
-    }
+    //     // ログインユーザーをフォローしているユーザーのIDリストを取得
+    //     followerList = await RelationshipDAO.getFollowers(currentUserId);
+    // } catch (error) {
+    //     console.error('FIN017 フレンドリスト取得エラー:', error);
+    //     req.session.error = 'フレンドリストの取得中にエラーが発生しました。';
+    //     // エラー時も空のリストで画面を表示
+    // }
 
     res.render('FIN017.ejs', {
         pageTitle: 'フレンド',
@@ -857,9 +857,14 @@ app.post('/api/search-user', requireLogin, async (req, res) => {
     // 8桁の数字の場合、user_idで検索
     if (/^\d{8}$/.test(keyword)) {
         try {
-            const user = UserDAO.getUserById(keyword);
+            const user = await UserDAO.getUserById(keyword);
             if (user !== null) {
-                return res.json({ result: true, user: user });
+                console.log(user); // デバッグ用
+                return res.json({ 
+                    result: true, 
+                    user_id: user.user_id,
+                    user_name: user.user_name
+                });
             } else {
                 return res.status(404).json({ result: false, message: 'ユーザーが見つかりません。' });
             }
@@ -872,34 +877,26 @@ app.post('/api/search-user', requireLogin, async (req, res) => {
     }
 });
 
-    // try {
-    //     // 1. FriendshipDAOを使って、ログインユーザーのフレンドのIDリストを取得
-    //     const friendIds = await friendshipDAO.findFriendsByUserId(currentUserId);
+// ===================================
+// FIN017: フレンド追加・削除API
+// ===================================
+app.get('/api/friend/load', requireLogin, async (req, res) => {
+    const currentUserId = req.session.user.id;
 
-    //     // 2. UserDAOを使って、IDリストに基づいてフレンドの詳細情報を一括取得する
-    //     //    新しい UserDAO.findUsersByIds メソッドを利用
-    //     if (friendIds.length > 0) {
-    //         // 
-    //         friendList = await UserDAO.findUsersByIds(friendIds); 
-    //     }
+    try {
+        const followingList = await RelationshipDAO.getFollowedUsers(currentUserId);
+        const followerList = await RelationshipDAO.getFollowers(currentUserId);
 
-    //     // 3. ユーザーアイコンURLを付与（任意：UserDAO側で結合されていない場合）
-    //     // (UserDAO.findUsersByIdsが profile_photo_id を返しているため、
-    //     //  ここで別途 UserIconDAO を使って URL に変換するロジックが必要になる場合がある)
-    //     // 今回は、UserDAOが返す `iconId` を利用し、FIN017のEJS側で処理するものと仮定。
-
-    // } catch (error) {
-    //     console.error('FIN017 フレンドリスト取得エラー:', error);
-    //     req.session.error = 'フレンドリストの取得中にエラーが発生しました。';
-    //     // エラー時も空のリストで画面を表示
-    // }
-
-    // res.render('FIN017.ejs', {
-    //     pageTitle: 'フレンド',
-    //     ...viewData,
-    //     friendList: friendList, // 取得したフレンドリスト (user_id, user_name, login_id, profile_photo_id を含む)
-    // });
-
+        res.json({
+            result: true,
+            followingList: followingList,
+            followerList: followerList
+        });
+    } catch (error) {
+        console.error('フレンドリスト読み込みエラー:', error);
+        res.status(500).json({ result: false, message: 'サーバーエラーが発生しました。' });
+    }
+});
 
 
 
