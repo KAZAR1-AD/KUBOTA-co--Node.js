@@ -823,17 +823,17 @@ app.get('/FIN017', requireLogin, async (req, res) => {
 
     let followingList = [];
     let followerList = [];
-    // try {
-    //     // ログインユーザーのフォローしているユーザーのIDリストを取得
-    //     followingList = await RelationshipDAO.getFollowedUsers(currentUserId);
+    try {
+        // ログインユーザーのフォローしているユーザーのIDリストを取得
+        followingList = await RelationshipDAO.getFollowedUsers(currentUserId);
 
-    //     // ログインユーザーをフォローしているユーザーのIDリストを取得
-    //     followerList = await RelationshipDAO.getFollowers(currentUserId);
-    // } catch (error) {
-    //     console.error('FIN017 フレンドリスト取得エラー:', error);
-    //     req.session.error = 'フレンドリストの取得中にエラーが発生しました。';
-    //     // エラー時も空のリストで画面を表示
-    // }
+        // ログインユーザーをフォローしているユーザーのIDリストを取得
+        followerList = await RelationshipDAO.getFollowers(currentUserId);
+    } catch (error) {
+        console.error('FIN017 フレンドリスト取得エラー:', error);
+        req.session.error = 'フレンドリストの取得中にエラーが発生しました。';
+        // エラー時も空のリストで画面を表示
+    }
 
     res.render('FIN017.ejs', {
         pageTitle: 'フレンド',
