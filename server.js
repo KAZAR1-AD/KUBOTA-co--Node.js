@@ -24,6 +24,7 @@ const friendshipDAO = new FriendshipDAO(database);
 
 // 環境変数PORTがあればそれを使用し、なければ"config/baseport.json"を使用
 const config = require('config');
+const c = require('config');
 const port = config.get('port');
 
 
@@ -850,7 +851,9 @@ app.get('/FIN017', requireLogin, async (req, res) => {
 // ----------------------------------------------------
 app.post('/api/search-user', requireLogin, async (req, res) => {
     let { keyword } = req.body;
+    const currentUserId = req.session.user.id;
     console.log(keyword); // デバッグ用
+    console.log(currentUserId); // デバッグ用
     
     keyword = String(keyword).trim();
     
@@ -858,12 +861,17 @@ app.post('/api/search-user', requireLogin, async (req, res) => {
     if (/^\d{8}$/.test(keyword)) {
         try {
             const user = await UserDAO.getUserById(keyword);
+            // フォロー関係をチェック
+            const isFollowing = await RelationshipDAO.isFollowing(currentUserId, user.user_id);
             if (user !== null) {
                 console.log(user); // デバッグ用
+                console.log(isFollowing); // デバッグ用
+
                 return res.json({ 
                     result: true, 
                     user_id: user.user_id,
-                    user_name: user.user_name
+                    user_name: user.user_name,
+                    is_following: isFollowing
                 });
             } else {
                 return res.status(404).json({ result: false, message: 'ユーザーが見つかりません。' });
@@ -880,24 +888,29 @@ app.post('/api/search-user', requireLogin, async (req, res) => {
 // ===================================
 // FIN017: フレンド追加・削除API
 // ===================================
-app.get('/api/friend/load', requireLogin, async (req, res) => {
+app.post('/api/follow', requireLogin, async (req, res) => {
     const currentUserId = req.session.user.id;
-
+    const { targetUserId } = req.body;
     try {
-        const followingList = await RelationshipDAO.getFollowedUsers(currentUserId);
-        const followerList = await RelationshipDAO.getFollowers(currentUserId);
-
-        res.json({
-            result: true,
-            followingList: followingList,
-            followerList: followerList
-        });
+        const result = await RelationshipDAO.followUser(currentUserId, targetUserId);
+        return res.json({ result: true });
     } catch (error) {
-        console.error('フレンドリスト読み込みエラー:', error);
-        res.status(500).json({ result: false, message: 'サーバーエラーが発生しました。' });
+        console.error('フォロー処理エラー:', error);
+        return res.status(500).json({ result: false });
     }
-});
+})
 
+app.post('/api/unfollow', requireLogin, async (req, res) => {
+    const currentUserId = req.session.user.id;
+    const { targetUserId } = req.body;
+    try {
+        const result = await RelationshipDAO.unfollowUser(currentUserId, targetUserId);
+        return res.json({ result: true });
+    } catch (error) {
+        console.error('アンフォロー処理エラー:', error);
+        return res.status(500).json({ result: false, });
+    }
+})
 
 
 // --- 404 Not Found エラーハンドリング ---
