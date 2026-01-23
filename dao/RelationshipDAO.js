@@ -2,14 +2,17 @@ const db = require('../database');
 
 class FollowDAO {
     /* followed_id: フォローされるユーザーのID */
-    /* follower_id: フォローするユーザーのID */
+    /* follower_id: フォロワーになるユーザーのID */
 
     // ユーザーをフォローする
     async followUser(followerId, followedId) {
         try {
+            if (followerId === followedId) {
+                throw new Error('ユーザーは自分自身をフォローできません');
+            }
             const sql = 'INSERT INTO relationship (follower_id, followed_id) VALUES (?, ?)';
             console.log('User followed successfully');
-            return result = await db.pool.execute(sql, [followerId, followedId]);
+            return await db.pool.execute(sql, [followerId, followedId]);
         } catch (err) {
             console.error('[FollowDAO] followUser Error:', err);
             throw err;
@@ -19,9 +22,12 @@ class FollowDAO {
     // ユーザーのフォローを解除する
     async unfollowUser(followerId, followedId) {
         try {
+            if (followerId === followedId) {
+                throw new Error('ユーザーは自分自身のフォローを解除できません');
+            }
             const sql = 'DELETE FROM relationship WHERE follower_id = ? AND followed_id = ?';
             console.log('User unfollowed successfully');
-            return result = await db.pool.execute(sql, [followerId, followedId]);
+            return await db.pool.execute(sql, [followerId, followedId]);
         } catch (err) {
             console.error('[FollowDAO] unfollowUser Error:', err);
             throw err;
@@ -68,6 +74,26 @@ class FollowDAO {
             return rows;
         } catch (err) {
             console.error('[FollowDAO] getFollowers Error:', err);
+            throw err;
+        }
+    }
+
+    /**
+     * フォローしているか否かを確認する
+     * @param {*} followerId 
+     * @param {*} followedId 
+     * @returns true | false
+     */
+    async isFollowing(followerId, followedId) {
+        try {
+            if (followerId === followedId) {
+                return false; // 自分自身はフォローできない
+            }
+            const sql = 'SELECT COUNT(*) AS count FROM relationship WHERE follower_id = ? AND followed_id = ?';
+            const [rows] = await db.pool.execute(sql, [followerId, followedId]);
+            return rows[0].count > 0;
+        } catch (err) {
+            console.error('[FollowDAO] isFollowing Error:', err);
             throw err;
         }
     }
