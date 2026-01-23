@@ -861,6 +861,7 @@ app.post('/api/search-user', requireLogin, async (req, res) => {
     if (/^\d{8}$/.test(keyword)) {
         try {
             const user = await UserDAO.getUserById(keyword);
+            const icon = await UserIconDAO.getIconUrlByPhotoId(user.profile_photo_id);
             // フォロー関係をチェック
             const isFollowing = await RelationshipDAO.isFollowing(currentUserId, user.user_id);
             if (user !== null) {
@@ -871,6 +872,7 @@ app.post('/api/search-user', requireLogin, async (req, res) => {
                     result: true, 
                     user_id: user.user_id,
                     user_name: user.user_name,
+                    photo_address: icon,
                     is_following: isFollowing
                 });
             } else {

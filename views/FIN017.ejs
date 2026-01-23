@@ -38,7 +38,7 @@
 
             <div class="fin017-friend-item" id="res-area" style="display: none;">
                 <div class="fin017-icon">
-                    <span>icon</span>
+                    <img src=""></img>
                 </div>
                 <div class="fin017-info">
                     <span class="fin017-username" id="res-userName"></span>
@@ -59,13 +59,13 @@
                     <% followingList.forEach(item=> { %>
                         <div class="fin017-friend-item">
                             <div class="fin017-icon">
-                                <span>icon</span>
+                                <img src="<% item.photo_address %>"></img>
                             </div>
                             <div class="fin017-info">
                                 <span class="fin017-username"><%- item.user_name %></span>
                                 <span class="fin017-userid"><%- item.user_id %></span>
                             </div>
-                            <div class="fin017-heart">❤️</div>
+                            <div class="fin017-heart" data-is-following="true">❤️</div>
                         </div>
                         <% }); %>
                             <% } else { %>
@@ -88,7 +88,7 @@
             <% followerList.forEach(item=> { %>
                 <div class="fin017-friend-item">
                     <div class="fin017-icon">
-                        <span>icon</span>
+                        <img src="<% item.photo_address %>"></img>
                     </div>
                     <div class="fin017-info">
                         <span class="fin017-username"><%- item.user_name %></span>

@@ -73,6 +73,8 @@ const searchUser = async () => {
 
     // 🔽 ここで画面を書き換える
     resArea.style.display = 'block';
+    const icon = resArea.querySelector('.fin017-icon img');
+    icon.src = result.photo_address;
     resArea.querySelector('.fin017-userid').textContent = result.user_id;
     resArea.querySelector('.fin017-username').textContent = result.user_name;
 
