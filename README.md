@@ -59,12 +59,6 @@ http://flat-icon-design.com/?paged=22
   sudo apt install python3
   ```
 
-### 4.MySQLのインストール
-
-### 5.UFWの設定
-
-### 6.
-
 
 ---
 
